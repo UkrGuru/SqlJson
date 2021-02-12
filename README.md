@@ -1,2 +1,2 @@
 # UkrGuru.SqlJson
-Alternative easy way of running Sql Server Procedures without using Miscrosoft ER Core
+Alternative easy way to run Sql Server procedures without using Entity Framework Core
