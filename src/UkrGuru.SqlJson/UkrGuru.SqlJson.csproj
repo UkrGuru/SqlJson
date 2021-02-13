@@ -2,10 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <Authors>Oleksander Viktor (UkrGuru)</Authors>
+    <Authors>Oleksandr Viktor (UkrGuru)</Authors>
     <Company>PE VIKTOR Oleksandr Oleksandrovych</Company>
-    <Product>Oleksander Viktor (UkrGuru)</Product>
-    <Copyright>Oleksander Viktor (UkrGuru)</Copyright>
+    <Product>Oleksandr Viktor (UkrGuru)</Product>
+    <Copyright>Oleksandr Viktor (UkrGuru)</Copyright>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
