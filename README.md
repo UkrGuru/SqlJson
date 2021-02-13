@@ -1,2 +1,2 @@
 # UkrGuru.SqlJson
-Alternative easy way to run Sql Server procedures without using Entity Framework Core
+Alternative easy way to run Sql Server procedures without using Microsoft Entity Framework Core
