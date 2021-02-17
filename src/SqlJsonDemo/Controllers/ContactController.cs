@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UkrGuru.SqlJson;
@@ -49,6 +50,19 @@ namespace SqlJsonDemo.Controllers
         public async Task Delete(int id)
         {
             await _db.ExecProcAsync("Contacts_Del", new { Id = id });
+        }
+
+        // DbHelper Demo
+        // POST api/<ContactController>/PostGet
+        [HttpPost("PostGet")]
+        public async Task<Contact> PostGet([FromBody] Contact item)
+        {
+            using SqlConnection connection = new SqlConnection(DbHelper.ConnString);
+            await connection.OpenAsync();
+
+            var id = await connection.FromProcAsync<int>("Contacts_Ins", item);
+
+            return await connection.FromProcAsync<Contact>("Contacts_Item", new { Id = id });
         }
     }
 }

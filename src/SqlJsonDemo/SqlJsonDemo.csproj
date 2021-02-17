@@ -10,8 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.0.5" />
-    <PackageReference Include="UkrGuru.SqlJson" Version="2.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.0.7" />
+    <PackageReference Include="UkrGuru.SqlJson" Version="2.1.0" />
   </ItemGroup>
 
 </Project>

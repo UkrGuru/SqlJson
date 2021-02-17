@@ -14,14 +14,13 @@ namespace UkrGuru.SqlJson
 
         public static async Task<int> ExecProcAsync(string name, object data = null, int? timeout = null)
         {
-            return await ExecProcAsync(ConnString, name, data, timeout);
-        }
-
-        public static async Task<int> ExecProcAsync(string conn, string name, object data = null, int? timeout = null)
-        {
-            using SqlConnection connection = new SqlConnection(conn);
+            using SqlConnection connection = new SqlConnection(ConnString);
             await connection.OpenAsync();
 
+            return await connection.ExecProcAsync(name, data, timeout);
+        }
+        public static async Task<int> ExecProcAsync(this SqlConnection connection, string name, object data = null, int? timeout = null)
+        {
             using SqlCommand command = new SqlCommand(name, connection);
             command.CommandType = System.Data.CommandType.StoredProcedure;
 
@@ -34,15 +33,14 @@ namespace UkrGuru.SqlJson
 
         public static async Task<string> FromProcAsync(string name, object data = null, int? timeout = null)
         {
-            return await FromProcAsync(ConnString, name, data, timeout);
-        }
+            using SqlConnection connection = new SqlConnection(ConnString);
+            await connection.OpenAsync();
 
-        public static async Task<string> FromProcAsync(string conn, string name, object data = null, int? timeout = null)
+            return await connection.FromProcAsync(name, data, timeout);
+        }
+        public static async Task<string> FromProcAsync(this SqlConnection connection, string name, object data = null, int? timeout = null)
         {
             var jsonResult = new StringBuilder();
-
-            using SqlConnection connection = new SqlConnection(conn);
-            await connection.OpenAsync();
 
             using SqlCommand command = new SqlCommand(name, connection);
             command.CommandType = System.Data.CommandType.StoredProcedure;
@@ -59,18 +57,21 @@ namespace UkrGuru.SqlJson
                     jsonResult.Append(reader.GetValue(0).ToString());
                 }
             }
-            
+            await reader.CloseAsync();
+
             return jsonResult.ToString();
         }
 
         public static async Task<T> FromProcAsync<T>(string name, object data = null, int? timeout = null)
         {
-            return await FromProcAsync<T>(ConnString, name, data, timeout);
-        }
+            using SqlConnection connection = new SqlConnection(ConnString);
+            await connection.OpenAsync();
 
-        public static async Task<T> FromProcAsync<T>(string conn, string name, object data = null, int? timeout = null)
+            return await connection.FromProcAsync<T>(name, data, timeout);
+        }
+        public static async Task<T> FromProcAsync<T>(this SqlConnection connection, string name, object data = null, int? timeout = null)
         {
-            var str = await FromProcAsync(conn, name, data, timeout);
+            var str = await connection.FromProcAsync(name, data, timeout);
 
             return (string.IsNullOrEmpty(str)) ? Activator.CreateInstance<T>() : JsonSerializer.Deserialize<T>(str);
         }
