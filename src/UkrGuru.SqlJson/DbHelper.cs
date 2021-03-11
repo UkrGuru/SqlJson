@@ -24,7 +24,7 @@ namespace UkrGuru.SqlJson
             using SqlCommand command = new SqlCommand(name, connection);
             command.CommandType = System.Data.CommandType.StoredProcedure;
 
-            if (data != null) command.Parameters.AddWithValue("@Data", JsonSerializer.Serialize(data));
+            if (data != null) command.Parameters.AddWithValue("@Data", data is string ? data : JsonSerializer.Serialize(data));
 
             if (timeout != null) command.CommandTimeout = timeout.Value;
 
@@ -45,7 +45,7 @@ namespace UkrGuru.SqlJson
             using SqlCommand command = new SqlCommand(name, connection);
             command.CommandType = System.Data.CommandType.StoredProcedure;
 
-            if (data != null) command.Parameters.AddWithValue("@Data", JsonSerializer.Serialize(data));
+            if (data != null) command.Parameters.AddWithValue("@Data", data is string ? data : JsonSerializer.Serialize(data));
 
             if (timeout != null) command.CommandTimeout = timeout.Value;
 
