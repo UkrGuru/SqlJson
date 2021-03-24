@@ -1,4 +1,5 @@
-﻿// Copyright (c) 2021 Oleksandr Viktor (UkrGuru)
+﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
+// Licensed under the MIT License. See License.txt in the project root for license information.
 
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;

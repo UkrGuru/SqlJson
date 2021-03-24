@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using UkrGuru.SqlJson;
 
 namespace WebAppDemo
 {
@@ -21,11 +20,7 @@ namespace WebAppDemo
         {
             services.AddRazorPages();
 
-            // DbService Init
-            services.AddScoped<DbService>();
-
-            // DbHelper Init
-            DbHelper.ConnString = Configuration.GetConnectionString("SqlJsonConnection");
+            services.AddSqlJson(Configuration.GetConnectionString("SqlJsonConnection")); 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
