@@ -6,8 +6,8 @@ using UkrGuru.SqlJson;
 
 namespace SqlJsonDemo.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class ContactController : ControllerBase
     {
         private readonly DbService _db;

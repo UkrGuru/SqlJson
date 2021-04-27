@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Version>1.1.0</Version>
+    <PackageReleaseNotes>Added ApiHole - universal Web API</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
