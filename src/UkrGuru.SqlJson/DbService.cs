@@ -3,6 +3,7 @@
 
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace UkrGuru.SqlJson
@@ -18,28 +19,28 @@ namespace UkrGuru.SqlJson
 
         private string _connString => _configuration.GetConnectionString("SqlJsonConnection");
 
-        public async Task<int> ExecProcAsync(string name, object data = null, int? timeout = null)
+        public async Task<int> ExecProcAsync(string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
             using SqlConnection connection = new SqlConnection(_connString);
-            await connection.OpenAsync();
+            await connection.OpenAsync(cancellationToken);
 
-            return await connection.ExecProcAsync(name, data, timeout);
+            return await connection.ExecProcAsync(name, data, timeout, cancellationToken);
         }
 
-        public async Task<string> FromProcAsync(string name, object data = null, int? timeout = null)
+        public async Task<string> FromProcAsync(string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
             using SqlConnection connection = new SqlConnection(_connString);
-            await connection.OpenAsync();
+            await connection.OpenAsync(cancellationToken);
 
-            return await connection.FromProcAsync(name, data, timeout);
+            return await connection.FromProcAsync(name, data, timeout, cancellationToken);
         }
 
-        public async Task<T> FromProcAsync<T>(string name, object data = null, int? timeout = null)
+        public async Task<T> FromProcAsync<T>(string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
             using SqlConnection connection = new SqlConnection(_connString);
-            await connection.OpenAsync();
+            await connection.OpenAsync(cancellationToken);
 
-            return await connection.FromProcAsync<T>(name, data, timeout);
+            return await connection.FromProcAsync<T>(name, data, timeout, cancellationToken);
         }
     }
 }

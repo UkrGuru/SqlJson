@@ -13,7 +13,10 @@
 
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.4" />
-    <PackageReference Include="UkrGuru.SqlJson" Version="2.1.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UkrGuru.SqlJson\UkrGuru.SqlJson.csproj" />
   </ItemGroup>
 
 </Project>
