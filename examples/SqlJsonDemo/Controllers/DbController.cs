@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
+// Licensed under the MIT License. See License.txt in the project root for license information.
+
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using UkrGuru.SqlJson;

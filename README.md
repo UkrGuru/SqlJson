@@ -34,6 +34,78 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
+## Samples of code
+
+### DbService: how to use?
+```c#
+[ApiController]
+[Route("api/[controller]")]
+public class ContactController : ControllerBase
+{
+    private readonly DbService _db;
+    public ContactController(DbService db) => _db = db;
+
+    [HttpGet]
+    public async Task<List<Contact>> Get() => await _db.FromProcAsync<List<Contact>>("Contacts_List");
+
+    [HttpGet("{id}")]
+    public async Task<Contact> Get(int id) => await _db.FromProcAsync<Contact>("Contacts_Item", new { Id = id });
+
+    [HttpPost]
+    public async Task<Contact> Post([FromBody] Contact item) => await _db.FromProcAsync<Contact>("Contacts_Ins", item);
+
+    [HttpPut("{id}")]
+    public async Task Put(int id, [FromBody] Contact item) => await _db.ExecProcAsync("Contacts_Upd", item);
+
+    [HttpDelete("{id}")]
+    public async Task Delete(int id) => await _db.ExecProcAsync("Contacts_Del", new { Id = id });
+}
+```
+### DbHelper: how to use?
+```c#
+[HttpPost("Post")]
+public async Task<Contact> Post([FromBody] Contact item)
+{
+    return await DbHelper.FromProcAsync<Contact>("Contacts_Ins", item);
+}
+```
+
+##Standard for procedures
+
+UkrGuru.SqlJson will automatically serialize C# input parameters list to json and deserialize result in object.
+
+So you must follow the next requirements:
+
+### 1. You can use procedures without parameters or with 1 specific parameter (@Data varchar)
+
+### 2. If used FromProcAsync then you need prepare result in json format with "FOR JSON PATH" for List<TEntity> or with "FOR JSON PATH, WITHOUT_ARRAY_WRAPPER" for TEntity
+
+
+```sql
+CREATE PROCEDURE [api].[Contacts_List] 
+AS
+SELECT Id, FullName, Email, Notes
+FROM Contacts
+FOR JSON PATH
+```
+
+```sql
+ALTER PROCEDURE [dbo].[Contacts_Ins]
+	@Data nvarchar(max) 
+AS
+INSERT INTO Contacts (FullName, Email, Notes)
+SELECT * FROM OPENJSON(@Data) 
+WITH (FullName nvarchar(50), Email nvarchar(100), Notes nvarchar(max))
+
+DECLARE @Id int = SCOPE_IDENTITY()
+
+SELECT Id, FullName, Email, Notes
+FROM Contacts
+WHERE Id = @Id
+FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+```
+
+
 ## License
 The UkrGuru.SqlJson package is an open source product licensed under:
 
