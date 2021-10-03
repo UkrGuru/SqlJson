@@ -75,10 +75,8 @@ public async Task<Contact> Post([FromBody] Contact item)
 UkrGuru.SqlJson will automatically serialize C# input parameters list to json and deserialize result in object.
 
 So you must follow the next requirements:
-
-### 1. You can use procedures without parameters or with 1 specific parameter (@Data varchar)
-
-### 2. If used FromProcAsync then you need prepare result in json format with "FOR JSON PATH" for List<TEntity> or with "FOR JSON PATH, WITHOUT_ARRAY_WRAPPER" for TEntity
+1. You can use procedures without parameters or with 1 specific parameter (@Data varchar)
+2. If used FromProcAsync then you need prepare result in json format with "FOR JSON PATH" for List<TEntity> or with "FOR JSON PATH, WITHOUT_ARRAY_WRAPPER" for TEntity
 
 
 ```sql
