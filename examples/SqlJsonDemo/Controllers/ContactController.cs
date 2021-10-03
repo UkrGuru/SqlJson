@@ -12,10 +12,7 @@ namespace SqlJsonDemo.Controllers
     {
         private readonly DbService _db;
 
-        public ContactController(DbService db)
-        {
-            _db = db;
-        }
+        public ContactController(DbService db) => _db = db;
 
         // GET: api/<ContactController>
         [HttpGet]

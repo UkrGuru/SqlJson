@@ -4,12 +4,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class SqlJsonServiceCollectionExtensions
     {
-        public static void AddSqlJson(this IServiceCollection services)
-        {
-            services.AddScoped<DbService>();
-        }
-
-        public static void AddSqlJson(this IServiceCollection services, string connString)
+        public static void AddSqlJson(this IServiceCollection services, string connString = null)
         {
             DbHelper.ConnString = connString;
             services.AddSqlJson();

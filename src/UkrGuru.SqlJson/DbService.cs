@@ -12,10 +12,7 @@ namespace UkrGuru.SqlJson
     {
         private readonly IConfiguration _configuration;
 
-        public DbService(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
+        public DbService(IConfiguration configuration) => _configuration = configuration;
 
         private string _connString => _configuration.GetConnectionString("SqlJsonConnection");
 

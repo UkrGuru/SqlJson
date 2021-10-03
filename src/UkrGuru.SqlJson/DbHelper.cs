@@ -21,6 +21,7 @@ namespace UkrGuru.SqlJson
 
             return await connection.ExecProcAsync(name, data, timeout, cancellationToken);
         }
+
         public static async Task<int> ExecProcAsync(this SqlConnection connection, string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
             using SqlCommand command = new(name, connection);
@@ -40,6 +41,7 @@ namespace UkrGuru.SqlJson
 
             return await connection.FromProcAsync(name, data, timeout, cancellationToken);
         }
+
         public static async Task<string> FromProcAsync(this SqlConnection connection, string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
             var jsonResult = new StringBuilder();
@@ -56,7 +58,7 @@ namespace UkrGuru.SqlJson
             {
                 while (await reader.ReadAsync(cancellationToken))
                 {
-                    jsonResult.Append(reader.GetValue(0).ToString());
+                    jsonResult.Append(reader.GetValue(0)?.ToString());
                 }
             }
             await reader.CloseAsync();
@@ -71,6 +73,7 @@ namespace UkrGuru.SqlJson
 
             return await connection.FromProcAsync<T>(name, data, timeout, cancellationToken);
         }
+       
         public static async Task<T> FromProcAsync<T>(this SqlConnection connection, string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
             var str = await connection.FromProcAsync(name, data, timeout, cancellationToken);
