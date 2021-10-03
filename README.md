@@ -1,6 +1,45 @@
 # UkrGuru.SqlJson
-Alternative easy way to run Sql Server procedures without using Microsoft Entity Framework Core
+#### Alternative easy way to run Sql Server procedures without using Microsoft Entity Framework Core
 
-<a href="https://www.codeproject.com/Tips/5295154/UkrGuru-SqlJson-Your-Link-Between-SQL-Server-and-N" target="_blank">UkrGuru.SqlJson Your Link Between SQL Server and .NET 5 [Tip/Trick]</a>
+[![Nuget](https://img.shields.io/nuget/v/UkrGuru.SqlJson)](https://www.nuget.org/packages/UkrGuru.SqlJson/)
 
-<a href="https://www.codeproject.com/Tips/5295844/UkrGuru-SqlJson-is-Perfect-for-your-ASP-NET-Core-W" target="_blank">UkrGuru.SqlJson is Perfect for your ASP.NET Core Web Application! [Tip/Trick]</a>
+## Installation
+
+### 1. Install the nuget package UkrGuru.SqlJson in Visual Studio
+
+#### Package Manager:
+```ps
+Install-Package UkrGuru.SqlJson
+```
+
+#### or the `dotnet` command line:
+```cmd
+dotnet add package UkrGuru.SqlJson
+```
+
+### 2. Add a new SqlJsonConnection to your database in appsettings.json
+```json
+  "ConnectionStrings": {
+    "SqlJsonConnection": "Server=localhost;Database=SqlJsonDemo;Integrated Security=SSPI"
+  }
+```
+
+### 3. Open the ~/Startup.cs file and register the UkrGuru SqlJson service:
+```c#
+  services.AddSqlJson(Configuration.GetConnectionString("SqlJsonConnection"));
+```
+
+## License
+The UkrGuru.SqlJson package is an open source product licensed under:
+
+* **[MIT license](http://opensource.org/licenses/MIT)**
+
+All source code is **&copy; Oleksandr Viktor (UkrGuru)**, regardless of changes made to them. Any source code modifications must leave the original copyright code headers intact if present.
+
+There's no charge to use, integrate or modify the code for this project. You are free to use it in personal, commercial, government and any other type of application and you are free to modify the code for use in your own projects.
+
+### Donate
+If you find this library useful, consider making a small donation:
+
+<a title="Payoneer Donate for UkrGuru" href="mailto:ukrguru@gmail.com?subject=Programming Support Donate&amp;body=Hello, I want to Donate for the Development of UkrGuru packages. Create an invoice for $ [amount from 99$]. Thanks, [FULLNAME]"><img src="https://pubs.payoneer.com/Content/Default/img/Favicon/favicon.ico" width="25" class="pr-1"> Payoneer</a>
+         
