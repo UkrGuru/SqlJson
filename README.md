@@ -37,7 +37,7 @@ public void ConfigureServices(IServiceCollection services)
 ## License
 The UkrGuru.SqlJson package is an open source product licensed under:
 
-***[MIT license](https://raw.githubusercontent.com/UkrGuru/SqlJson/main/LICENSE.txt)**
+* **[MIT license](https://github.com/UkrGuru/WebJobs/blob/main/LICENSE.txt)**
 
 All source code is **&copy; Oleksandr Viktor (UkrGuru)**, regardless of changes made to them. Any source code modifications must leave the original copyright code headers intact if present.
 
