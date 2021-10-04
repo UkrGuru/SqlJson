@@ -80,7 +80,7 @@ So you must follow the next requirements:
 
 
 ```sql
-CREATE PROCEDURE [api].[Contacts_List] 
+CREATE PROCEDURE [dbo].[Contacts_List] 
 AS
 SELECT Id, FullName, Email, Notes
 FROM Contacts
