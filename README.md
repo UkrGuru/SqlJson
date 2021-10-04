@@ -1,6 +1,10 @@
 # UkrGuru.SqlJson
 #### Alternative easy way to run Sql Server procedures without using Microsoft Entity Framework Core
 
+## Background
+
+I am an old software developer for over 20 years and have written a lot of unique code in my life. In my practice of working with data, I usually use SQL Server and stored procedures to execute queries of any complexity. For the past year, I tried to use the Microsoft EF Core framework, but I always lacked the power that I had when using procedures earlier. In the end, my patience ran out and I created a minimally simple UkrGuru.SqlJson package for modern data manipulation, and now I want to share this knowledge with you...
+
 [![Nuget](https://img.shields.io/nuget/v/UkrGuru.SqlJson)](https://www.nuget.org/packages/UkrGuru.SqlJson/)
 
 ## Installation
