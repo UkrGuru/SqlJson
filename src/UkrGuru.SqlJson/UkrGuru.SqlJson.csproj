@@ -11,7 +11,7 @@
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageIcon>ukrguru-logo.jpg</PackageIcon>
     <Description>Alternative easy way to run stored procedures (Sql Server) without using Microsoft Entity Framework Core.</Description>
-    <Version>3.0.2</Version>
+    <Version>3.0.3</Version>
     <RepositoryUrl>https://github.com/UkrGuru/SqlJson</RepositoryUrl>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>UkrGuru.pfx</AssemblyOriginatorKeyFile>
