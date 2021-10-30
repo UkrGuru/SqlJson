@@ -118,5 +118,5 @@ All source code is **&copy; Oleksandr Viktor (UkrGuru)**, regardless of changes 
 There's no charge to use, integrate or modify the code for this project. You are free to use it in personal, commercial, government and any other type of application and you are free to modify the code for use in your own projects.
 
 ### Donate
-If you find this library useful, consider making a small donation. 
-Contact with me by email (ukrguru@gmail.com) for Payoneer Invoice ...
+If you find this library useful, consider making a small donation.
+	Contact with me by email (ukrguru@gmail.com) for Payoneer Invoice ...
