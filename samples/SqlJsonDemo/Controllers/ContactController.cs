@@ -33,7 +33,7 @@ namespace SqlJsonDemo.Controllers
         [HttpPost("PostGet")]
         public async Task<Contact> PostGet([FromBody] Contact item)
         {
-            using SqlConnection connection = new SqlConnection(DbHelper.ConnString);
+            using SqlConnection connection = _db.CreateSqlConnection();
             await connection.OpenAsync();
 
             var id = await connection.FromProcAsync<int>("Contacts_Ins", item);

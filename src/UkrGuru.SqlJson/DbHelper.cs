@@ -12,11 +12,15 @@ namespace UkrGuru.SqlJson
 {
     public static class DbHelper
     {
-        public static string ConnString { get; set; }
+        private static string connectionString;
+
+        public static string ConnectionString { set => connectionString = value; }
+
+        public static SqlConnection CreateSqlConnection() => new SqlConnection(connectionString);
 
         public static async Task<int> ExecProcAsync(string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
-            using SqlConnection connection = new(ConnString);
+            using SqlConnection connection = new(connectionString);
             await connection.OpenAsync(cancellationToken);
 
             return await connection.ExecProcAsync(name, data, timeout, cancellationToken);
@@ -36,7 +40,7 @@ namespace UkrGuru.SqlJson
 
         public static async Task<string> FromProcAsync(string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
-            using SqlConnection connection = new(ConnString);
+            using SqlConnection connection = new(connectionString);
             await connection.OpenAsync(cancellationToken);
 
             return await connection.FromProcAsync(name, data, timeout, cancellationToken);
@@ -68,7 +72,7 @@ namespace UkrGuru.SqlJson
 
         public static async Task<T> FromProcAsync<T>(string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
-            using SqlConnection connection = new(ConnString);
+            using SqlConnection connection = new(connectionString);
             await connection.OpenAsync(cancellationToken);
 
             return await connection.FromProcAsync<T>(name, data, timeout, cancellationToken);
