@@ -20,7 +20,14 @@ namespace UkrGuru.SqlJson
         private string _connectionString => _configuration.GetConnectionString(ConnectionStringName);
 
         public SqlConnection CreateSqlConnection() => new SqlConnection(_connectionString);
-        
+
+        public int ExecProc(string name, object data = null, int? timeout = null)
+        {
+            using SqlConnection connection = new SqlConnection(_connectionString);
+            connection.Open();
+
+            return connection.ExecProc(name, data, timeout);
+        }
         public async Task<int> ExecProcAsync(string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
             using SqlConnection connection = new SqlConnection(_connectionString);
@@ -29,6 +36,13 @@ namespace UkrGuru.SqlJson
             return await connection.ExecProcAsync(name, data, timeout, cancellationToken);
         }
 
+        public string FromProc(string name, object data = null, int? timeout = null)
+        {
+            using SqlConnection connection = new SqlConnection(_connectionString);
+            connection.Open();
+
+            return connection.FromProc(name, data, timeout);
+        }
         public async Task<string> FromProcAsync(string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
             using SqlConnection connection = new SqlConnection(_connectionString);
@@ -37,6 +51,13 @@ namespace UkrGuru.SqlJson
             return await connection.FromProcAsync(name, data, timeout, cancellationToken);
         }
 
+        public T FromProc<T>(string name, object data = null, int? timeout = null)
+        {
+            using SqlConnection connection = new SqlConnection(_connectionString);
+            connection.Open();
+
+            return connection.FromProc<T>(name, data, timeout);
+        }
         public async Task<T> FromProcAsync<T>(string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
             using SqlConnection connection = new SqlConnection(_connectionString);
