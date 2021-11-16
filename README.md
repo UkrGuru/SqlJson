@@ -1,5 +1,5 @@
 # UkrGuru.SqlJson
-#### Alternative easy way to run stored procedures (Sql Server) without using Microsoft Entity Framework Core
+#### This repository is fast and easy access to Sql Server databases only through stored procedures and EF Core is not involved in this.
 
 ## Background
 
