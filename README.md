@@ -1,6 +1,7 @@
 # UkrGuru.SqlJson
 [![Nuget](https://img.shields.io/nuget/v/UkrGuru.SqlJson)](https://www.nuget.org/packages/UkrGuru.SqlJson/)
-#### This repository is fast and easy access to Sql Server databases only through stored procedures and EF Core is not involved in this.
+
+This repository is fast and easy access to Sql Server databases only through stored procedures and EF Core is not involved in this.
 
 ## Background
 
