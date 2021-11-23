@@ -1,0 +1,4 @@
+IF DB_ID ('SqlJsonTest') IS NOT NULL 
+	DROP DATABASE SqlJsonTest;
+
+CREATE DATABASE SqlJsonTest;
