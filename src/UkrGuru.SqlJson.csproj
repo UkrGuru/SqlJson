@@ -18,6 +18,7 @@
     <PackageTags>json data sql sql-server csharp core dotnet netcore entity-framework-core asp-net-core stored-procedures net5</PackageTags>
     <PackageReleaseNotes>Added ExecCommand and ExecResource for tests and install scripts.</PackageReleaseNotes>
     <PackageProjectUrl>https://ukrguru.com/sql</PackageProjectUrl>
+    <PackageIconUrl />
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -36,11 +37,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="..\..\ukrguru-logo.jpg">
+    <EmbeddedResource Include="..\LICENSE.txt">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\..\LICENSE.txt">
+    <EmbeddedResource Include="..\ukrguru-logo.jpg">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </EmbeddedResource>
