@@ -23,7 +23,8 @@ CREATE OR ALTER PROCEDURE [dbo].[Regions_Lst]
 AS
 SELECT Id, Name
 FROM Regions
-FOR JSON PATH';
+FOR JSON PATH
+';
 
 EXEC dbo.sp_executesql @statement = N'
 CREATE OR ALTER PROCEDURE [dbo].[Regions_Get] 
@@ -32,7 +33,8 @@ AS
 SELECT Id, Name
 FROM Regions
 WHERE Id = JSON_VALUE(@Data, ''$.Id'')
-FOR JSON PATH, WITHOUT_ARRAY_WRAPPER';
+FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+';
 
 EXEC dbo.sp_executesql @statement = N'
 CREATE OR ALTER PROCEDURE [dbo].[Regions_Upd] 
@@ -40,11 +42,13 @@ CREATE OR ALTER PROCEDURE [dbo].[Regions_Upd]
 AS
 UPDATE Regions
 SET Name = JSON_VALUE(@Data, ''$.Name'')
-WHERE (Id = JSON_VALUE(@Data, ''$.Id''))';
+WHERE (Id = JSON_VALUE(@Data, ''$.Id''))
+';
 
 EXEC dbo.sp_executesql @statement = N'
 CREATE OR ALTER PROCEDURE [dbo].[Regions_Del] 
     @Data varchar(20)
 AS
 DELETE FROM Regions
-WHERE (Id = JSON_VALUE(@Data, ''$.Id''))';
+WHERE (Id = JSON_VALUE(@Data, ''$.Id''))
+';
