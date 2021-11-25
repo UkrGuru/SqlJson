@@ -14,19 +14,19 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Contact[0].FullName)
+                @Html.DisplayNameFor(model => model.Contacts[0].FullName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Contact[0].Email)
+                @Html.DisplayNameFor(model => model.Contacts[0].Email)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Contact[0].Notes)
+                @Html.DisplayNameFor(model => model.Contacts[0].Notes)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Contact)
+        @foreach (var item in Model.Contacts)
         {
             <tr>
                 <td>

@@ -11,8 +11,6 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static void AddSqlJsonWebApp(this IServiceCollection services, string connectionString)
         {
-            services.AddSqlJson(connectionString);
-
             var dbName = new SqlConnectionStringBuilder(connectionString).InitialCatalog;
 
             DbHelper.ConnectionString = connectionString.Replace(dbName, "master");

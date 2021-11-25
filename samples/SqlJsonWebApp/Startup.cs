@@ -18,9 +18,11 @@ namespace SqlJsonWebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = Configuration.GetConnectionString("SqlJsonConnection");
+            // next line is required to create the database, you can later delete
+            services.AddSqlJsonWebApp(Configuration.GetConnectionString("SqlJsonConnection"));
 
-            services.AddSqlJsonWebApp(connectionString);
+            // important for use UkrGuru.SqlJson
+            services.AddSqlJson(Configuration.GetConnectionString("SqlJsonConnection"));
 
             services.AddRazorPages();
         }

@@ -12,11 +12,11 @@ namespace SqlJsonWebApp.Pages.Contacts
 
         public IndexModel(DbService db) => _db = db;
 
-        public List<Contact> Contact { get; set; }
+        public List<Contact> Contacts { get; set; }
 
         public async Task OnGetAsync()
         {
-            Contact = await _db.FromProcAsync<List<Contact>>("Contacts_Lst");
+            Contacts = await _db.FromProcAsync<List<Contact>>("Contacts_Lst");
         }
     }
 }
