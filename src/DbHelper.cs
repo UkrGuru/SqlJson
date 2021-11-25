@@ -170,12 +170,10 @@ namespace UkrGuru.SqlJson
         public static async Task<int> ExecCommandAsync(this SqlConnection connection, string cmdText, int? timeout = null, CancellationToken cancellationToken = default)
         {
             using SqlCommand command = new(cmdText, connection);
-            command.CommandType = System.Data.CommandType.StoredProcedure;
 
             if (timeout != null) command.CommandTimeout = timeout.Value;
 
             return await command.ExecuteNonQueryAsync(cancellationToken);
         }
-
     }
 }
