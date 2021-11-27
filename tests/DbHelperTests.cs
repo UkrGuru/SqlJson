@@ -4,7 +4,7 @@ using Xunit;
 
 namespace UkrGuru.SqlJson.Tests
 {
-    public class SqlJsonTest
+    public class DbHelperTests
     {
         public class Region
         {
@@ -12,7 +12,7 @@ namespace UkrGuru.SqlJson.Tests
             public string Name { get; set; }
         }
 
-        public SqlJsonTest()
+        public DbHelperTests()
         {
             var dbName = "SqlJsonTest";
             var connectionString = $"Server=(localdb)\\mssqllocaldb;Database={dbName};Trusted_Connection=True";
@@ -25,7 +25,7 @@ namespace UkrGuru.SqlJson.Tests
         }
 
         [Fact]
-        public void AllTest()
+        public void FromProcTest()
         {
             var regions = DbHelper.FromProc<List<Region>>("Regions_Lst");
 

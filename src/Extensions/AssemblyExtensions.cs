@@ -10,6 +10,9 @@ namespace System.Reflection
     {
         public static void ExecResource(this Assembly assembly, string filename)
         {
+            assembly.ThrowIfNull(nameof(assembly));
+            filename.ThrowIfBlank(nameof(filename));
+
             var script = string.Empty;
             var resourceName = $"{assembly.GetName().Name}.Resources.{filename}";
 

@@ -18,10 +18,12 @@ namespace UkrGuru.SqlJson
 
         public static SqlConnection CreateSqlConnection() => new (connectionString);
 
-        private static object ConvertToParameterValue(object data) => data is string ? data : JsonSerializer.Serialize(data);
+        private static object ConvertToStrJson(object data) => data is string ? data : JsonSerializer.Serialize(data);
 
         public static int ExecProc(string name, object data = null, int? timeout = null)
         {
+            name.ThrowIfBlank(nameof(name));
+
             using SqlConnection connection = CreateSqlConnection();
             connection.Open();
 
@@ -29,6 +31,8 @@ namespace UkrGuru.SqlJson
         }
         public static async Task<int> ExecProcAsync(string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
+            name.ThrowIfBlank(nameof(name));
+
             using SqlConnection connection = CreateSqlConnection();
             await connection.OpenAsync(cancellationToken);
 
@@ -37,10 +41,13 @@ namespace UkrGuru.SqlJson
 
         public static int ExecProc(this SqlConnection connection, string name, object data = null, int? timeout = null)
         {
+            connection.ThrowIfNull(nameof(connection));
+            name.ThrowIfBlank(nameof(name));
+
             using SqlCommand command = new(name, connection);
             command.CommandType = System.Data.CommandType.StoredProcedure;
 
-            if (data != null) command.Parameters.AddWithValue("@Data", ConvertToParameterValue(data));
+            if (data != null) command.Parameters.AddWithValue("@Data", ConvertToStrJson(data));
 
             if (timeout != null) command.CommandTimeout = timeout.Value;
 
@@ -48,10 +55,13 @@ namespace UkrGuru.SqlJson
         }
         public static async Task<int> ExecProcAsync(this SqlConnection connection, string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
+            connection.ThrowIfNull(nameof(connection));
+            name.ThrowIfBlank(nameof(name));
+
             using SqlCommand command = new(name, connection);
             command.CommandType = System.Data.CommandType.StoredProcedure;
 
-            if (data != null) command.Parameters.AddWithValue("@Data", ConvertToParameterValue(data));
+            if (data != null) command.Parameters.AddWithValue("@Data", ConvertToStrJson(data));
 
             if (timeout != null) command.CommandTimeout = timeout.Value;
 
@@ -60,6 +70,8 @@ namespace UkrGuru.SqlJson
 
         public static string FromProc(string name, object data = null, int? timeout = null)
         {
+            name.ThrowIfBlank(nameof(name));
+
             using SqlConnection connection = CreateSqlConnection();
             connection.Open();
 
@@ -67,6 +79,8 @@ namespace UkrGuru.SqlJson
         }
         public static async Task<string> FromProcAsync(string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
+            name.ThrowIfBlank(nameof(name));
+
             using SqlConnection connection = CreateSqlConnection();
             await connection.OpenAsync(cancellationToken);
 
@@ -75,12 +89,15 @@ namespace UkrGuru.SqlJson
 
         public static string FromProc(this SqlConnection connection, string name, object data = null, int? timeout = null)
         {
+            connection.ThrowIfNull(nameof(connection));
+            name.ThrowIfBlank(nameof(name));
+
             var jsonResult = new StringBuilder();
 
             using SqlCommand command = new(name, connection);
             command.CommandType = System.Data.CommandType.StoredProcedure;
 
-            if (data != null) command.Parameters.AddWithValue("@Data", ConvertToParameterValue(data));
+            if (data != null) command.Parameters.AddWithValue("@Data", ConvertToStrJson(data));
 
             if (timeout != null) command.CommandTimeout = timeout.Value;
 
@@ -96,12 +113,15 @@ namespace UkrGuru.SqlJson
         }
         public static async Task<string> FromProcAsync(this SqlConnection connection, string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
+            connection.ThrowIfNull(nameof(connection));
+            name.ThrowIfBlank(nameof(name));
+
             var jsonResult = new StringBuilder();
 
             using SqlCommand command = new(name, connection);
             command.CommandType = System.Data.CommandType.StoredProcedure;
 
-            if (data != null) command.Parameters.AddWithValue("@Data", ConvertToParameterValue(data));
+            if (data != null) command.Parameters.AddWithValue("@Data", ConvertToStrJson(data));
 
             if (timeout != null) command.CommandTimeout = timeout.Value;
 
@@ -118,6 +138,8 @@ namespace UkrGuru.SqlJson
 
         public static T FromProc<T>(string name, object data = null, int? timeout = null)
         {
+            name.ThrowIfBlank(nameof(name));
+
             using SqlConnection connection = CreateSqlConnection();
             connection.Open();
 
@@ -125,6 +147,8 @@ namespace UkrGuru.SqlJson
         }
         public static async Task<T> FromProcAsync<T>(string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
+            name.ThrowIfBlank(nameof(name));
+
             using SqlConnection connection = CreateSqlConnection();
             await connection.OpenAsync(cancellationToken);
 
@@ -133,12 +157,18 @@ namespace UkrGuru.SqlJson
 
         public static T FromProc<T>(this SqlConnection connection, string name, object data = null, int? timeout = null)
         {
+            connection.ThrowIfNull(nameof(connection));
+            name.ThrowIfBlank(nameof(name));
+
             var str = connection.FromProc(name, data, timeout);
 
             return (string.IsNullOrEmpty(str)) ? Activator.CreateInstance<T>() : JsonSerializer.Deserialize<T>(str);
         }
         public static async Task<T> FromProcAsync<T>(this SqlConnection connection, string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
+            connection.ThrowIfNull(nameof(connection));
+            name.ThrowIfBlank(nameof(name));
+
             var str = await connection.FromProcAsync(name, data, timeout, cancellationToken);
 
             return (string.IsNullOrEmpty(str)) ? Activator.CreateInstance<T>() : JsonSerializer.Deserialize<T>(str);
@@ -146,6 +176,8 @@ namespace UkrGuru.SqlJson
 
         public static int ExecCommand(string cmdText, int? timeout = null)
         {
+            cmdText.ThrowIfBlank(nameof(cmdText));
+
             using SqlConnection connection = CreateSqlConnection();
             connection.Open();
 
@@ -153,6 +185,8 @@ namespace UkrGuru.SqlJson
         }
         public static async Task<int> ExecCommandAsync(string cmdText, int? timeout = null, CancellationToken cancellationToken = default)
         {
+            cmdText.ThrowIfBlank(nameof(cmdText));
+
             using SqlConnection connection = CreateSqlConnection();
             await connection.OpenAsync(cancellationToken);
 
@@ -161,6 +195,9 @@ namespace UkrGuru.SqlJson
 
         public static int ExecCommand(this SqlConnection connection, string cmdText, int? timeout = null)
         {
+            connection.ThrowIfNull(nameof(connection));
+            cmdText.ThrowIfBlank(nameof(cmdText));
+
             using SqlCommand command = new(cmdText, connection);
 
             if (timeout != null) command.CommandTimeout = timeout.Value;
@@ -169,6 +206,9 @@ namespace UkrGuru.SqlJson
         }
         public static async Task<int> ExecCommandAsync(this SqlConnection connection, string cmdText, int? timeout = null, CancellationToken cancellationToken = default)
         {
+            connection.ThrowIfNull(nameof(connection));
+            cmdText.ThrowIfBlank(nameof(cmdText));
+
             using SqlCommand command = new(cmdText, connection);
 
             if (timeout != null) command.CommandTimeout = timeout.Value;
