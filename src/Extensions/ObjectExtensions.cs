@@ -14,7 +14,7 @@ namespace System
         {
             argument.ThrowIfNull(argumentName);
 
-            if (argument is string && string.IsNullOrEmpty((string)argument))
+            if (argument is string sArg && string.IsNullOrEmpty(sArg))
                 throw new ArgumentException($"'{argumentName}' cannot be null or empty.", argumentName);
         }
     }
