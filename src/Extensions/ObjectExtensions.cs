@@ -10,11 +10,11 @@ namespace System
             if (argument is null) throw new ArgumentNullException(argumentName);
         }
 
-        public static void ThrowIfBlank(this object argument, string argumentName)
+        public static void ThrowIfBlank(this string argument, string argumentName)
         {
             argument.ThrowIfNull(argumentName);
 
-            if (argument is string sArg && string.IsNullOrWhiteSpace(sArg))
+            if (string.IsNullOrWhiteSpace(argument))
                 throw new ArgumentException($"'{argumentName}' cannot be blank.", argumentName);
         }
     }
