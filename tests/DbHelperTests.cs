@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using Xunit;
+using System;
 
 namespace UkrGuru.SqlJson.Tests
 {
@@ -25,34 +26,37 @@ namespace UkrGuru.SqlJson.Tests
         }
 
         [Fact]
-        public void FromProcTest()
+        public void Parameters_Exceptions()
         {
-            var regions = DbHelper.FromProc<List<Region>>("Regions_Lst");
+            Assert.Equal("cmdText", Assert.Throws<ArgumentNullException>(() => DbHelper.ExecCommand(null)).ParamName);
+            Assert.Equal("cmdText", Assert.Throws<ArgumentException>(() => DbHelper.ExecCommand(string.Empty)).ParamName);
 
-            // check all regions
+            Assert.Equal("name", Assert.Throws<ArgumentNullException>(() => DbHelper.ExecProc(null)).ParamName);
+            Assert.Equal("name", Assert.Throws<ArgumentException>(() => DbHelper.ExecProc(string.Empty)).ParamName);
+
+            Assert.Equal("name", Assert.Throws<ArgumentNullException>(() => DbHelper.FromProc(null)).ParamName);
+            Assert.Equal("name", Assert.Throws<ArgumentException>(() => DbHelper.FromProc(string.Empty)).ParamName);
+        }
+
+        [Fact]
+        public void Proc_Tests()
+        {
+            List<Region> regions;
+
+            regions = DbHelper.FromProc<List<Region>>("Regions_Lst");
             Assert.Equal(4, regions.Count);
             Assert.Equal("Eastern", regions[0].Name);
             Assert.Equal("Western", regions[1].Name);
             Assert.Equal("Northern", regions[2].Name);
             Assert.Equal("Southern", regions[3].Name);
 
-            // check 1st region
+            Assert.Equal(1, DbHelper.ExecProc("Regions_Upd", new { Id = 1, Name = "Eastern #1" }));
+
             var region = DbHelper.FromProc<Region>("Regions_Get", new { Id = 1 });
-            Assert.Equal("Eastern", region.Name);
-
-            // check no exists region
-            region = DbHelper.FromProc<Region>("Regions_Get", new { Id = -1 });
-            Assert.Null(region.Name);
-
-            // update region name
-            DbHelper.ExecProc("Regions_Upd", new { Id = 1, Name = "Eastern #1" });
-            region = DbHelper.FromProc<Region>("Regions_Get", new { Id = 1 });
             Assert.Equal("Eastern #1", region.Name);
 
-            // delete region
-            DbHelper.ExecProc("Regions_Del", new { Id = 1 });
-            region = DbHelper.FromProc<Region>("Regions_Get", new { Id = 1 });
-            Assert.Null(region.Name);
+            Assert.Equal(1, DbHelper.ExecProc("Regions_Del", new { Id = 1 }));
+            Assert.Equal(0, DbHelper.ExecProc("Regions_Del", new { Id = 1 }));
         }
     }
 }

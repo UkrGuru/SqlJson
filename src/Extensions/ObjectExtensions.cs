@@ -14,8 +14,8 @@ namespace System
         {
             argument.ThrowIfNull(argumentName);
 
-            if (argument is string sArg && string.IsNullOrEmpty(sArg))
-                throw new ArgumentException($"'{argumentName}' cannot be null or empty.", argumentName);
+            if (argument is string sArg && string.IsNullOrWhiteSpace(sArg))
+                throw new ArgumentException($"'{argumentName}' cannot be blank.", argumentName);
         }
     }
 }
