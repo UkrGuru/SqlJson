@@ -8,14 +8,12 @@ namespace System.Reflection
 {
     public static class AssemblyExtensions
     {
-        public static void ExecResource(this Assembly assembly, string filename)
+        public static void ExecResource(this Assembly assembly, string resourceName)
         {
             assembly.ThrowIfNull(nameof(assembly));
-            filename.ThrowIfBlank(nameof(filename));
+            resourceName.ThrowIfBlank(nameof(resourceName));
 
             var script = string.Empty;
-            var resourceName = $"{assembly.GetName().Name}.Resources.{filename}";
-
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             using (StreamReader reader = new(stream)) { script = reader.ReadToEnd(); }
 

@@ -8,14 +8,10 @@
 
   <ItemGroup>
     <None Remove="Resources\InitDb.sql" />
-    <None Remove="Resources\SeedDb.sql" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\InitDb.sql">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\SeedDb.sql">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>

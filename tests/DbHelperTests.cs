@@ -16,13 +16,23 @@ namespace UkrGuru.SqlJson.Tests
         public DbHelperTests()
         {
             var dbName = "SqlJsonTest";
+
             var connectionString = $"Server=(localdb)\\mssqllocaldb;Database={dbName};Trusted_Connection=True";
 
+            var dbInitScript = $"IF DB_ID('{dbName}') IS NOT NULL BEGIN " +
+    $"  ALTER DATABASE {dbName} SET SINGLE_USER WITH ROLLBACK IMMEDIATE; " +
+    $"  DROP DATABASE {dbName}; " +
+    $"END " +
+    $"CREATE DATABASE {dbName};";
+
             DbHelper.ConnectionString = connectionString.Replace(dbName, "master");
-            Assembly.GetExecutingAssembly().ExecResource("InitDb.sql");
+            DbHelper.ExecCommand(dbInitScript);
 
             DbHelper.ConnectionString = connectionString;
-            Assembly.GetExecutingAssembly().ExecResource("SeedDb.sql");
+
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceName = $"{assembly.GetName().Name}.Resources.InitDb.sql";
+            assembly.ExecResource(resourceName);
         }
 
         [Fact]
