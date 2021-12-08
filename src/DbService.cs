@@ -119,12 +119,7 @@ namespace UkrGuru.SqlJson
         /// <returns>The result as object.</returns>
         public T FromProc<T>(string name, object data = null, int? timeout = null)
         {
-            name.ThrowIfBlank(nameof(name));
-
-            using SqlConnection connection = CreateSqlConnection();
-            connection.Open();
-
-            return connection.FromProc<T>(name, data, timeout);
+            return FromProc(name, data, timeout).ToObj<T>();
         }
 
         /// <summary>
@@ -139,12 +134,7 @@ namespace UkrGuru.SqlJson
         /// <returns>The result as object.</returns>
         public async Task<T> FromProcAsync<T>(string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
-            name.ThrowIfBlank(nameof(name));
-
-            using SqlConnection connection = CreateSqlConnection();
-            await connection.OpenAsync(cancellationToken);
-
-            return await connection.FromProcAsync<T>(name, data, timeout, cancellationToken);
+            return await (await FromProcAsync(name, data, timeout)).ToObjAsync<T>();
         }
 
         /// <summary>

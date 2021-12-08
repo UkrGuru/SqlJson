@@ -14,8 +14,9 @@ namespace System.Reflection
             resourceName.ThrowIfBlank(nameof(resourceName));
 
             var script = string.Empty;
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-            using (StreamReader reader = new(stream)) { script = reader.ReadToEnd(); }
+            using Stream stream = assembly.GetManifestResourceStream(resourceName);
+            using StreamReader reader = new(stream);
+            script = reader.ReadToEnd();
 
             DbHelper.ExecCommand(script);
         }

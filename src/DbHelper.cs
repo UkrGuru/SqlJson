@@ -239,12 +239,7 @@ namespace UkrGuru.SqlJson
         /// <returns>The result as object.</returns>
         public static T FromProc<T>(string name, object data = null, int? timeout = null)
         {
-            name.ThrowIfBlank(nameof(name));
-
-            using SqlConnection connection = CreateSqlConnection();
-            connection.Open();
-
-            return connection.FromProc<T>(name, data, timeout);
+            return FromProc(name, data, timeout).ToObj<T>();
         }
 
         /// <summary>
@@ -259,12 +254,7 @@ namespace UkrGuru.SqlJson
         /// <returns>The result as object.</returns>
         public static async Task<T> FromProcAsync<T>(string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
-            name.ThrowIfBlank(nameof(name));
-
-            using SqlConnection connection = CreateSqlConnection();
-            await connection.OpenAsync(cancellationToken);
-
-            return await connection.FromProcAsync<T>(name, data, timeout, cancellationToken);
+            return await (await FromProcAsync(name, data, timeout, cancellationToken)).ToObjAsync<T>();
         }
 
         /// <summary>
@@ -278,12 +268,7 @@ namespace UkrGuru.SqlJson
         /// <returns>The result as object.</returns>
         public static T FromProc<T>(this SqlConnection connection, string name, object data = null, int? timeout = null)
         {
-            connection.ThrowIfNull(nameof(connection));
-            name.ThrowIfBlank(nameof(name));
-
-            var str = connection.FromProc(name, data, timeout);
-
-            return (string.IsNullOrEmpty(str)) ? Activator.CreateInstance<T>() : JsonSerializer.Deserialize<T>(str);
+            return connection.FromProc(name, data, timeout).ToObj<T>();
         }
 
         /// <summary>
@@ -299,12 +284,7 @@ namespace UkrGuru.SqlJson
         /// <returns>The result as object.</returns>
         public static async Task<T> FromProcAsync<T>(this SqlConnection connection, string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
-            connection.ThrowIfNull(nameof(connection));
-            name.ThrowIfBlank(nameof(name));
-
-            var str = await connection.FromProcAsync(name, data, timeout, cancellationToken);
-
-            return (string.IsNullOrEmpty(str)) ? Activator.CreateInstance<T>() : JsonSerializer.Deserialize<T>(str);
+            return await (await connection.FromProcAsync(name, data, timeout, cancellationToken)).ToObjAsync<T>();
         }
 
         /// <summary>

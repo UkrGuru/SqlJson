@@ -5,17 +5,19 @@ namespace System
 {
     public static class ObjectExtensions
     {
-        public static void ThrowIfNull(this object argument, string argumentName)
+        public static T ThrowIfNull<T>(this T argument, string argumentName)
         {
-            if (argument is null) throw new ArgumentNullException(argumentName);
+            return argument ?? throw new ArgumentNullException(argumentName);
         }
 
-        public static void ThrowIfBlank(this string argument, string argumentName)
+        public static string ThrowIfBlank(this string argument, string argumentName)
         {
             argument.ThrowIfNull(argumentName);
 
             if (string.IsNullOrWhiteSpace(argument))
                 throw new ArgumentException($"'{argumentName}' cannot be blank.", argumentName);
+
+            return argument;
         }
     }
 }
