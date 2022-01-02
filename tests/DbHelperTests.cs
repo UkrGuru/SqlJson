@@ -54,16 +54,20 @@ namespace UkrGuru.SqlJson.Tests
             List<Region> regions;
 
             regions = DbHelper.FromProc<List<Region>>("Regions_Lst");
-            Assert.Equal(4, regions.Count);
+            Assert.Equal(5, regions.Count);
             Assert.Equal("Eastern", regions[0].Name);
             Assert.Equal("Western", regions[1].Name);
             Assert.Equal("Northern", regions[2].Name);
             Assert.Equal("Southern", regions[3].Name);
+            Assert.Null(regions[4].Name);
 
             Assert.Equal(1, DbHelper.ExecProc("Regions_Upd", new { Id = 1, Name = "Eastern #1" }));
 
             var region = DbHelper.FromProc<Region>("Regions_Get", new { Id = 1 });
             Assert.Equal("Eastern #1", region.Name);
+
+            var regionName = DbHelper.FromProc("Regions_Get_Name", 5);
+            Assert.Null(regionName);
 
             Assert.Equal(1, DbHelper.ExecProc("Regions_Del", new { Id = 1 }));
             Assert.Equal(0, DbHelper.ExecProc("Regions_Del", new { Id = 1 }));

@@ -186,11 +186,12 @@ namespace UkrGuru.SqlJson
 
             if (reader.HasRows)
                 while (reader.Read())
-                    jsonResult.Append(reader.GetString(0));
+                    if (!reader.IsDBNull(0))
+                        jsonResult.Append(reader.GetString(0));
 
             reader.Close();
 
-            return jsonResult.ToString();
+            return jsonResult.Length == 0 ? null : jsonResult.ToString();
         }
 
         /// <summary>
@@ -221,12 +222,13 @@ namespace UkrGuru.SqlJson
             var reader = await command.ExecuteReaderAsync(cancellationToken);
 
             if (reader.HasRows)
-                while (await reader.ReadAsync(cancellationToken)) 
-                    jsonResult.Append(reader.GetString(0));
+                while (await reader.ReadAsync(cancellationToken))
+                    if (!(await reader.IsDBNullAsync(0, cancellationToken)))
+                        jsonResult.Append(reader.GetString(0));
 
             await reader.CloseAsync();
 
-            return jsonResult.ToString();
+            return jsonResult.Length == 0 ? null : jsonResult.ToString();
         }
 
         /// <summary>

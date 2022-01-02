@@ -134,7 +134,7 @@ namespace UkrGuru.SqlJson
         /// <returns>The result as object.</returns>
         public async Task<T> FromProcAsync<T>(string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
-            return await (await FromProcAsync(name, data, timeout)).ToObjAsync<T>();
+            return await (await FromProcAsync(name, data, timeout, cancellationToken)).ToObjAsync<T>();
         }
 
         /// <summary>

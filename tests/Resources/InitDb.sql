@@ -2,7 +2,7 @@ IF NOT  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[R
 BEGIN
     CREATE TABLE [dbo].[Regions](
 	    [Id] [int] IDENTITY(1,1) NOT NULL,
-	    [Name] [varchar](50) NOT NULL,
+	    [Name] [varchar](50) NULL,
      CONSTRAINT [PK_Regions] PRIMARY KEY NONCLUSTERED 
     (
 	    [Id] ASC
@@ -16,6 +16,7 @@ INSERT [dbo].[Regions] ([Id], [Name]) VALUES (1, N'Eastern')
 INSERT [dbo].[Regions] ([Id], [Name]) VALUES (2, N'Western')
 INSERT [dbo].[Regions] ([Id], [Name]) VALUES (3, N'Northern')
 INSERT [dbo].[Regions] ([Id], [Name]) VALUES (4, N'Southern')
+INSERT [dbo].[Regions] ([Id], [Name]) VALUES (5, NULL)
 SET IDENTITY_INSERT [dbo].[Regions] OFF
 
 EXEC dbo.sp_executesql @statement = N'
@@ -34,6 +35,15 @@ SELECT Id, Name
 FROM Regions
 WHERE Id = JSON_VALUE(@Data, ''$.Id'')
 FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+';
+
+EXEC dbo.sp_executesql @statement = N'
+CREATE OR ALTER PROCEDURE [dbo].[Regions_Get_Name] 
+    @Data int
+AS
+SELECT Name
+FROM Regions
+WHERE Id = @Data
 ';
 
 EXEC dbo.sp_executesql @statement = N'
