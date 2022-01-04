@@ -18,11 +18,14 @@ namespace Microsoft.Extensions.DependencyInjection
 
             dbName.ThrowIfBlank(nameof(dbName));
 
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var product_name = assembly.GetName().Name;
+
             DbHelper.ConnectionString = connectionString.Replace(dbName, "master");
-            Assembly.GetExecutingAssembly().ExecResource("InitDb.sql");
+            assembly.ExecResource($"{product_name}.Resources.InitDb.sql");
 
             DbHelper.ConnectionString = connectionString;
-            Assembly.GetExecutingAssembly().ExecResource("SeedDb.sql");
+            assembly.ExecResource($"{product_name}.Resources.SeedDb.sql");
         }
     }
 }
