@@ -15,7 +15,7 @@ namespace UkrGuru.SqlJson
     /// </summary>
     public static class DbHelper
     {
-        private static string connectionString;
+        private static string? connectionString;
 
         /// <summary>
         /// Sets the string used to open a SQL Server database.
@@ -32,7 +32,7 @@ namespace UkrGuru.SqlJson
         /// </summary>
         /// <param name="data">The string or object value to convert.</param>
         /// <returns>The standard value for the @Data parameter.</returns>
-        private static string ConvertToStrJson(object data) => data is string sData ? sData : JsonSerializer.Serialize(data);
+        private static string ConvertToStrJson(object? data) => data is string sData ? sData : JsonSerializer.Serialize(data);
 
         /// <summary>
         /// Opens a database connection, then executes the stored procedure with or without '@Data' parameter
@@ -42,7 +42,7 @@ namespace UkrGuru.SqlJson
         /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
         /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
         /// <returns>The number of rows affected.</returns>
-        public static int ExecProc(string name, object data = null, int? timeout = null)
+        public static int ExecProc(string name, object? data = null, int? timeout = null)
         {
             name.ThrowIfBlank(nameof(name));
 
@@ -62,7 +62,7 @@ namespace UkrGuru.SqlJson
         /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
         /// <param name="cancellationToken">The cancellation instruction.</param>
         /// <returns>The number of rows affected.</returns>
-        public static async Task<int> ExecProcAsync(string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
+        public static async Task<int> ExecProcAsync(string name, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
             name.ThrowIfBlank(nameof(name));
 
@@ -81,9 +81,9 @@ namespace UkrGuru.SqlJson
         /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
         /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
         /// <returns>The number of rows affected.</returns>
-        public static int ExecProc(this SqlConnection connection, string name, object data = null, int? timeout = null)
+        public static int ExecProc(this SqlConnection connection, string name, object? data = null, int? timeout = null)
         {
-            connection.ThrowIfNull(nameof(connection));
+            ArgumentNullException.ThrowIfNull(connection);
             name.ThrowIfBlank(nameof(name));
 
             using SqlCommand command = new(name, connection);
@@ -107,9 +107,9 @@ namespace UkrGuru.SqlJson
         /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
         /// <param name="cancellationToken">The cancellation instruction.</param>
         /// <returns>The number of rows affected.</returns>
-        public static async Task<int> ExecProcAsync(this SqlConnection connection, string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
+        public static async Task<int> ExecProcAsync(this SqlConnection connection, string name, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
-            connection.ThrowIfNull(nameof(connection));
+            ArgumentNullException.ThrowIfNull(connection);
             name.ThrowIfBlank(nameof(name));
 
             using SqlCommand command = new(name, connection);
@@ -130,7 +130,7 @@ namespace UkrGuru.SqlJson
         /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
         /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
         /// <returns>The result as string.</returns>
-        public static string FromProc(string name, object data = null, int? timeout = null)
+        public static string? FromProc(string name, object? data = null, int? timeout = null)
         {
             name.ThrowIfBlank(nameof(name));
 
@@ -150,7 +150,7 @@ namespace UkrGuru.SqlJson
         /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
         /// <param name="cancellationToken">The cancellation instruction.</param>
         /// <returns>The result as string.</returns>
-        public static async Task<string> FromProcAsync(string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
+        public static async Task<string?> FromProcAsync(string name, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
             name.ThrowIfBlank(nameof(name));
 
@@ -168,9 +168,9 @@ namespace UkrGuru.SqlJson
         /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
         /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
         /// <returns>The result as string.</returns>
-        public static string FromProc(this SqlConnection connection, string name, object data = null, int? timeout = null)
+        public static string? FromProc(this SqlConnection connection, string name, object? data = null, int? timeout = null)
         {
-            connection.ThrowIfNull(nameof(connection));
+            ArgumentNullException.ThrowIfNull(connection);
             name.ThrowIfBlank(nameof(name));
 
             var jsonResult = new StringBuilder();
@@ -205,9 +205,9 @@ namespace UkrGuru.SqlJson
         /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
         /// <param name="cancellationToken">The cancellation instruction.</param>
         /// <returns>The result as string.</returns>
-        public static async Task<string> FromProcAsync(this SqlConnection connection, string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
+        public static async Task<string?> FromProcAsync(this SqlConnection connection, string name, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
-            connection.ThrowIfNull(nameof(connection));
+            ArgumentNullException.ThrowIfNull(connection);
             name.ThrowIfBlank(nameof(name));
 
             var jsonResult = new StringBuilder();
@@ -239,7 +239,7 @@ namespace UkrGuru.SqlJson
         /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
         /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
         /// <returns>The result as object.</returns>
-        public static T FromProc<T>(string name, object data = null, int? timeout = null)
+        public static T? FromProc<T>(string name, object? data = null, int? timeout = null)
         {
             return FromProc(name, data, timeout).ToObj<T>();
         }
@@ -254,7 +254,7 @@ namespace UkrGuru.SqlJson
         /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
         /// <param name="cancellationToken">The cancellation instruction.</param>
         /// <returns>The result as object.</returns>
-        public static async Task<T> FromProcAsync<T>(string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
+        public static async Task<T?> FromProcAsync<T>(string name, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
             return await (await FromProcAsync(name, data, timeout, cancellationToken)).ToObjAsync<T>();
         }
@@ -268,7 +268,7 @@ namespace UkrGuru.SqlJson
         /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
         /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
         /// <returns>The result as object.</returns>
-        public static T FromProc<T>(this SqlConnection connection, string name, object data = null, int? timeout = null)
+        public static T? FromProc<T>(this SqlConnection connection, string name, object? data = null, int? timeout = null)
         {
             return connection.FromProc(name, data, timeout).ToObj<T>();
         }
@@ -284,7 +284,7 @@ namespace UkrGuru.SqlJson
         /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
         /// <param name="cancellationToken">The cancellation instruction.</param>
         /// <returns>The result as object.</returns>
-        public static async Task<T> FromProcAsync<T>(this SqlConnection connection, string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
+        public static async Task<T?> FromProcAsync<T>(this SqlConnection connection, string name, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
             return await (await connection.FromProcAsync(name, data, timeout, cancellationToken)).ToObjAsync<T>();
         }
@@ -335,7 +335,7 @@ namespace UkrGuru.SqlJson
         /// <returns>The number of rows affected.</returns>
         public static int ExecCommand(this SqlConnection connection, string cmdText, int? timeout = null)
         {
-            connection.ThrowIfNull(nameof(connection));
+            ArgumentNullException.ThrowIfNull(connection);
             cmdText.ThrowIfBlank(nameof(cmdText));
 
             using SqlCommand command = new(cmdText, connection);
@@ -357,7 +357,7 @@ namespace UkrGuru.SqlJson
         /// <returns>The number of rows affected.</returns>
         public static async Task<int> ExecCommandAsync(this SqlConnection connection, string cmdText, int? timeout = null, CancellationToken cancellationToken = default)
         {
-            connection.ThrowIfNull(nameof(connection));
+            ArgumentNullException.ThrowIfNull(connection);
             cmdText.ThrowIfBlank(nameof(cmdText));
 
             using SqlCommand command = new(cmdText, connection);

@@ -4,6 +4,7 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -41,7 +42,7 @@ namespace UkrGuru.SqlJson
         /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
         /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
         /// <returns>The number of rows affected.</returns>
-        public int ExecProc(string name, object data = null, int? timeout = null)
+        public int ExecProc(string name, object? data = null, int? timeout = null)
         {
             name.ThrowIfBlank(nameof(name));
 
@@ -61,7 +62,7 @@ namespace UkrGuru.SqlJson
         /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
         /// <param name="cancellationToken">The cancellation instruction.</param>
         /// <returns>The number of rows affected.</returns>
-        public async Task<int> ExecProcAsync(string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
+        public async Task<int> ExecProcAsync(string name, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
             name.ThrowIfBlank(nameof(name));
 
@@ -79,7 +80,7 @@ namespace UkrGuru.SqlJson
         /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
         /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
         /// <returns>The result as string.</returns>
-        public string FromProc(string name, object data = null, int? timeout = null)
+        public string? FromProc(string name, object? data = null, int? timeout = null)
         {
             name.ThrowIfBlank(nameof(name));
 
@@ -99,7 +100,7 @@ namespace UkrGuru.SqlJson
         /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
         /// <param name="cancellationToken">The cancellation instruction.</param>
         /// <returns>The result as string.</returns>
-        public async Task<string> FromProcAsync(string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
+        public async Task<string?> FromProcAsync(string name, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
             name.ThrowIfBlank(nameof(name));
 
@@ -117,7 +118,7 @@ namespace UkrGuru.SqlJson
         /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
         /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
         /// <returns>The result as object.</returns>
-        public T FromProc<T>(string name, object data = null, int? timeout = null)
+        public T? FromProc<T>(string name, object? data = null, int? timeout = null)
         {
             return FromProc(name, data, timeout).ToObj<T>();
         }
@@ -132,7 +133,7 @@ namespace UkrGuru.SqlJson
         /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
         /// <param name="cancellationToken">The cancellation instruction.</param>
         /// <returns>The result as object.</returns>
-        public async Task<T> FromProcAsync<T>(string name, object data = null, int? timeout = null, CancellationToken cancellationToken = default)
+        public async Task<T?> FromProcAsync<T>(string name, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
         {
             return await (await FromProcAsync(name, data, timeout, cancellationToken)).ToObjAsync<T>();
         }

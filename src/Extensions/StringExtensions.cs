@@ -2,19 +2,18 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace System
 {
     public static class StringExtensions
     {
-        public static T ToObj<T>(this string json, JsonSerializerOptions options = null)
+        public static T? ToObj<T>(this string? json)
         {
-            return (string.IsNullOrEmpty(json)) ? Activator.CreateInstance<T>() : JsonSerializer.Deserialize<T>(json, options);
+            return string.IsNullOrEmpty(json) ? default : JsonSerializer.Deserialize<T>(json);
         }
-        public static async Task<T> ToObjAsync<T>(this string json, JsonSerializerOptions options = null)
+        public static async Task<T?> ToObjAsync<T>(this string? json)
         {
-            return await Task.FromResult((string.IsNullOrEmpty(json)) ? Activator.CreateInstance<T>() : JsonSerializer.Deserialize<T>(json, options));
+            return await Task.FromResult(string.IsNullOrEmpty(json) ? default : JsonSerializer.Deserialize<T>(json));
         }
     }
 }

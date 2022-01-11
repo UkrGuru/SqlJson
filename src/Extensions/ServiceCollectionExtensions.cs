@@ -7,7 +7,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class SqlJsonServiceCollectionExtensions
     {
-        public static void AddSqlJson(this IServiceCollection services, string connectionString = null)
+        public static void AddSqlJson(this IServiceCollection services, string? connectionString = null)
         {
             if (connectionString != null)
                 DbHelper.ConnectionString = connectionString;
