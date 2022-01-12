@@ -3,24 +3,16 @@
 
 using UkrGuru.SqlJson;
 
-namespace System.Reflection
+namespace System.Reflection;
+
+public static class AssemblyExtensions
 {
-    public static class AssemblyExtensions
+    public static void ExecResource(this Assembly assembly, string resourceName)
     {
-        public static void ExecResource(this Assembly assembly, string resourceName)
-        {
-            ArgumentNullException.ThrowIfNull(assembly);
-            resourceName.ThrowIfBlank(nameof(resourceName));
+        using var stream = assembly.GetManifestResourceStream(resourceName);
+        ArgumentNullException.ThrowIfNull(stream);
 
-            var script = null as string;
-
-            using Stream? stream = assembly.GetManifestResourceStream(resourceName);
-            ArgumentNullException.ThrowIfNull(stream);
-
-            using StreamReader reader = new(stream);
-            script = reader.ReadToEnd();
-
-            DbHelper.ExecCommand(script);
-        }
+        using StreamReader reader = new(stream);
+        DbHelper.ExecCommand(reader.ReadToEnd());
     }
 }
