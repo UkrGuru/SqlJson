@@ -62,7 +62,7 @@ $"CREATE DATABASE {dbName};";
         var region6 = DbHelper.FromProc<Region>("Regions_Get", new { Id = 6 });
         Assert.Null(region6);
 
-        var regionName = DbHelper.FromProc("Regions_Get_Name", 5);
+        var regionName = DbHelper.FromProc<string>("Regions_Get_Name", 5);
         Assert.Null(regionName);
 
         Assert.Equal(1, DbHelper.ExecProc("Regions_Del", new { Id = 1 }));
@@ -70,9 +70,39 @@ $"CREATE DATABASE {dbName};";
     }
 
     //[Fact]
-    //public void ExecProcTest()
+    //public void ToObjTest()
     //{
-    //    Assert.True(false, "This test needs an implementation");
+    //    var b1 = ((string?)null).ToObj<bool?>();
+
+    //    var b2 = "".ToObj<bool?>();
+
+    //    var b3 = "true".ToObj<bool>();
+
+    //    var n = "123".ToObj<int>();
+
+    //    var s = "true".ToObj<string>();
+
+    //    var r1 = @"{ ""Id"" : 1 }".ToObj<Region>();
+
+    //    Assert.True(true);
+    //}
+
+    //[Fact]
+    //public async Task ToObjTestAsync()
+    //{
+    //    var b1 = await ((string?)null).ToObjAsync<bool?>();
+
+    //    var b2 = await "".ToObjAsync<bool?>();
+
+    //    var b3 = await "true".ToObjAsync<bool>();
+
+    //    var n = await "123".ToObjAsync<int>();
+
+    //    var s = await "true".ToObjAsync<string>();
+
+    //    var r1 = await @"{ ""Id"" : 1 }".ToObjAsync<Region>();
+
+    //    Assert.True(true);
     //}
 
     //[Fact]

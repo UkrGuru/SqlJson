@@ -64,40 +64,6 @@ public class DbService
 
     /// <summary>
     /// Opens a database connection, then executes the stored procedure with or without '@Data' parameter
-    /// and returns the result as string.
-    /// </summary>
-    /// <param name="name">The name of the stored procedure.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <returns>The result as string.</returns>
-    public string? FromProc(string name, object? data = null, int? timeout = null)
-    {
-        using SqlConnection connection = CreateSqlConnection();
-        connection.Open();
-
-        return connection.FromProc(name, data, timeout);
-    }
-
-    /// <summary>
-    /// An asynchronous version of UkrGuru.SqlJson.DbService.FromProc, which
-    /// Opens a database connection, then executes the stored procedure with or without '@Data' parameter
-    /// and returns the result as string.
-    /// </summary>
-    /// <param name="name">The name of the stored procedure.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
-    /// <returns>The result as string.</returns>
-    public async Task<string?> FromProcAsync(string name, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-    {
-        using SqlConnection connection = CreateSqlConnection();
-        await connection.OpenAsync(cancellationToken);
-
-        return await connection.FromProcAsync(name, data, timeout, cancellationToken);
-    }
-
-    /// <summary>
-    /// Opens a database connection, then executes the stored procedure with or without '@Data' parameter
     /// and returns the result as object.
     /// </summary>
     /// <param name="name">The name of the stored procedure.</param>
@@ -106,7 +72,10 @@ public class DbService
     /// <returns>The result as object.</returns>
     public T? FromProc<T>(string name, object? data = null, int? timeout = null)
     {
-        return FromProc(name, data, timeout).ToObj<T>();
+        using SqlConnection connection = CreateSqlConnection();
+        connection.Open();
+
+        return connection.FromProc<T>(name, data, timeout);
     }
 
     /// <summary>
@@ -121,7 +90,10 @@ public class DbService
     /// <returns>The result as object.</returns>
     public async Task<T?> FromProcAsync<T>(string name, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
-        return await (await FromProcAsync(name, data, timeout, cancellationToken)).ToObjAsync<T>();
+        using SqlConnection connection = CreateSqlConnection();
+        await connection.OpenAsync(cancellationToken);
+
+        return await connection.FromProcAsync<T>(name, data, timeout, cancellationToken);
     }
 
     /// <summary>

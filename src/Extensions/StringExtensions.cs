@@ -9,10 +9,16 @@ public static class StringExtensions
 {
     public static T? ToObj<T>(this string? json)
     {
-        return string.IsNullOrEmpty(json) ? default : JsonSerializer.Deserialize<T>(json);
+        if (string.IsNullOrEmpty(json)) 
+            return default;
+        else if (typeof(T) == typeof(string)) 
+            return (T?)(object)json;
+        else
+            return JsonSerializer.Deserialize<T>(json);
     }
+
     public static async Task<T?> ToObjAsync<T>(this string? json)
     {
-        return await Task.FromResult(string.IsNullOrEmpty(json) ? default : JsonSerializer.Deserialize<T>(json));
+        return await Task.FromResult(json.ToObj<T>());
     }
 }

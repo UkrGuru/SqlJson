@@ -111,47 +111,48 @@ public static class DbHelper
 
     /// <summary>
     /// Opens a database connection, then executes the stored procedure with or without '@Data' parameter
-    /// and returns the result as string.
+    /// and returns the result as object.
     /// </summary>
     /// <param name="name">The name of the stored procedure.</param>
     /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <returns>The result as string.</returns>
-    public static string? FromProc(string name, object? data = null, int? timeout = null)
+    /// <returns>The result as object.</returns>
+    public static T? FromProc<T>(string name, object? data = null, int? timeout = null)
     {
         using SqlConnection connection = CreateSqlConnection();
         connection.Open();
 
-        return connection.FromProc(name, data, timeout);
+        return connection.FromProc<T>(name, data, timeout);
     }
 
     /// <summary>
     /// An asynchronous version of UkrGuru.SqlJson.DbHelper.FromProc, which
     /// Opens a database connection, then executes the stored procedure with or without '@Data' parameter
-    /// and returns the result as string.
+    /// and returns the result as object.
     /// </summary>
     /// <param name="name">The name of the stored procedure.</param>
     /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
-    /// <returns>The result as string.</returns>
-    public static async Task<string?> FromProcAsync(string name, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+    /// <returns>The result as object.</returns>
+    public static async Task<T?> FromProcAsync<T>(string name, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
         using SqlConnection connection = CreateSqlConnection();
-        await connection.OpenAsync(cancellationToken);
+        connection.Open();
 
-        return await connection.FromProcAsync(name, data, timeout, cancellationToken);
+        return await connection.FromProcAsync<T>(name, data, timeout, cancellationToken);
     }
 
     /// <summary>
     /// Executes the stored procedure with or without '@Data' parameter
-    /// and returns the result as string.
+    /// and returns the result as object.
     /// </summary>
+    /// <param name="connection">The connection instance to bind.</param>
     /// <param name="name">The name of the stored procedure.</param>
     /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <returns>The result as string.</returns>
-    public static string? FromProc(this SqlConnection connection, string name, object? data = null, int? timeout = null)
+    /// <returns>The result as object.</returns>
+    public static T? FromProc<T>(this SqlConnection connection, string name, object? data = null, int? timeout = null)
     {
         var jsonResult = new StringBuilder();
 
@@ -171,21 +172,21 @@ public static class DbHelper
 
         reader.Close();
 
-        return jsonResult.Length == 0 ? null : jsonResult.ToString();
+        return jsonResult.Length == 0 ? default : jsonResult.ToString().ToObj<T>();
     }
 
     /// <summary>
     /// An asynchronous version of UkrGuru.SqlJson.DbHelper.FromProc, which
     /// Executes the stored procedure with or without '@Data' parameter
-    /// and returns the result as string.
+    /// and returns the result as object.
     /// </summary>
     /// <param name="connection">The connection instance to bind.</param>
     /// <param name="name">The name of the stored procedure.</param>
     /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
-    /// <returns>The result as string.</returns>
-    public static async Task<string?> FromProcAsync(this SqlConnection connection, string name, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+    /// <returns>The result as object.</returns>
+    public static async Task<T?> FromProcAsync<T>(this SqlConnection connection, string name, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
         var jsonResult = new StringBuilder();
 
@@ -205,65 +206,7 @@ public static class DbHelper
 
         await reader.CloseAsync();
 
-        return jsonResult.Length == 0 ? null : jsonResult.ToString();
-    }
-
-    /// <summary>
-    /// Opens a database connection, then executes the stored procedure with or without '@Data' parameter
-    /// and returns the result as object.
-    /// </summary>
-    /// <param name="name">The name of the stored procedure.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <returns>The result as object.</returns>
-    public static T? FromProc<T>(string name, object? data = null, int? timeout = null)
-    {
-        return FromProc(name, data, timeout).ToObj<T>();
-    }
-
-    /// <summary>
-    /// An asynchronous version of UkrGuru.SqlJson.DbHelper.FromProc, which
-    /// Opens a database connection, then executes the stored procedure with or without '@Data' parameter
-    /// and returns the result as object.
-    /// </summary>
-    /// <param name="name">The name of the stored procedure.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
-    /// <returns>The result as object.</returns>
-    public static async Task<T?> FromProcAsync<T>(string name, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-    {
-        return await (await FromProcAsync(name, data, timeout, cancellationToken)).ToObjAsync<T>();
-    }
-
-    /// <summary>
-    /// Executes the stored procedure with or without '@Data' parameter
-    /// and returns the result as object.
-    /// </summary>
-    /// <param name="connection">The connection instance to bind.</param>
-    /// <param name="name">The name of the stored procedure.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <returns>The result as object.</returns>
-    public static T? FromProc<T>(this SqlConnection connection, string name, object? data = null, int? timeout = null)
-    {
-        return connection.FromProc(name, data, timeout).ToObj<T>();
-    }
-
-    /// <summary>
-    /// An asynchronous version of UkrGuru.SqlJson.DbHelper.FromProc, which
-    /// Executes the stored procedure with or without '@Data' parameter
-    /// and returns the result as object.
-    /// </summary>
-    /// <param name="connection">The connection instance to bind.</param>
-    /// <param name="name">The name of the stored procedure.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
-    /// <returns>The result as object.</returns>
-    public static async Task<T?> FromProcAsync<T>(this SqlConnection connection, string name, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-    {
-        return await (await connection.FromProcAsync(name, data, timeout, cancellationToken)).ToObjAsync<T>();
+        return await Task.FromResult(jsonResult.Length == 0 ? default : jsonResult.ToString().ToObj<T>());
     }
 
     /// <summary>
