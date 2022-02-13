@@ -9,8 +9,7 @@ public static class ServiceCollectionExtensions
 {
     public static void AddSqlJson(this IServiceCollection services, string? connectionString = null)
     {
-        if (connectionString != null)
-            DbHelper.ConnectionString = connectionString;
+        if (connectionString != null) DbHelper.ConnectionString = connectionString;
 
         services.AddScoped<DbService>();
     }

@@ -29,7 +29,8 @@ public static class DbHelper
     /// </summary>
     /// <param name="data">The string or object value to convert.</param>
     /// <returns>The standard value for the @Data parameter.</returns>
-    private static string ConvertToStrJson(object? data) => data is string sData ? sData : JsonSerializer.Serialize(data);
+    private static object? Normalize(object? data) => (data is string) ? data :
+        data?.GetType().IsClass == true ? JsonSerializer.Serialize(data) : data;
 
     /// <summary>
     /// Opens a database connection, then executes the stored procedure with or without '@Data' parameter
@@ -79,7 +80,7 @@ public static class DbHelper
         using SqlCommand command = new(name, connection);
         command.CommandType = System.Data.CommandType.StoredProcedure;
 
-        if (data != null) command.Parameters.AddWithValue("@Data", ConvertToStrJson(data));
+        if (data != null) command.Parameters.AddWithValue("@Data", Normalize(data));
 
         if (timeout != null) command.CommandTimeout = timeout.Value;
 
@@ -102,7 +103,7 @@ public static class DbHelper
         using SqlCommand command = new(name, connection);
         command.CommandType = System.Data.CommandType.StoredProcedure;
 
-        if (data != null) command.Parameters.AddWithValue("@Data", ConvertToStrJson(data));
+        if (data != null) command.Parameters.AddWithValue("@Data", Normalize(data));
 
         if (timeout != null) command.CommandTimeout = timeout.Value;
 
@@ -159,7 +160,7 @@ public static class DbHelper
         using SqlCommand command = new(name, connection);
         command.CommandType = System.Data.CommandType.StoredProcedure;
 
-        if (data != null) command.Parameters.AddWithValue("@Data", ConvertToStrJson(data));
+        if (data != null) command.Parameters.AddWithValue("@Data", Normalize(data));
 
         if (timeout != null) command.CommandTimeout = timeout.Value;
 
@@ -193,7 +194,7 @@ public static class DbHelper
         using SqlCommand command = new(name, connection);
         command.CommandType = System.Data.CommandType.StoredProcedure;
 
-        if (data != null) command.Parameters.AddWithValue("@Data", ConvertToStrJson(data));
+        if (data != null) command.Parameters.AddWithValue("@Data", Normalize(data));
 
         if (timeout != null) command.CommandTimeout = timeout.Value;
 

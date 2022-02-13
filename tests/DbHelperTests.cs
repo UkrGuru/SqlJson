@@ -28,64 +28,63 @@ $"CREATE DATABASE {dbName};";
 
         DbHelper.ConnectionString = connectionString;
 
-        var assembly = Assembly.GetExecutingAssembly();
-        var resourceName = $"{assembly.GetName().Name}.Resources.InitDb.sql";
-        assembly.ExecResource(resourceName);
+        //        var assembly = Assembly.GetExecutingAssembly();
+        //        var resourceName = $"{assembly.GetName().Name}.Resources.InitDb.sql";
+        //        assembly.ExecResource(resourceName);
     }
-
-    //[Fact]
-    //public void CreateSqlConnectionTest()
-    //{
-    //    Assert.True(false, "This test needs an implementation");
-    //}
 
     [Fact]
-    public void SyncFuncs_Tests()
+    public void InputData_Tests()
     {
-        List<Region>? regions = DbHelper.FromProc<List<Region>>("Regions_Lst");
+        _ = DbHelper.ExecCommand("IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Table]') AND type in (N'U')) DROP TABLE [dbo].[Table]");
 
-        Assert.NotNull(regions);
-        ArgumentNullException.ThrowIfNull(regions);
+        _ = DbHelper.ExecCommand("CREATE TABLE [dbo].[Table] ([value][sql_variant] NULL) ON [PRIMARY]");
 
-        Assert.Equal(5, regions.Count);
-        Assert.Equal("Eastern", regions[0].Name);
-        Assert.Equal("Western", regions[1].Name);
-        Assert.Equal("Northern", regions[2].Name);
-        Assert.Equal("Southern", regions[3].Name);
-        Assert.Null(regions[4].Name);
+        _ = DbHelper.ExecCommand("CREATE OR ALTER PROCEDURE [dbo].[StrTest] @Data sql_variant = null AS INSERT INTO [Table] (Value) VALUES(@Data)");
 
-        Assert.Equal(1, DbHelper.ExecProc("Regions_Upd", new { Id = 1, Name = "Eastern #1" }));
+        _ = DbHelper.ExecProc("StrTest");
 
-        var region1 = DbHelper.FromProc<Region>("Regions_Get", new { Id = 1 });
-        Assert.Equal("Eastern #1", region1?.Name);
+        string? null1 = null;
+        _ = DbHelper.ExecProc("StrTest", null1);
 
-        var region6 = DbHelper.FromProc<Region>("Regions_Get", new { Id = 6 });
-        Assert.Null(region6);
+        var str1 = "String";
+        _ = DbHelper.ExecProc("StrTest", str1);
 
-        var regionName = DbHelper.FromProc<string>("Regions_Get_Name", 5);
-        Assert.Null(regionName);
+        var class1 = new { Id = 1, Name = "Region1" };
+        _ = DbHelper.ExecProc("StrTest", class1);
 
-        Assert.Equal(1, DbHelper.ExecProc("Regions_Del", new { Id = 1 }));
-        Assert.Equal(0, DbHelper.ExecProc("Regions_Del", new { Id = 1 }));
+        var int1 = 123;
+        _ = DbHelper.ExecProc("StrTest", int1);
+
+        var double1 = 123.123;
+        _ = DbHelper.ExecProc("StrTest", double1);
+
+        var guid1 = Guid.NewGuid();
+        _ = DbHelper.ExecProc("StrTest", guid1);
+
+        var dt1 = new DateTime(2000, 1, 1);
+        _ = DbHelper.ExecProc("StrTest", dt1);
+
+        Assert.True(true);     
     }
 
-    //[Fact]
-    //public void ToObjTest()
-    //{
-    //    var b1 = ((string?)null).ToObj<bool?>();
+    [Fact]
+    public void ToObjTest()
+    {
+        var b1 = ((string?)null).ToObj<bool?>();
 
-    //    var b2 = "".ToObj<bool?>();
+        var b2 = "".ToObj<bool?>();
 
-    //    var b3 = "true".ToObj<bool>();
+        var b3 = "true".ToObj<bool>();
 
-    //    var n = "123".ToObj<int>();
+        var n = "123".ToObj<int>();
 
-    //    var s = "true".ToObj<string>();
+        var s = "true".ToObj<string>();
 
-    //    var r1 = @"{ ""Id"" : 1 }".ToObj<Region>();
+        var r1 = @"{ ""Id"" : 1 }".ToObj<Region>();
 
-    //    Assert.True(true);
-    //}
+        Assert.True(true);
+    }
 
     //[Fact]
     //public async Task ToObjTestAsync()
@@ -103,23 +102,5 @@ $"CREATE DATABASE {dbName};";
     //    var r1 = await @"{ ""Id"" : 1 }".ToObjAsync<Region>();
 
     //    Assert.True(true);
-    //}
-
-    //[Fact]
-    //public async Task ExecProcAsyncTest()
-    //{
-    //    Assert.True(false, "This test needs an implementation");
-    //}
-
-    //[Fact]
-    //public void FromProcTest()
-    //{
-    //    Assert.True(false, "This test needs an implementation");
-    //}
-
-    //[Fact]
-    //public async Task FromProcAsyncTest()
-    //{
-    //    Assert.True(false, "This test needs an implementation");
     //}
 }
