@@ -24,7 +24,7 @@ namespace SqlJsonWebApp.Pages.Contacts
                 return NotFound();
             }
 
-            Contact = await _db.FromProcAsync<Contact>("Contacts_Get", new { Id = id });
+            Contact = await _db.FromProcAsync<Contact>("Contacts_Get", id);
 
             if (Contact.Id == 0)
             {

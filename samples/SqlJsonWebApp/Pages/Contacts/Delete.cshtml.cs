@@ -22,7 +22,7 @@ namespace SqlJsonWebApp.Pages.Contacts
                 return NotFound();
             }
 
-            Contact = await _db.FromProcAsync<Contact>("Contacts_Get", new { Id = id });
+            Contact = await _db.FromProcAsync<Contact>("Contacts_Get", id);
 
             if (Contact.Id == 0)
             {
@@ -38,7 +38,7 @@ namespace SqlJsonWebApp.Pages.Contacts
                 return NotFound();
             }
 
-            await _db.FromProcAsync<Contact>("Contacts_Del", new { Id = id });
+            await _db.FromProcAsync<Contact>("Contacts_Del", id);
 
             return RedirectToPage("./Index");
         }

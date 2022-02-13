@@ -28,7 +28,7 @@ namespace SqlJsonWebApp.Pages.Contacts
                 return Page();
             }
 
-            await _db.ExecProcAsync("Contacts_Ins", Contact);
+            var id = await _db.FromProcAsync<int?>("Contacts_Ins", Contact);
 
             return RedirectToPage("./Index");
         }

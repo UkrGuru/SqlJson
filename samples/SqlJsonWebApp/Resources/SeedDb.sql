@@ -15,10 +15,10 @@ SET IDENTITY_INSERT [dbo].[Contacts] OFF
 
 EXEC dbo.sp_executesql @statement = N'
 CREATE PROCEDURE [dbo].[Contacts_Del]
-    @Data nvarchar(50)
+    @Data int
 AS
 DELETE FROM Contacts
-WHERE (Id = JSON_VALUE(@Data, ''$.Id''))
+WHERE Id = @Data
 ';
 
 EXEC dbo.sp_executesql @statement = N'
@@ -28,15 +28,16 @@ AS
 INSERT INTO Contacts (FullName, Email, Notes)
 SELECT * FROM OPENJSON(@Data) 
 WITH (FullName nvarchar(50), Email nvarchar(100), Notes nvarchar(max))
+SELECT CAST(SCOPE_IDENTITY() as varchar)
 ';
 
 EXEC dbo.sp_executesql @statement = N'
 CREATE PROCEDURE [dbo].[Contacts_Get]
-    @Data nvarchar(50)
+	@Data int
 AS
 SELECT Id, FullName, Email, Notes
 FROM Contacts
-WHERE Id = JSON_VALUE(@Data, ''$.Id'')
+WHERE Id = @Data
 FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
 ';
 
