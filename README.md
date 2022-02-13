@@ -53,7 +53,7 @@ public class ContactController : ControllerBase
     public async Task<List<Contact>> Get() => await _db.FromProcAsync<List<Contact>>("Contacts_List");
 
     [HttpGet("{id}")]
-    public async Task<Contact> Get(int id) => await _db.FromProcAsync<Contact>("Contacts_Item", new { Id = id });
+    public async Task<Contact> Get(int id) => await _db.FromProcAsync<Contact>("Contacts_Item", id);
 
     [HttpPost]
     public async Task<Contact> Post([FromBody] Contact item) => await _db.FromProcAsync<Contact>("Contacts_Ins", item);
@@ -62,7 +62,7 @@ public class ContactController : ControllerBase
     public async Task Put(int id, [FromBody] Contact item) => await _db.ExecProcAsync("Contacts_Upd", item);
 
     [HttpDelete("{id}")]
-    public async Task Delete(int id) => await _db.ExecProcAsync("Contacts_Del", new { Id = id });
+    public async Task Delete(int id) => await _db.ExecProcAsync("Contacts_Del", id);
 }
 ```
 ### DbHelper: how to use?
