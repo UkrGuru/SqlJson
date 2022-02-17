@@ -13,23 +13,26 @@ public static class StringExtensions
         if (string.IsNullOrEmpty(value))
             return default;
 
-        else if (typeof(T) == typeof(string))
+        var type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
+
+        if (type == typeof(string))
             return (T)(object)value;
 
-        else if (typeof(T) == typeof(Guid))
+        else if (type == typeof(Guid))
             return (T)(object)Guid.Parse(value);
 
-        else if (typeof(T).IsClass)
+        else if (type.IsClass)
             return JsonSerializer.Deserialize<T>(value);
 
-        else if (typeof(T).IsEnum)
-            return (T)Enum.Parse(typeof(T), value);
+        else if (type.IsEnum)
+            return (T)Enum.Parse(type, value);
 
-        else if (typeof(T).IsPrimitive)
-            return (T)Convert.ChangeType(value, typeof(T), CultureInfo.CurrentCulture);
+        else if (type.IsPrimitive)
+            return (T)Convert.ChangeType(value, type, CultureInfo.CurrentCulture);
 
-        else
-            return (T)Convert.ChangeType(value, typeof(T));
+        else 
+            return (T)Convert.ChangeType(value, type);
+
     }
 
     public static async Task<T?> ToObjAsync<T>(this string? value)

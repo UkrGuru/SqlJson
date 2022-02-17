@@ -12,7 +12,7 @@
     <PackageIcon>ukrguru-logo.jpg</PackageIcon>
     <RepositoryUrl>https://github.com/UkrGuru/SqlJson</RepositoryUrl>
     <Description>UkrGuru.SqlJson is fast and easy access to Sql Server databases through stored procedures and EF Core is not involved in this.</Description>
-    <Version>4.3.0</Version>
+    <Version>4.3.1</Version>
     <SignAssembly>False</SignAssembly>
     <AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
     <PackageTags>json data sql sql-server csharp core dotnet netcore entity-framework-core asp-net-core stored-procedures net6</PackageTags>
