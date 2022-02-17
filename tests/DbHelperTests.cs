@@ -79,7 +79,11 @@ $"CREATE DATABASE {dbName};";
 
         var n = "123".ToObj<int>();
 
+        var g1 = Guid.NewGuid().ToString().ToObj<Guid>();
+
         var s = "true".ToObj<string>();
+
+        var dt = "Feb 17 2022 11:58AM".ToObj<DateTime>();
 
         var r1 = @"{ ""Id"" : 1 }".ToObj<Region>();
 
