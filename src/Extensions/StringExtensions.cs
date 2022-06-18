@@ -32,7 +32,6 @@ public static class StringExtensions
 
         else 
             return (T)Convert.ChangeType(value, type);
-
     }
 
     public static async Task<T?> ToObjAsync<T>(this string? value)

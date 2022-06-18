@@ -1,4 +1,3 @@
-using System.Reflection;
 using Xunit;
 
 namespace UkrGuru.SqlJson.Tests;
@@ -91,6 +90,27 @@ $"CREATE DATABASE {dbName};";
         var r1 = @"{ ""Id"" : 1 }".ToObj<Region>();
 
         Assert.True(true);
+    }
+
+    [Fact]
+    public async Task RunSqlProcNullTest()
+    {
+        await DbHelper.ExecCommandAsync("CREATE OR ALTER PROCEDURE [dbo].[NullTest] AS SELECT 'OK'");
+        var data = null as string;
+        var proc_result = DbHelper.FromProc<string?>("NullTest", data);
+
+        Assert.Equal("OK", proc_result);
+    }
+
+    [Fact]
+    public async Task RunSqlProcDataTest()
+    {
+        await DbHelper.ExecCommandAsync("CREATE OR ALTER PROCEDURE [dbo].[DataTest] (@Data varchar(100)) AS SELECT @Data");
+
+        var data = "DATA";
+        var proc_result = DbHelper.FromProc<string?>("DataTest", data);
+
+        Assert.Equal(data, proc_result);
     }
 
     //[Fact]
