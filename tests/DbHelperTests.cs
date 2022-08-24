@@ -1,3 +1,4 @@
+using UkrGuru.Extensions;
 using Xunit;
 
 namespace UkrGuru.SqlJson.Tests;
@@ -95,7 +96,7 @@ $"CREATE DATABASE {dbName};";
     [Fact]
     public async Task RunSqlProcNullTest()
     {
-        await DbHelper.ExecCommandAsync("CREATE OR ALTER PROCEDURE [dbo].[NullTest] AS SELECT 'OK'");
+        await DbHelper.ExecCommandAsync("CREATE OR ALTER PROCEDURE [dbo].[NullTest] (@Data varchar(100)) AS SELECT 'OK'");
         var data = null as string;
         var proc_result = DbHelper.FromProc<string?>("NullTest", data);
 
