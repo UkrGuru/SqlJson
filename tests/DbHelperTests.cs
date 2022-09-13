@@ -11,26 +11,23 @@ public class DbHelperTests
         public string? Name { get; set; }
     }
 
+    private readonly bool dbOK = false;
+
     public DbHelperTests()
     {
         var dbName = "SqlJsonTest";
 
         var connectionString = $"Server=(localdb)\\mssqllocaldb;Database={dbName};Trusted_Connection=True";
 
-        var dbInitScript = $"IF DB_ID('{dbName}') IS NOT NULL BEGIN " +
-$"  ALTER DATABASE {dbName} SET SINGLE_USER WITH ROLLBACK IMMEDIATE; " +
-$"  DROP DATABASE {dbName}; " +
-$"END " +
-$"CREATE DATABASE {dbName};";
-
         DbHelper.ConnectionString = connectionString.Replace(dbName, "master");
-        DbHelper.ExecCommand(dbInitScript);
+
+        DbHelper.ExecCommand($"IF DB_ID('{dbName}') IS NULL CREATE DATABASE {dbName};");
 
         DbHelper.ConnectionString = connectionString;
 
-        //        var assembly = Assembly.GetExecutingAssembly();
-        //        var resourceName = $"{assembly.GetName().Name}.Resources.InitDb.sql";
-        //        assembly.ExecResource(resourceName);
+        if (dbOK) return;
+
+        dbOK = true;
     }
 
     [Fact]
@@ -96,7 +93,7 @@ $"CREATE DATABASE {dbName};";
     [Fact]
     public async Task RunSqlProcNullTest()
     {
-        await DbHelper.ExecCommandAsync("CREATE OR ALTER PROCEDURE [dbo].[NullTest] (@Data varchar(100)) AS SELECT 'OK'");
+        await DbHelper.ExecCommandAsync("CREATE OR ALTER PROCEDURE [dbo].[NullTest] AS SELECT 'OK'");
         var data = null as string;
         var proc_result = DbHelper.FromProc<string?>("NullTest", data);
 
@@ -112,6 +109,16 @@ $"CREATE DATABASE {dbName};";
         var proc_result = DbHelper.FromProc<string?>("DataTest", data);
 
         Assert.Equal(data, proc_result);
+    }
+
+    [Fact]
+    public async Task RunSqlProcTempTest()
+    {
+        await DbHelper.ExecCommandAsync("CREATE OR ALTER   PROCEDURE [JFSettings_Get] @Data nvarchar(100) AS SELECT TOP 1 [Value] FROM JFSettings WHERE Name = @Data");
+
+        var proc_result = await DbHelper.FromProcAsync<string?>("JFSettings_Get", "Layout Form");
+
+        Assert.True(true);
     }
 
     //[Fact]
