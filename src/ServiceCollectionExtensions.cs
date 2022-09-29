@@ -8,7 +8,7 @@ namespace UkrGuru.SqlJson;
 /// <summary>
 /// 
 /// </summary>
-public static class ServiceCollectionExtensions
+public static partial class ServiceCollectionExtensions
 {
     /// <summary>
     /// 

@@ -7,9 +7,9 @@ using System.Text.Json;
 namespace UkrGuru.Extensions;
 
 /// <summary>
-/// 
+/// Additional set of functions for converting to an object of a specific type.
 /// </summary>
-public static class StringExtensions
+public static partial class StringExtensions
 {
     /// <summary>
     /// Converts the string value to an equivalent T object.
