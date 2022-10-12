@@ -45,5 +45,5 @@ public static partial class MoreExtensions
     /// <param name="name"></param>
     /// <param name="defaultValue"></param>
     /// <returns></returns>
-    public static T? GetValue<T>(this More? more, string name, T? defaultValue = default) => more.GetValue(name).ToObj<T?>() ?? defaultValue;
+    public static T? GetValue<T>(this More? more, string name, T? defaultValue = default) => more.GetValue(name).ToObj<T?>(defaultValue);
 }

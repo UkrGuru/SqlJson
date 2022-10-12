@@ -10,10 +10,7 @@ namespace SqlJsonWebApp.Pages.Contacts
     {
         private readonly DbService _db;
 
-        public DetailsModel(DbService db)
-        {
-            _db = db;
-        }
+        public DetailsModel(DbService db) => _db = db;
 
         public Contact Contact { get; set; }
 

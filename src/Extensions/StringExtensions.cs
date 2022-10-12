@@ -16,11 +16,12 @@ public static partial class StringExtensions
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="value"></param>
+    /// <param name="defaultValue"></param>
     /// <returns></returns>
-    public static T? ToObj<T>(this string? value)
+    public static T? ToObj<T>(this string? value, T? defaultValue = default)
     {
         if (string.IsNullOrEmpty(value))
-            return default;
+            return defaultValue;
 
         var type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
 

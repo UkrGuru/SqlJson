@@ -32,7 +32,7 @@ public static partial class AssemblyExtensions
     /// <param name="resourceName"></param>
     public static async Task ExecResourceAsync(this Assembly assembly, string resourceName)
     {
-        using var stream = assembly.GetManifestResourceStream(resourceName);
+        await using var stream = assembly.GetManifestResourceStream(resourceName);
         ArgumentNullException.ThrowIfNull(stream);
 
         using StreamReader reader = new(stream);
