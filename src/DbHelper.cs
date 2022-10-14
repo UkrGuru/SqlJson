@@ -30,8 +30,30 @@ public static class DbHelper
     /// </summary>
     /// <param name="data">The string or object value to convert.</param>
     /// <returns>The standard value for the @Data parameter.</returns>
-    private static object? Normalize(object? data) => (data is string) ? data :
-        data?.GetType().IsClass == true ? JsonSerializer.Serialize(data) : data;
+    public static object NormalizeParams(object data)
+    {
+        switch (data.GetType().Name)
+        {
+            case "Boolean":
+            case "Byte":
+            case "Byte[]":
+            case "Char[]":
+            case "DateTime":
+            case "DateTimeOffset":
+            case "Decimal":
+            case "Double":
+            case "Guid":
+            case "Int16":
+            case "Int32":
+            case "Single":
+            case "String":
+            case "TimeSpan":
+            case "Xml":
+                return data;
+            default:
+                return JsonSerializer.Serialize(data);
+        }
+    }
 
     /// <summary>
     /// Opens a database connection, then executes the stored procedure with or without '@Data' parameter
@@ -81,7 +103,7 @@ public static class DbHelper
         using SqlCommand command = new(name, connection);
         command.CommandType = System.Data.CommandType.StoredProcedure;
 
-        if (data != null) command.Parameters.AddWithValue("@Data", Normalize(data));
+        if (data != null) command.Parameters.AddWithValue("@Data", NormalizeParams(data));
 
         if (timeout != null) command.CommandTimeout = timeout.Value;
 
@@ -104,7 +126,7 @@ public static class DbHelper
         using SqlCommand command = new(name, connection);
         command.CommandType = System.Data.CommandType.StoredProcedure;
 
-        if (data != null) command.Parameters.AddWithValue("@Data", Normalize(data));
+        if (data != null) command.Parameters.AddWithValue("@Data", NormalizeParams(data));
 
         if (timeout != null) command.CommandTimeout = timeout.Value;
 
@@ -161,7 +183,7 @@ public static class DbHelper
         using SqlCommand command = new(name, connection);
         command.CommandType = System.Data.CommandType.StoredProcedure;
 
-        if (data != null) command.Parameters.AddWithValue("@Data", Normalize(data));
+        if (data != null) command.Parameters.AddWithValue("@Data", NormalizeParams(data));
 
         if (timeout != null) command.CommandTimeout = timeout.Value;
 
@@ -195,7 +217,7 @@ public static class DbHelper
         using SqlCommand command = new(name, connection);
         command.CommandType = System.Data.CommandType.StoredProcedure;
 
-        if (data != null) command.Parameters.AddWithValue("@Data", Normalize(data));
+        if (data != null) command.Parameters.AddWithValue("@Data", NormalizeParams(data));
 
         if (timeout != null) command.CommandTimeout = timeout.Value;
 
