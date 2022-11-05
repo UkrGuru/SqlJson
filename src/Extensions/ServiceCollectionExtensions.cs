@@ -1,9 +1,9 @@
 ﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using Microsoft.Extensions.DependencyInjection;
+using UkrGuru.SqlJson;
 
-namespace UkrGuru.SqlJson;
+namespace Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
 /// 

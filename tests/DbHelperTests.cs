@@ -53,7 +53,7 @@ public class DbHelperTests
         var int1 = 123;
         _ = DbHelper.ExecProc("StrTest", int1);
 
-        var double1 = 123.123;
+        var double1 = 123.45;
         _ = DbHelper.ExecProc("StrTest", double1);
 
         var guid1 = Guid.NewGuid();
@@ -114,7 +114,7 @@ public class DbHelperTests
     [Fact]
     public async Task RunSqlProcTempTest()
     {
-        await DbHelper.ExecCommandAsync("CREATE OR ALTER   PROCEDURE [JFSettings_Get] @Data nvarchar(100) AS SELECT TOP 1 [Value] FROM JFSettings WHERE Name = @Data");
+        await DbHelper.ExecCommandAsync("CREATE OR ALTER PROCEDURE [JFSettings_Get] @Data nvarchar(100) AS SELECT TOP 1 [Value] FROM JFSettings WHERE Name = @Data");
 
         var proc_result = await DbHelper.FromProcAsync<string?>("JFSettings_Get", "Layout Form");
 

@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using Microsoft.Data.SqlClient;
+using System.Data;
 using System.Text;
 using System.Text.Json;
 using UkrGuru.Extensions;
@@ -11,7 +12,7 @@ namespace UkrGuru.SqlJson;
 /// <summary>
 /// Database Helper minimizes the effort to process or retrieve data from SQL Server databases.
 /// </summary>
-public static class DbHelper
+public static partial class DbHelper
 {
     private static string? _connectionString;
 
@@ -23,7 +24,28 @@ public static class DbHelper
     /// <summary>
     /// Initializes a new instance of the Microsoft.Data.SqlClient.SqlConnection class.
     /// </summary>
-    public static SqlConnection CreateSqlConnection() => new(_connectionString);
+    private static SqlConnection CreateSqlConnection() => new(_connectionString);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="connection"></param>
+    /// <param name="cmdText"></param>
+    /// <param name="data"></param>
+    /// <param name="timeout"></param>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    private static SqlCommand CreateSqlCommand(this SqlConnection connection, string cmdText, object? data = null, int? timeout = null, CommandType type = CommandType.StoredProcedure)
+    {
+        SqlCommand command = new(cmdText, connection);
+        command.CommandType = type;
+
+        if (data != null) command.Parameters.AddWithValue("@Data", NormalizeParams(data));
+
+        if (timeout.HasValue) command.CommandTimeout = timeout.Value;
+
+        return command;
+    }
 
     /// <summary>
     /// Converts a data object to the standard @Data parameter.
@@ -100,12 +122,7 @@ public static class DbHelper
     /// <returns>The number of rows affected.</returns>
     public static int ExecProc(this SqlConnection connection, string name, object? data = null, int? timeout = null)
     {
-        using SqlCommand command = new(name, connection);
-        command.CommandType = System.Data.CommandType.StoredProcedure;
-
-        if (data != null) command.Parameters.AddWithValue("@Data", NormalizeParams(data));
-
-        if (timeout != null) command.CommandTimeout = timeout.Value;
+        using SqlCommand command = connection.CreateSqlCommand(name, data, timeout);
 
         return command.ExecuteNonQuery();
     }
@@ -123,12 +140,7 @@ public static class DbHelper
     /// <returns>The number of rows affected.</returns>
     public static async Task<int> ExecProcAsync(this SqlConnection connection, string name, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
-        using SqlCommand command = new(name, connection);
-        command.CommandType = System.Data.CommandType.StoredProcedure;
-
-        if (data != null) command.Parameters.AddWithValue("@Data", NormalizeParams(data));
-
-        if (timeout != null) command.CommandTimeout = timeout.Value;
+        using SqlCommand command = connection.CreateSqlCommand(name, data, timeout);
 
         return await command.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -162,7 +174,7 @@ public static class DbHelper
     public static async Task<T?> FromProcAsync<T>(string name, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
         using SqlConnection connection = CreateSqlConnection();
-        connection.Open();
+        await connection.OpenAsync(cancellationToken);
 
         return await connection.FromProcAsync<T>(name, data, timeout, cancellationToken);
     }
@@ -180,23 +192,18 @@ public static class DbHelper
     {
         var jsonResult = new StringBuilder();
 
-        using SqlCommand command = new(name, connection);
-        command.CommandType = System.Data.CommandType.StoredProcedure;
-
-        if (data != null) command.Parameters.AddWithValue("@Data", NormalizeParams(data));
-
-        if (timeout != null) command.CommandTimeout = timeout.Value;
+        using SqlCommand command = connection.CreateSqlCommand(name, data, timeout);
 
         var reader = command.ExecuteReader();
 
-        if (reader.HasRows)
-            while (reader.Read())
-                if (!reader.IsDBNull(0))
-                    jsonResult.Append(reader.GetString(0));
+        // if (reader.HasRows)
+        while (reader.Read())
+            if (!reader.IsDBNull(0))
+                jsonResult.Append(reader.GetString(0));
 
-        reader.Close();
+        // reader.Close();
 
-        return jsonResult.Length == 0 ? default : jsonResult.ToString().ToObj<T>();
+        return jsonResult.ToObj<T>();
     }
 
     /// <summary>
@@ -214,23 +221,18 @@ public static class DbHelper
     {
         var jsonResult = new StringBuilder();
 
-        using SqlCommand command = new(name, connection);
-        command.CommandType = System.Data.CommandType.StoredProcedure;
-
-        if (data != null) command.Parameters.AddWithValue("@Data", NormalizeParams(data));
-
-        if (timeout != null) command.CommandTimeout = timeout.Value;
+        using SqlCommand command = connection.CreateSqlCommand(name, data, timeout);
 
         var reader = await command.ExecuteReaderAsync(cancellationToken);
 
-        if (reader.HasRows)
-            while (await reader.ReadAsync(cancellationToken))
-                if (!(await reader.IsDBNullAsync(0, cancellationToken)))
-                    jsonResult.Append(reader.GetString(0));
+        // if (reader.HasRows)
+        while (await reader.ReadAsync(cancellationToken))
+            if (!await reader.IsDBNullAsync(0, cancellationToken))
+                jsonResult.Append(reader.GetString(0));
 
-        await reader.CloseAsync();
+        // await reader.CloseAsync();
 
-        return await Task.FromResult(jsonResult.Length == 0 ? default : jsonResult.ToString().ToObj<T>());
+        return jsonResult.ToObj<T>();
     }
 
     /// <summary>
@@ -275,9 +277,7 @@ public static class DbHelper
     /// <returns>The number of rows affected.</returns>
     public static int ExecCommand(this SqlConnection connection, string cmdText, int? timeout = null)
     {
-        using SqlCommand command = new(cmdText, connection);
-
-        if (timeout != null) command.CommandTimeout = timeout.Value;
+        using SqlCommand command = connection.CreateSqlCommand(cmdText, null, timeout, CommandType.Text);
 
         return command.ExecuteNonQuery();
     }
@@ -294,9 +294,7 @@ public static class DbHelper
     /// <returns>The number of rows affected.</returns>
     public static async Task<int> ExecCommandAsync(this SqlConnection connection, string cmdText, int? timeout = null, CancellationToken cancellationToken = default)
     {
-        using SqlCommand command = new(cmdText, connection);
-
-        if (timeout != null) command.CommandTimeout = timeout.Value;
+        using SqlCommand command = connection.CreateSqlCommand(cmdText, null, timeout, CommandType.Text);
 
         return await command.ExecuteNonQueryAsync(cancellationToken);
     }
