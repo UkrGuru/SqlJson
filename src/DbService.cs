@@ -11,7 +11,7 @@ namespace UkrGuru.SqlJson;
 /// </summary>
 public class DbService
 {
-    private readonly string _connectionString;
+    private readonly string? _connectionString;
 
     /// <summary>
     /// Initializes a new instance of the UkrGuru.SqlJson.DbService class.

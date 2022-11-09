@@ -11,7 +11,7 @@ namespace UkrGuru.Extensions;
 public sealed class More : Dictionary<string, object?> { }
 
 /// <summary>
-/// 
+/// Additional set of functions for the More dictionary.
 /// </summary>
 public static partial class MoreExtensions
 {

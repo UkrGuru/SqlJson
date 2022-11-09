@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using System.Globalization;
+using System.Text;
 using System.Text.Json;
 
 namespace UkrGuru.Extensions;
@@ -11,7 +12,6 @@ namespace UkrGuru.Extensions;
 /// </summary>
 public static partial class StringExtensions
 {
-
     /// <summary>
     /// Throws a System.ArgumentNullException if the argument is null, 
     /// Throws a System.ArgumentException if the argument is blank, 
@@ -30,7 +30,16 @@ public static partial class StringExtensions
 
         return argument;
     }
-    
+
+    /// <summary>
+    /// Converts the StringBuilder value to an equivalent T object.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="jsonResult"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public static T? ToObj<T>(this StringBuilder? jsonResult, T? defaultValue = default) => jsonResult?.Length > 0 ? jsonResult.ToString().ToObj<T>() : default;
+
     /// <summary>
     /// Converts the string value to an equivalent T object.
     /// </summary>
@@ -60,7 +69,7 @@ public static partial class StringExtensions
         else if (type.IsPrimitive)
             return (T?)Convert.ChangeType(value, type, CultureInfo.CurrentCulture);
 
-        else 
+        else
             return (T?)Convert.ChangeType(value, type);
     }
 }
