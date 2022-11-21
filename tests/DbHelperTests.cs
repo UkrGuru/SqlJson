@@ -25,13 +25,13 @@ public class DbHelperTests
 
         DbHelper.ConnectionString = connectionString;
 
-        if (dbOK) return;
+        if ( dbOK ) return;
 
         dbOK = true;
     }
 
     [Fact]
-    public void InputData_Tests()
+    public void ParamDataTests()
     {
         _ = DbHelper.ExecCommand("IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Table]') AND type in (N'U')) DROP TABLE [dbo].[Table]");
 
@@ -66,7 +66,7 @@ public class DbHelperTests
     }
 
     [Fact]
-    public void ToObjTest()
+    public void ToObjTests()
     {
         var b1 = ((string?)null).ToObj<bool?>();
         var b2 = "".ToObj<bool?>();
@@ -110,32 +110,4 @@ public class DbHelperTests
 
         Assert.Equal(data, proc_result);
     }
-
-    [Fact]
-    public async Task RunSqlProcTempTest()
-    {
-        await DbHelper.ExecCommandAsync("CREATE OR ALTER PROCEDURE [JFSettings_Get] @Data nvarchar(100) AS SELECT TOP 1 [Value] FROM JFSettings WHERE Name = @Data");
-
-        var proc_result = await DbHelper.FromProcAsync<string?>("JFSettings_Get", "Layout Form");
-
-        Assert.True(true);
-    }
-
-    //[Fact]
-    //public async Task ToObjTestAsync()
-    //{
-    //    var b1 = await ((string?)null).ToObjAsync<bool?>();
-
-    //    var b2 = await "".ToObjAsync<bool?>();
-
-    //    var b3 = await "true".ToObjAsync<bool>();
-
-    //    var n = await "123".ToObjAsync<int>();
-
-    //    var s = await "true".ToObjAsync<string>();
-
-    //    var r1 = await @"{ ""Id"" : 1 }".ToObjAsync<Region>();
-
-    //    Assert.True(true);
-    //}
 }

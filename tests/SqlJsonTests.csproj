@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\UkrGuru.SqlJson.csproj" />
+    <ProjectReference Include="..\src\SqlJson.csproj" />
   </ItemGroup>
 
 </Project>

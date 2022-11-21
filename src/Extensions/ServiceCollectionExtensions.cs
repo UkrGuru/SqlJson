@@ -18,9 +18,12 @@ public static class ServiceCollectionExtensions
     /// <returns>The updated IServiceCollection collection argument the ConfigureServices method receives.</returns>
     public static IServiceCollection AddSqlJson(this IServiceCollection services, string? connectionString = null)
     {
-        if (connectionString != null) DbHelper.ConnectionString = connectionString;
+        if (!string.IsNullOrEmpty(connectionString))
+        {
+            DbHelper.ConnectionString = connectionString;
 
-        services.AddScoped<DbService>();
+            services.AddScoped<DbService>();
+        }
 
         return services;
     }

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <Version>5.0.5</Version>
   </PropertyGroup>
 
@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="UkrGuru.SqlJson" Version="5.0.5" />
+    <PackageReference Include="UkrGuru.SqlJson" Version="5.0.7" />
   </ItemGroup>
 
 </Project>

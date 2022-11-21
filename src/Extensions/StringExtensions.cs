@@ -13,32 +13,14 @@ namespace UkrGuru.Extensions;
 public static partial class StringExtensions
 {
     /// <summary>
-    /// Throws a System.ArgumentNullException if the argument is null, 
-    /// Throws a System.ArgumentException if the argument is blank, 
-    /// otherwise the returned argument.
-    /// </summary>
-    /// <param name="argument"></param>
-    /// <param name="argumentName"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
-    public static string? ThrowIfBlank(this string? argument, string? argumentName)
-    {
-        ArgumentNullException.ThrowIfNull(argument, argumentName);
-
-        if (string.IsNullOrWhiteSpace(argument))
-            throw new ArgumentException($"'{argumentName}' cannot be blank.", argumentName);
-
-        return argument;
-    }
-
-    /// <summary>
     /// Converts the StringBuilder value to an equivalent T object.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="jsonResult"></param>
     /// <param name="defaultValue"></param>
     /// <returns></returns>
-    public static T? ToObj<T>(this StringBuilder? jsonResult, T? defaultValue = default) => jsonResult?.Length > 0 ? jsonResult.ToString().ToObj<T>() : default;
+    public static T? ToObj<T>(this StringBuilder? jsonResult, T? defaultValue = default) 
+        => jsonResult?.Length > 0 ? jsonResult.ToString().ToObj<T>() : default;
 
     /// <summary>
     /// Converts the string value to an equivalent T object.

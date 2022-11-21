@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31005.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UkrGuru.SqlJson", "src\UkrGuru.SqlJson.csproj", "{3D28E3AE-4ADF-4ECC-9BE9-BF290952079B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UkrGuru.SqlJson", "src\SqlJson.csproj", "{3D28E3AE-4ADF-4ECC-9BE9-BF290952079B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UkrGuru.SqlJsonTests", "tests\UkrGuru.SqlJsonTests.csproj", "{C7DBB551-C8B8-4DD4-B58A-99DCCAD188A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UkrGuru.SqlJsonTests", "tests\SqlJsonTests.csproj", "{C7DBB551-C8B8-4DD4-B58A-99DCCAD188A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

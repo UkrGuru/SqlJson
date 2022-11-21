@@ -1,0 +1,61 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Authors>UkrGuru</Authors>
+        <Company>PE VIKTOR Oleksandr Oleksandrovych</Company>
+        <Copyright>Oleksandr Viktor (UkrGuru)</Copyright>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+        <PackageIcon>ukrguru-logo.jpg</PackageIcon>
+        <RepositoryUrl>https://github.com/UkrGuru/SqlJson</RepositoryUrl>
+        <Description>UkrGuru.SqlJson is fast and easy access to Sql Server databases through stored procedures and EF Core is not involved in this.</Description>
+        <Version>5.1.0</Version>
+        <SignAssembly>False</SignAssembly>
+        <AssemblyOriginatorKeyFile>UkrGuru.pfx</AssemblyOriginatorKeyFile>
+        <PackageTags>.net7 sql-server stored-procedures json data</PackageTags>
+        <PackageReleaseNotes>Reorganization. Extracted unused code in UkrGuru.Extensions package</PackageReleaseNotes>
+        <DebugType>none</DebugType>
+        <DelaySign>False</DelaySign>
+        <GenerateDocumentationFile>True</GenerateDocumentationFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <AssemblyName>UkrGuru.SqlJson</AssemblyName>
+        <RootNamespace>UkrGuru.SqlJson</RootNamespace>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DebugType>portable</DebugType>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <DebugType>portable</DebugType>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Remove="Extensions\AssemblyExtensions.cs" />
+      <Compile Remove="Extensions\MoreExtensions.cs" />
+      <Compile Remove="Extensions\ObjectExtensions.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="..\LICENSE.txt">
+            <Pack>True</Pack>
+            <PackagePath></PackagePath>
+        </EmbeddedResource>
+        <EmbeddedResource Include="..\ukrguru-logo.jpg">
+            <Pack>True</Pack>
+            <PackagePath></PackagePath>
+        </EmbeddedResource>
+        <EmbeddedResource Include="..\README.md">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </EmbeddedResource>
+    </ItemGroup>
+</Project>
