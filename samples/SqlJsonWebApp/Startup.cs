@@ -22,7 +22,7 @@ namespace SqlJsonWebApp
             services.AddSqlJsonWebApp(Configuration.GetConnectionString("SqlJsonConnection"));
 
             // important for use UkrGuru.SqlJson
-            services.AddSqlJson(Configuration.GetConnectionString("SqlJsonConnection"));
+            services.AddUkrGuruSqlJson(Configuration.GetConnectionString("SqlJsonConnection"));
 
             services.AddRazorPages();
         }

@@ -38,7 +38,7 @@ namespace SqlJsonWebApp.Pages.Contacts
                 return NotFound();
             }
 
-            await _db.FromProcAsync<Contact>("Contacts_Del", id);
+            await _db.ExecProcAsync("Contacts_Del", id);
 
             return RedirectToPage("./Index");
         }

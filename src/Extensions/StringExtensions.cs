@@ -13,6 +13,25 @@ namespace UkrGuru.Extensions;
 public static class StringExtensions
 {
     /// <summary>
+    /// Throws a System.ArgumentNullException if the argument is null, 
+    /// Throws a System.ArgumentException if the argument is blank, 
+    /// otherwise the returned argument.
+    /// </summary>
+    /// <param name="argument"></param>
+    /// <param name="argumentName"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    public static string? ThrowIfBlank(this string? argument, string? argumentName)
+    {
+        ArgumentNullException.ThrowIfNull(argument, argumentName);
+
+        if (string.IsNullOrWhiteSpace(argument))
+            throw new ArgumentException($"'{argumentName}' cannot be blank.", argumentName);
+
+        return argument;
+    }
+
+    /// <summary>
     /// Converts the StringBuilder value to an equivalent T object.
     /// </summary>
     /// <typeparam name="T"></typeparam>

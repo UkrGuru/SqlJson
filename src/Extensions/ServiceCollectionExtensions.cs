@@ -1,7 +1,11 @@
 ﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
+using Microsoft.Identity.Client;
+using System.Reflection;
+using UkrGuru.Extensions;
 using UkrGuru.SqlJson;
+using LogLevel = UkrGuru.Extensions.WJbLog.Level;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -25,5 +29,23 @@ public static class ServiceCollectionExtensions
         services.AddScoped<DbService>();
 
         return services;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="connectionString"></param>
+    /// <param name="logLevel"></param>
+    public static void AddUkrGuruSqlJsonExt(this IServiceCollection services, string? connectionString, LogLevel logLevel = LogLevel.Debug)
+    {
+        services.AddUkrGuruSqlJson(connectionString);
+
+        WJbLogHelper.MinLogLevel = logLevel;
+
+        var assembly = Assembly.GetAssembly(typeof(ServiceCollectionExtensions));
+        ArgumentNullException.ThrowIfNull(assembly);
+
+        assembly.InitDb();
     }
 }
