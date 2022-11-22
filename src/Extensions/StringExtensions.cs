@@ -10,7 +10,7 @@ namespace UkrGuru.Extensions;
 /// <summary>
 /// Additional set of functions for converting to an object of a specific type.
 /// </summary>
-public static partial class StringExtensions
+public static class StringExtensions
 {
     /// <summary>
     /// Converts the StringBuilder value to an equivalent T object.

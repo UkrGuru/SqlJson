@@ -16,14 +16,13 @@ public static class ServiceCollectionExtensions
     /// <param name="services">The IServiceCollection argument the ConfigureServices method receives.</param>
     /// <param name="connectionString">The connection string used to open the SQL Server database.</param>
     /// <returns>The updated IServiceCollection collection argument the ConfigureServices method receives.</returns>
-    public static IServiceCollection AddSqlJson(this IServiceCollection services, string? connectionString = null)
+    public static IServiceCollection AddUkrGuruSqlJson(this IServiceCollection services, string? connectionString = null)
     {
-        if (!string.IsNullOrEmpty(connectionString))
-        {
-            DbHelper.ConnectionString = connectionString;
+        ArgumentNullException.ThrowIfNull(connectionString);
 
-            services.AddScoped<DbService>();
-        }
+        DbHelper.ConnectionString = connectionString;
+
+        services.AddScoped<DbService>();
 
         return services;
     }
