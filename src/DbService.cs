@@ -72,10 +72,7 @@ public class DbService
     /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>The number of rows affected.</returns>
-    public int ExecProc(string name, object? data = null, int? timeout = null)
-    {
-        return ExecCommand(name, data, timeout, CommandType.StoredProcedure);
-    }
+    public int ExecProc(string name, object? data = null, int? timeout = null) => ExecCommand(name, data, timeout, CommandType.StoredProcedure);
 
     /// <summary>
     /// An asynchronous version of UkrGuru.SqlJson.DbService.ExecProc, which
@@ -88,9 +85,7 @@ public class DbService
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The number of rows affected.</returns>
     public async Task<int> ExecProcAsync(string name, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-    {
-        return await ExecCommandAsync(name, data, timeout, CommandType.StoredProcedure, cancellationToken);
-    }
+        => await ExecCommandAsync(name, data, timeout, CommandType.StoredProcedure, cancellationToken);
 
     /// <summary>
     /// Executes the stored procedure with or without '@Data' parameter

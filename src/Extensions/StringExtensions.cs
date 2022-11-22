@@ -38,7 +38,7 @@ public static class StringExtensions
     /// <param name="jsonResult"></param>
     /// <param name="defaultValue"></param>
     /// <returns></returns>
-    public static T? ToObj<T>(this StringBuilder? jsonResult, T? defaultValue = default) 
+    public static T? ToObj<T>(this StringBuilder? jsonResult, T? defaultValue = default)
         => jsonResult?.Length > 0 ? jsonResult.ToString().ToObj<T>() : default;
 
     /// <summary>

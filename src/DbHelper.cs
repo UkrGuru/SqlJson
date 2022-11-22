@@ -139,7 +139,7 @@ public static partial class DbHelper
     /// <param name="type">The type of the cmdText. The default is Text.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The number of rows affected.</returns>
-    public static async Task<int> ExecCommandAsync(string cmdText, object? data = null, int? timeout = null, 
+    public static async Task<int> ExecCommandAsync(string cmdText, object? data = null, int? timeout = null,
         CommandType type = CommandType.Text, CancellationToken cancellationToken = default)
     {
         using SqlConnection connection = CreateSqlConnection();
@@ -304,7 +304,7 @@ public static partial class DbHelper
     /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>The result as object.</returns>
-    public static T? FromProc<T>(this SqlConnection connection, string name, object? data = null, int? timeout = null) 
+    public static T? FromProc<T>(this SqlConnection connection, string name, object? data = null, int? timeout = null)
         => connection.FromCommand<T>(name, data, timeout, CommandType.StoredProcedure);
 
     /// <summary>
@@ -315,7 +315,7 @@ public static partial class DbHelper
     /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>The result as object.</returns>
-    public static T? FromProc<T>(string name, object? data = null, int? timeout = null) 
+    public static T? FromProc<T>(string name, object? data = null, int? timeout = null)
         => FromCommand<T>(name, data, timeout, CommandType.StoredProcedure);
 
     /// <summary>

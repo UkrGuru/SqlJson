@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using Microsoft.Identity.Client;
 using System.Reflection;
 using UkrGuru.Extensions;
 using UkrGuru.SqlJson;
@@ -12,7 +11,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 /// <summary>
 /// Class that contains the UkrGuru service extensions.
 /// </summary>
-public static class ServiceCollectionExtensions
+public static class UkrGuruSqlJsonExtensions
 {
     /// <summary>
     /// Registers the UkrGuru SqlJson services. You must call it in the ConfigureServices method of the Startup class of your project.
@@ -37,15 +36,12 @@ public static class ServiceCollectionExtensions
     /// <param name="services"></param>
     /// <param name="connectionString"></param>
     /// <param name="logLevel"></param>
-    public static void AddUkrGuruSqlJsonExt(this IServiceCollection services, string? connectionString, LogLevel logLevel = LogLevel.Debug)
+    public static void AddUkrGuruSqlJsonExt(this IServiceCollection services, string? connectionString = null, LogLevel logLevel = LogLevel.Debug)
     {
         services.AddUkrGuruSqlJson(connectionString);
 
         WJbLogHelper.MinLogLevel = logLevel;
 
-        var assembly = Assembly.GetAssembly(typeof(ServiceCollectionExtensions));
-        ArgumentNullException.ThrowIfNull(assembly);
-
-        assembly.InitDb();
+        Assembly.GetExecutingAssembly().InitDb();
     }
 }

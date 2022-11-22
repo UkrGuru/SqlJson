@@ -40,7 +40,7 @@ public static class WJbFileHelper
     /// <returns></returns>
     public static async Task<WJbFile?> GetAsync(Guid guid, CancellationToken cancellationToken = default)
     {
-       var file = await DbHelper.FromProcAsync<WJbFile>("WJbFiles_Get", guid, cancellationToken: cancellationToken);
+        var file = await DbHelper.FromProcAsync<WJbFile>("WJbFiles_Get", guid, cancellationToken: cancellationToken);
 
         await file.DecompressAsync(cancellationToken);
 
@@ -110,7 +110,7 @@ public static class WJbFileHelper
     /// <param name="guid"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public static async Task DelAsync(Guid guid, CancellationToken cancellationToken = default) 
+    public static async Task DelAsync(Guid guid, CancellationToken cancellationToken = default)
         => await DbHelper.ExecProcAsync("WJbFiles_Del", guid, cancellationToken: cancellationToken);
 
     /// <summary>

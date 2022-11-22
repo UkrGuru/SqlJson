@@ -11,7 +11,7 @@
         <PackageIcon>ukrguru-logo.jpg</PackageIcon>
         <RepositoryUrl>https://github.com/UkrGuru/SqlJson</RepositoryUrl>
         <Description>UkrGuru.SqlJson is fast and easy access to Sql Server databases through stored procedures and EF Core is not involved in this.</Description>
-        <Version>5.0.10</Version>
+        <Version>5.0.11</Version>
         <SignAssembly>False</SignAssembly>
         <AssemblyOriginatorKeyFile>UkrGuru.pfx</AssemblyOriginatorKeyFile>
         <PackageTags>.net7 sql-server stored-procedures json data</PackageTags>
@@ -24,6 +24,15 @@
         <RootNamespace>UkrGuru.SqlJson</RootNamespace>
 
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <DebugType>full</DebugType>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <DebugType>full</DebugType>
+    </PropertyGroup>
+    <ItemGroup>
+      <None Remove="Resources\InitDb.sql" />
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.1" />
@@ -44,5 +53,6 @@
             <Pack>True</Pack>
             <PackagePath>\</PackagePath>
         </EmbeddedResource>
+        <EmbeddedResource Include="Resources\InitDb.sql" />
     </ItemGroup>
 </Project>
