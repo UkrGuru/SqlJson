@@ -4,15 +4,14 @@
 using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Text;
-using System.Text.Json;
 using UkrGuru.Extensions;
 
 namespace UkrGuru.SqlJson;
 
 /// <summary>
-/// Database Helper minimizes the effort to process or retrieve data from SQL Server databases.
+/// Database Extensions minimizes the effort to process or retrieve data from SQL Server databases.
 /// </summary>
-public static partial class DbHelper
+public static class DbExtensions
 {
     /// <summary>
     /// Creates a new instance of the SqlCommand class with initialization parameters.
@@ -28,41 +27,11 @@ public static partial class DbHelper
         SqlCommand command = new(cmdText, connection);
         command.CommandType = type;
 
-        if (data != null) command.Parameters.AddWithValue("@Data", NormalizeParams(data));
+        if (data != null) command.Parameters.AddWithValue("@Data", DbHelper.NormalizeParams(data));
 
         if (timeout.HasValue) command.CommandTimeout = timeout.Value;
 
         return command;
-    }
-
-    /// <summary>
-    /// Converts a data object to the standard @Data parameter.
-    /// </summary>
-    /// <param name="data">The string or object value to convert.</param>
-    /// <returns>The standard value for the @Data parameter.</returns>
-    public static object NormalizeParams(object data)
-    {
-        switch (data.GetType().Name)
-        {
-            case "Boolean":
-            case "Byte":
-            case "Byte[]":
-            case "Char[]":
-            case "DateTime":
-            case "DateTimeOffset":
-            case "Decimal":
-            case "Double":
-            case "Guid":
-            case "Int16":
-            case "Int32":
-            case "Single":
-            case "String":
-            case "TimeSpan":
-            case "Xml":
-                return data;
-            default:
-                return JsonSerializer.Serialize(data);
-        }
     }
 
     /// <summary>

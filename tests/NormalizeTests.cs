@@ -45,22 +45,6 @@ public class NormalizeTests
         data = (Int32)1;
         Assert.Equal(data, DbHelper.NormalizeParams(data));
 
-        //case "Single":
-        data = (Int32)1;
-        Assert.Equal(data, DbHelper.NormalizeParams(data));
-
-        //case "String":
-        data = (Int32)1;
-        Assert.Equal(data, DbHelper.NormalizeParams(data));
-
-        //case "TimeSpan":
-        data = (Int32)1;
-        Assert.Equal(data, DbHelper.NormalizeParams(data));
-
-        //case "Xml":
-        //data = "str1";
-        //Assert.Equal(data, DbHelper.NormalizeParams(data));
-
         data = new { Name = "Proc1" };
         Assert.Equal(JsonSerializer.Serialize(data), DbHelper.NormalizeParams(data));
 

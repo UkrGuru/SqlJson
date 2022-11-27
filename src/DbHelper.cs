@@ -3,16 +3,14 @@
 
 using Microsoft.Data.SqlClient;
 using System.Data;
-using System.Text;
 using System.Text.Json;
-using UkrGuru.Extensions;
 
 namespace UkrGuru.SqlJson;
 
 /// <summary>
 /// Database Helper minimizes the effort to process or retrieve data from SQL Server databases.
 /// </summary>
-public static partial class DbHelper
+public class DbHelper
 {
     private static string? _connectionString;
 
@@ -25,6 +23,36 @@ public static partial class DbHelper
     /// Initializes a new instance of the Microsoft.Data.SqlClient.SqlConnection class.
     /// </summary>
     private static SqlConnection CreateSqlConnection() => new(_connectionString);
+
+    /// <summary>
+    /// Converts a data object to the standard @Data parameter.
+    /// </summary>
+    /// <param name="data">The string or object value to convert.</param>
+    /// <returns>The standard value for the @Data parameter.</returns>
+    public static object NormalizeParams(object data)
+    {
+        switch (data.GetType().Name)
+        {
+            case "Boolean":
+            case "Byte":
+            case "Byte[]":
+            case "Char[]":
+            case "DateTime":
+            case "DateTimeOffset":
+            case "Decimal":
+            case "Double":
+            case "Guid":
+            case "Int16":
+            case "Int32":
+            case "Single":
+            case "String":
+            case "TimeSpan":
+            case "Xml":
+                return data;
+            default:
+                return JsonSerializer.Serialize(data);
+        }
+    }
 
     /// <summary>
     /// Opens a database connection, then executes a Transact-SQL statement and returns the number of rows affected.

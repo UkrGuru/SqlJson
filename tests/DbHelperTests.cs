@@ -27,8 +27,6 @@ public class DbHelperTests
 
         if ( dbOK ) return;
 
-        
-
         dbOK = true;
     }
 
