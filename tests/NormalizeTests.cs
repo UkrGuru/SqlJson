@@ -1,9 +1,10 @@
 using System.Text.Json;
+using UkrGuru.SqlJson;
 using Xunit;
 
-namespace UkrGuru.SqlJson.Tests;
+namespace SqlJsonTests;
 
-public class NormalizeTests
+public class DbHelper_NormalizeParamsTests
 {
     [Fact]
     public void DbHelper_Normalize_Tests()

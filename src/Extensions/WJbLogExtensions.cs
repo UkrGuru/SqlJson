@@ -17,32 +17,32 @@ public static class WJbLogExtensions
     /// 
     /// </summary>
     public static async Task LogTraceAsync(this SqlConnection connection, string title, object? more = null, CancellationToken cancellationToken = default)
-        => await LogAsync(connection, LogLevel.Trace, title, more, cancellationToken);
+        => await connection.LogAsync(LogLevel.Trace, title, more, cancellationToken);
     /// <summary>
     /// 
     /// </summary>
     public static async Task LogDebugAsync(this SqlConnection connection, string title, object? more = null, CancellationToken cancellationToken = default)
-        => await LogAsync(connection, LogLevel.Debug, title, more, cancellationToken);
+        => await connection.LogAsync(LogLevel.Debug, title, more, cancellationToken);
     /// <summary>
     /// 
     /// </summary>
     public static async Task LogInformationAsync(this SqlConnection connection, string title, object? more = null, CancellationToken cancellationToken = default)
-        => await LogAsync(connection, LogLevel.Information, title, more, cancellationToken);
+        => await connection.LogAsync(LogLevel.Information, title, more, cancellationToken);
     /// <summary>
     /// 
     /// </summary>
     public static async Task LogWarningAsync(this SqlConnection connection, string title, object? more = null, CancellationToken cancellationToken = default)
-        => await LogAsync(connection, LogLevel.Warning, title, more, cancellationToken);
+        => await connection.LogAsync(LogLevel.Warning, title, more, cancellationToken);
     /// <summary>
     /// 
     /// </summary>
     public static async Task LogErrorAsync(this SqlConnection connection, string title, object? more = null, CancellationToken cancellationToken = default)
-        => await LogAsync(connection, LogLevel.Error, title, more, cancellationToken);
+        => await connection.LogAsync(LogLevel.Error, title, more, cancellationToken);
     /// <summary>
     /// 
     /// </summary>
     public static async Task LogCriticalAsync(this SqlConnection connection, string title, object? more = null, CancellationToken cancellationToken = default)
-        => await LogAsync(connection, LogLevel.Critical, title, more, cancellationToken);
+        => await connection.LogAsync(LogLevel.Critical, title, more, cancellationToken);
 
     /// <summary>
     /// 

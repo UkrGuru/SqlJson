@@ -34,7 +34,7 @@ public class DbService
     /// and returns the number of rows affected.
     /// </summary>
     /// <param name="cmdText">The text of the query.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="type">The type of the cmdText. The default is Text.</param>
     /// <returns>The number of rows affected.</returns>
@@ -51,7 +51,7 @@ public class DbService
     /// Opens a database connection, then executes a Transact-SQL statement and returns the number of rows affected.
     /// </summary>
     /// <param name="cmdText">The text of the query.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="type">The type of the cmdText. The default is Text.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
@@ -69,7 +69,7 @@ public class DbService
     /// and returns the number of rows affected.
     /// </summary>
     /// <param name="name">The name of the stored procedure.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>The number of rows affected.</returns>
     public int ExecProc(string name, object? data = null, int? timeout = null) => ExecCommand(name, data, timeout, CommandType.StoredProcedure);
@@ -80,7 +80,7 @@ public class DbService
     /// and returns the number of rows affected.
     /// </summary>
     /// <param name="name">The name of the stored procedure.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The number of rows affected.</returns>
@@ -92,7 +92,7 @@ public class DbService
     /// and returns the result as object.
     /// </summary>
     /// <param name="cmdText">The text of the query.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="type">The type of the cmdText. The default is Text.</param>
     /// <returns>The result as object.</returns>
@@ -110,7 +110,7 @@ public class DbService
     /// and returns the result as object.
     /// </summary>
     /// <param name="cmdText">The name of the stored procedure.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="type">The type of the cmdText. The default is Text.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
@@ -129,7 +129,7 @@ public class DbService
     /// and returns the result as object.
     /// </summary>
     /// <param name="name">The name of the stored procedure.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>The result as object.</returns>
     public T? FromProc<T>(string name, object? data = null, int? timeout = null)
@@ -141,7 +141,7 @@ public class DbService
     /// and returns the result as object.
     /// </summary>
     /// <param name="name">The name of the stored procedure.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The result as object.</returns>

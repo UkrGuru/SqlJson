@@ -2,7 +2,7 @@
 [![Nuget](https://img.shields.io/nuget/v/UkrGuru.SqlJson)](https://www.nuget.org/packages/UkrGuru.SqlJson/)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-yellow.svg)](https://www.paypal.com/donate/?hosted_button_id=BPUF3H86X96YN)
 
-This package provides fast and easy access to SQL Server databases through stored procedures only, and EF Core is not involved in this.
+This package provides fast and easy access through stored procedures to SQL Server databases, and EF Core is not involved in this.
 
 ## Background
 
@@ -23,19 +23,14 @@ dotnet add package UkrGuru.SqlJson
 
 ### 2. Add a new SqlJsonConnection to your database in appsettings.json
 ```json
-  "ConnectionStrings": {
+"ConnectionStrings": {
     "SqlJsonConnection": "Server=localhost;Database=SqlJsonDemo;Integrated Security=SSPI"
-  }
+}
 ```
 
-### 3. Open the ~/Startup.cs file and register the UkrGuru SqlJson service:
+### 3. Open the ~/Program.cs file and register the UkrGuru SqlJson service:
 ```c#
-public void ConfigureServices(IServiceCollection services)
-{
-  // more code may be present here
-  services.AddSqlJson(Configuration.GetConnectionString("SqlJsonConnection"));
-  // more code may be present here
-}
+builder.Services.AddUkrGuruSqlJson(builder.Configuration.GetConnectionString("SqlJsonConnection"));  
 ```
 
 ## Samples of code
@@ -76,12 +71,11 @@ public async Task<Contact> Post([FromBody] Contact item)
 
 ## Standard for procedures
 
-UkrGuru.SqlJson will automatically serialize C# input parameters list to json and deserialize result in object.
+UkrGuru.SqlJson will automatically normalize the input parameter and deserialize the result.
 
 So you must follow the next requirements:
-1. You can use procedures without parameters or with 1 specific parameter (@Data varchar)
-2. If used FromProcAsync then you need prepare result in json format with "FOR JSON PATH" for List<TEntity> or with "FOR JSON PATH, WITHOUT_ARRAY_WRAPPER" for TEntity
-
+1. You can use procedures without or with one specific @Data parameter only
+2. To use FromProcAsync, you need to prepare the result in json format with the "FOR JSON PATH" option for List or "FOR JSON PATH, WITHOUT_ARRAY_WRAPPER" for TEntity,
 
 ```sql
 CREATE PROCEDURE [dbo].[Contacts_List] 

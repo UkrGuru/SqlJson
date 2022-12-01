@@ -28,6 +28,7 @@ AS
 INSERT INTO Contacts (FullName, Email, Notes)
 SELECT * FROM OPENJSON(@Data) 
 WITH (FullName nvarchar(50), Email nvarchar(100), Notes nvarchar(max))
+
 SELECT CAST(SCOPE_IDENTITY() as varchar)
 ';
 

@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <Version>5.0.5</Version>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,7 +17,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\SqlJson.csproj" />
+    <None Include="Pages\Contacts\Create.cshtml" />
+    <None Include="Pages\Contacts\Delete.cshtml" />
+    <None Include="Pages\Contacts\Details.cshtml" />
+    <None Include="Pages\Contacts\Edit.cshtml" />
+    <None Include="Pages\Contacts\Index.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="UkrGuru.SqlJson" Version="5.0.11" />
   </ItemGroup>
 
 </Project>

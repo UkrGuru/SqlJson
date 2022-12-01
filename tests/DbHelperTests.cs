@@ -1,7 +1,7 @@
 using UkrGuru.Extensions;
 using Xunit;
 
-namespace UkrGuru.SqlJson.Tests;
+namespace SqlJsonTests;
 
 public class DbHelperTests
 {
@@ -15,13 +15,9 @@ public class DbHelperTests
 
     public DbHelperTests()
     {
-        var dbName = "SqlJsonTest";
+        DbHelper.ConnectionString = ConnectionString.Replace(DbHelper.DbName, "master");
 
-        var connectionString = $"Server=(localdb)\\mssqllocaldb;Database={dbName};Trusted_Connection=True";
-
-        DbHelper.ConnectionString = connectionString.Replace(dbName, "master");
-
-        DbHelper.ExecCommand($"IF DB_ID('{dbName}') IS NULL CREATE DATABASE {dbName};");
+        DbHelper.ExecCommand($"IF DB_ID('{DbHelper.DbName}') IS NULL CREATE DATABASE {DbHelper.DbName};");
 
         DbHelper.ConnectionString = connectionString;
 

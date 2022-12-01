@@ -6,7 +6,7 @@ namespace UkrGuru.Extensions;
 /// <summary>
 /// Additional set of functions for checking null or blank values.
 /// </summary>
-public static partial class ObjectExtensions
+public static class ObjectExtensions
 {
     /// <summary>
     /// Throws a System.ArgumentNullException if the argument is null, 

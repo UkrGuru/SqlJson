@@ -10,7 +10,7 @@
         <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
         <PackageIcon>ukrguru-logo.jpg</PackageIcon>
         <RepositoryUrl>https://github.com/UkrGuru/SqlJson</RepositoryUrl>
-        <Description>UkrGuru.SqlJson is fast and easy access to Sql Server databases through stored procedures and EF Core is not involved in this.</Description>
+        <Description>This package provides fast and easy access through stored procedures to SQL Server databases, and EF Core is not involved in this.</Description>
         <Version>5.0.11</Version>
         <SignAssembly>False</SignAssembly>
         <AssemblyOriginatorKeyFile>UkrGuru.pfx</AssemblyOriginatorKeyFile>

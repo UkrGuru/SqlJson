@@ -10,7 +10,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class WebJobsServiceCollectionExtensions
     {
-        public static void AddSqlJsonWebApp(this IServiceCollection services, string connectionString)
+        public static void AddSqlJsonWebApp(this IServiceCollection services, string? connectionString)
         {
             connectionString.ThrowIfBlank(nameof(connectionString));
 

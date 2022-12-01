@@ -22,7 +22,7 @@ public class DbHelper
     /// <summary>
     /// Initializes a new instance of the Microsoft.Data.SqlClient.SqlConnection class.
     /// </summary>
-    private static SqlConnection CreateSqlConnection() => new(_connectionString);
+    public static SqlConnection CreateSqlConnection() => new(_connectionString);
 
     /// <summary>
     /// Converts a data object to the standard @Data parameter.
@@ -58,7 +58,7 @@ public class DbHelper
     /// Opens a database connection, then executes a Transact-SQL statement and returns the number of rows affected.
     /// </summary>
     /// <param name="cmdText">The text of the query.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="type"></param>
     /// <returns>The number of rows affected.</returns>
@@ -76,7 +76,7 @@ public class DbHelper
     /// and returns the number of rows affected.
     /// </summary>
     /// <param name="cmdText">The text of the query.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="type">The type of the cmdText. The default is Text.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
@@ -96,7 +96,7 @@ public class DbHelper
     /// and returns the number of rows affected.
     /// </summary>
     /// <param name="name">The name of the stored procedure.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>The number of rows affected.</returns>
     public static int ExecProc(string name, object? data = null, int? timeout = null)
@@ -108,7 +108,7 @@ public class DbHelper
     /// and returns the number of rows affected.
     /// </summary>
     /// <param name="name">The name of the stored procedure.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The number of rows affected.</returns>
@@ -120,7 +120,7 @@ public class DbHelper
     /// and returns the result as object.
     /// </summary>
     /// <param name="cmdText">The name of the stored procedure.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="type">The type of the cmdText. The default is Text.</param>
     /// <returns>The result as object.</returns>
@@ -138,7 +138,7 @@ public class DbHelper
     /// and returns the result as object.
     /// </summary>
     /// <param name="cmdText">The name of the stored procedure.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="type">The type of the cmdText. The default is Text.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
@@ -157,7 +157,7 @@ public class DbHelper
     /// and returns the result as object.
     /// </summary>
     /// <param name="name">The name of the stored procedure.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>The result as object.</returns>
     public static T? FromProc<T>(string name, object? data = null, int? timeout = null)
@@ -169,7 +169,7 @@ public class DbHelper
     /// and returns the result as object.
     /// </summary>
     /// <param name="name">The name of the stored procedure.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The result as object.</returns>

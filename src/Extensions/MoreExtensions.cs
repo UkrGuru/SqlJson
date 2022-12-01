@@ -8,7 +8,7 @@ namespace UkrGuru.Extensions;
 /// <summary>
 /// Additional set of functions for the More dictionary.
 /// </summary>
-public static partial class MoreExtensions
+public static class MoreExtensions
 {
     /// <summary>
     /// Deserialize the text representing a array of key/value pairs then adds to the More dictionary.

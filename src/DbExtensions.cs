@@ -18,7 +18,7 @@ public static class DbExtensions
     /// </summary>
     /// <param name="connection">The connection instance to bind.</param>
     /// <param name="cmdText">The text of the query.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="type">The type of the cmdText. The default is Text.</param>
     /// <returns>New instance of the SqlCommand class with initialize parameters</returns>
@@ -39,7 +39,7 @@ public static class DbExtensions
     /// </summary>
     /// <param name="connection">The connection instance to bind.</param>
     /// <param name="cmdText">The text of the query.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="type">The type of the cmdText. The default is Text.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>The number of rows affected.</returns>
@@ -56,7 +56,7 @@ public static class DbExtensions
     /// </summary>
     /// <param name="connection">The connection instance to bind.</param>
     /// <param name="cmdText">The text of the query.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="type">The type of the cmdText. The default is Text.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
@@ -75,7 +75,7 @@ public static class DbExtensions
     /// </summary>
     /// <param name="connection">The connection instance to bind.</param>
     /// <param name="name">The name of the stored procedure.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>The number of rows affected.</returns>
     public static int ExecProc(this SqlConnection connection, string name, object? data = null, int? timeout = null)
@@ -88,7 +88,7 @@ public static class DbExtensions
     /// </summary>
     /// <param name="connection">The connection instance to bind.</param>
     /// <param name="name">The name of the stored procedure.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The number of rows affected.</returns>
@@ -101,7 +101,7 @@ public static class DbExtensions
     /// </summary>
     /// <param name="connection">The connection instance to bind.</param>
     /// <param name="cmdText">The text of the query.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="type">The type of the cmdText. The default is Text.</param>
     /// <returns>The result as object.</returns>
@@ -130,7 +130,7 @@ public static class DbExtensions
     /// </summary>
     /// <param name="connection">The connection instance to bind.</param>
     /// <param name="name">The name of the stored procedure.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="type">The type of the cmdText. The default is Text.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
@@ -160,7 +160,7 @@ public static class DbExtensions
     /// </summary>
     /// <param name="connection">The connection instance to bind.</param>
     /// <param name="name">The name of the stored procedure.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>The result as object.</returns>
     public static T? FromProc<T>(this SqlConnection connection, string name, object? data = null, int? timeout = null)
@@ -173,7 +173,7 @@ public static class DbExtensions
     /// </summary>
     /// <param name="connection">The connection instance to bind.</param>
     /// <param name="name">The name of the stored procedure.</param>
-    /// <param name="data">The single available '@Data' parameter for the stored procedure. The data object will be automatically serialized to json.</param>
+    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The result as object.</returns>

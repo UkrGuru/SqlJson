@@ -39,7 +39,7 @@ public static class StringExtensions
     /// <param name="defaultValue"></param>
     /// <returns></returns>
     public static T? ToObj<T>(this StringBuilder? jsonResult, T? defaultValue = default)
-        => jsonResult?.Length > 0 ? jsonResult.ToString().ToObj<T>() : default;
+        => jsonResult?.Length > 0 ? jsonResult.ToString().ToObj<T>() : defaultValue;
 
     /// <summary>
     /// Converts the string value to an equivalent T object.

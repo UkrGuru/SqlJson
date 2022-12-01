@@ -8,6 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="DbHelperTests.cs" />
+    <Compile Remove="Extensions\MoreExtensionsTests.cs" />
     <Compile Remove="Extensions\WJbFileTests.cs" />
   </ItemGroup>
 
@@ -26,6 +28,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\src\SqlJson.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions\" />
   </ItemGroup>
 
 </Project>

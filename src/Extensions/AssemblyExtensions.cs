@@ -9,7 +9,7 @@ namespace UkrGuru.Extensions;
 /// <summary>
 /// Additional feature set for installing sql patches, saved as a resource in this assembly.
 /// </summary>
-public static partial class AssemblyExtensions
+public static class AssemblyExtensions
 {
     /// <summary>
     /// Extracts and executes sql script from an assembly by resource name.
