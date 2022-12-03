@@ -19,13 +19,11 @@ public class WJbFileHelper
     /// <returns></returns>
     public static async Task<string?> GetAsync(string? value, CancellationToken cancellationToken = default)
     {
-        if (!string.IsNullOrEmpty(value) && Guid.TryParse(value, out Guid guid))
+        if (Guid.TryParse(value, out Guid guid))
         {
             var file = await GetAsync(guid, cancellationToken);
 
-            if (file?.FileContent == null) return null;
-
-            return Encoding.UTF8.GetString(file.FileContent);
+            return file?.FileContent == null ? null : Encoding.UTF8.GetString(file.FileContent);
         }
 
         return await Task.FromResult(value);
@@ -74,7 +72,7 @@ public class WJbFileHelper
     /// <returns></returns>
     public static async Task DelAsync(string? value, CancellationToken cancellationToken = default)
     {
-        if (!string.IsNullOrEmpty(value) && Guid.TryParse(value, out Guid guid)) await DelAsync(guid, cancellationToken);
+        if (Guid.TryParse(value, out Guid guid)) await DelAsync(guid, cancellationToken);
     }
 
     /// <summary>

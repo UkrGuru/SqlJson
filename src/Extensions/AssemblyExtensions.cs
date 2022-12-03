@@ -53,24 +53,26 @@ public static class AssemblyExtensions
 
         string? currectVersion = null;
 
-        try
-        {
-            currectVersion = DbHelper.FromCommand<string?>("""
-SELECT TOP 1 [value]
-FROM sys.extended_properties
-WHERE class = 0 AND class_desc = N'DATABASE' AND [name] = @Data
-""", assemblyName);
-        }
-        catch { }
+        try { currectVersion = DbHelper.FromCommand<string?>(cmd_version_get, assemblyName); } catch { }
 
         currectVersion ??= "0.0.0.0";
         if (currectVersion.CompareTo(assemblyVersion) != 0)
         {
             assembly.ExecResource($"{assemblyName}.Resources.InitDb.sql");
 
-            try
-            {
-                DbHelper.ExecCommand("""
+            try { DbHelper.ExecCommand(cmd_version_set, new { Name = assemblyName, Value = assemblyVersion }); } catch { }
+        }
+
+        return true;
+    }
+
+    private static readonly string cmd_version_get = """
+SELECT TOP 1 [value]
+FROM sys.extended_properties
+WHERE class = 0 AND class_desc = N'DATABASE' AND [name] = @Data
+""";
+
+    private static readonly string cmd_version_set = """
 DECLARE @Name nvarchar(100), @Value sql_variant
 
 SELECT @Name = D.[Name], @Value = CAST(D.[Value] AS sql_variant)
@@ -82,11 +84,5 @@ END TRY
 BEGIN CATCH
 	EXEC sp_addextendedproperty @name = @Name, @value = @Value;  
 END CATCH 
-""", new { Name = assemblyName, Value = assemblyVersion });
-            }
-            catch { }
-        }
-
-        return true;
-    }
+""";
 }

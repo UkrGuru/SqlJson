@@ -13,30 +13,22 @@ namespace SqlJsonWebApp.Pages.Contacts
         public DeleteModel(DbService db) => _db = db;
 
         [BindProperty]
-        public Contact Contact { get; set; }
+        public Contact? Contact { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             Contact = await _db.FromProcAsync<Contact>("Contacts_Get", id);
 
-            if (Contact.Id == 0)
-            {
-                return NotFound();
-            }
+            if (Contact == null) return NotFound();
+
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             await _db.ExecProcAsync("Contacts_Del", id);
 

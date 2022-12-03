@@ -12,21 +12,15 @@ namespace SqlJsonWebApp.Pages.Contacts
 
         public CreateModel(DbService db) => _db = db;
 
-        public IActionResult OnGet()
-        {
-            return Page();
-        }
+        public IActionResult OnGet() => Page();
 
         [BindProperty]
-        public Contact Contact { get; set; }
+        public Contact? Contact { get; set; }
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
+            if (!ModelState.IsValid) return Page();
 
             var id = await _db.FromProcAsync<int?>("Contacts_Ins", Contact);
 

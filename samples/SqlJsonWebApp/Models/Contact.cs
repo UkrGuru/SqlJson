@@ -8,11 +8,11 @@ namespace SqlJsonWebApp.Models
         public int Id { get; set; }
 
         [Required]
-        public string FullName { get; set; }
+        public string? FullName { get; set; }
 
         [Required]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
     }
 }

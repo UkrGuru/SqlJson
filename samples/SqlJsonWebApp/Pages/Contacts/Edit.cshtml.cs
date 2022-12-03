@@ -13,21 +13,16 @@ namespace SqlJsonWebApp.Pages.Contacts
         public EditModel(DbService db) => _db = db;
 
         [BindProperty]
-        public Contact Contact { get; set; }
+        public Contact? Contact { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             Contact = await _db.FromProcAsync<Contact>("Contacts_Get", id);
 
-            if (Contact.Id == 0)
-            {
-                return NotFound();
-            }
+            if (Contact == null) return NotFound();
+
             return Page();
         }
 
@@ -35,10 +30,7 @@ namespace SqlJsonWebApp.Pages.Contacts
         // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
+            if (!ModelState.IsValid) return Page();
 
             await _db.ExecProcAsync("Contacts_Upd", Contact);
 

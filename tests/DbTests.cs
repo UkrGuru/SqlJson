@@ -7,10 +7,6 @@ namespace SqlJsonTests;
 
 public class DbTests
 {
-    public static readonly string ConnectionString = "Server=(localdb)\\mssqllocaldb;Database=SqlJsonTest;Trusted_Connection=True";
-
-    private readonly bool dbOK = false;
-
     private static string DbName => new SqlConnectionStringBuilder(ConnectionString).InitialCatalog;
 
     public DbTests()

@@ -6,9 +6,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 
-builder.Services.AddUkrGuruSqlJson(builder.Configuration.GetConnectionString("SqlJsonConnection"));
-
-builder.Services.AddSqlJsonWebApp(builder.Configuration.GetConnectionString("SqlJsonConnection"));
+var connString = builder.Configuration.GetConnectionString("SqlJsonConnection");
+builder.Services.AddUkrGuruSqlJson(connString);
+builder.Services.AddSqlJsonWebApp(connString);
 
 var app = builder.Build();
 

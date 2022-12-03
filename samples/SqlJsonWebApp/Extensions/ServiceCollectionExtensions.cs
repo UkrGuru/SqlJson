@@ -12,11 +12,10 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static void AddSqlJsonWebApp(this IServiceCollection services, string? connectionString)
         {
-            connectionString.ThrowIfBlank(nameof(connectionString));
+            ArgumentNullException.ThrowIfNull(connectionString);
 
             var dbName = new SqlConnectionStringBuilder(connectionString).InitialCatalog;
-
-            dbName.ThrowIfBlank(nameof(dbName));
+            ArgumentNullException.ThrowIfNull(dbName);
 
             Assembly assembly = Assembly.GetExecutingAssembly();
             var product_name = assembly.GetName().Name;
