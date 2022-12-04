@@ -44,44 +44,21 @@ END
 
 BEGIN /*** Init WJbLogs ***/
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[WJbLogs]') AND type in (N'U'))
-BEGIN
-	CREATE TABLE [WJbLogs](
-		[LogId] [int] IDENTITY(1,1) NOT NULL,
-		[Logged] [datetime] NOT NULL,
-		[LogLevel] [int] NOT NULL,
-		[Title] [nvarchar](100) NOT NULL,
-		[LogMore] [nvarchar](max) NULL,
-	 CONSTRAINT [PK_WJbLogs] PRIMARY KEY CLUSTERED 
-	(
-		[LogId] DESC
-	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-	) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-END
+CREATE TABLE [WJbLogs](
+	[Logged] [datetime] NOT NULL,
+	[LogLevel] [tinyint] NOT NULL,
+	[Title] [nvarchar](100) NOT NULL,
+	[LogMore] [nvarchar](max) NULL
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[WJbLogs]') AND name = N'IX_WJbLogs_LoggedDesc')
-	CREATE NONCLUSTERED INDEX [IX_WJbLogs_LoggedDesc] ON [WJbLogs]
-	(
-		[Logged] DESC
-	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-
-IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[WJbLogs]') AND name = N'IX_WJbLogs_LogLevel')
-	CREATE NONCLUSTERED INDEX [IX_WJbLogs_LogLevel] ON [WJbLogs]
-	(
-		[LogLevel] ASC
-	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-
-SET ANSI_PADDING ON
-IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[WJbLogs]') AND name = N'IX_WJbLogs_Title')
-	CREATE NONCLUSTERED INDEX [IX_WJbLogs_Title] ON [WJbLogs]
-	(
-		[Title] ASC
-	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_WJbLogs_LoggedDesc] ON [WJbLogs]
+(
+	[Logged] DESC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[DF_WJbLogs_Created]') AND type = 'D')
-BEGIN
-	ALTER TABLE [WJbLogs] ADD  CONSTRAINT [DF_WJbLogs_Created]  DEFAULT (getdate()) FOR [Logged]
-END
-
+ALTER TABLE [WJbLogs] ADD  CONSTRAINT [DF_WJbLogs_Created]  DEFAULT (getdate()) FOR [Logged]
 END
 
 END
@@ -135,8 +112,8 @@ EXEC dbo.sp_executesql @statement = N'
 CREATE OR ALTER PROCEDURE [WJbLogs_Ins]
     @Data nvarchar(max)
 AS
-INSERT INTO WJbLogs (LogLevel, Title, LogMore)
-VALUES (JSON_VALUE(@Data, ''$.LogLevel''), JSON_VALUE(@Data, ''$.Title''), 
+INSERT INTO [WJbLogs] ([Logged], [LogLevel], [Title], [LogMore])
+VALUES (GETDATE(),JSON_VALUE(@Data, ''$.LogLevel''), JSON_VALUE(@Data, ''$.Title''), 
     ISNULL(JSON_QUERY(@Data, ''$.LogMore''), JSON_VALUE(@Data, ''$.LogMore'')))
 ';
 END

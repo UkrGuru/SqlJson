@@ -1,38 +1,10 @@
-﻿using Microsoft.Data.SqlClient;
-using System.Data;
-using UkrGuru.SqlJson;
-using Xunit;
+﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
+// Licensed under the MIT License. See License.txt in the project root for license information.
 
-namespace SqlJsonTests;
+namespace UkrGuru.SqlJson;
 
-public class DbTests
+public class DbExtensionsTests
 {
-    private static string DbName => new SqlConnectionStringBuilder(ConnectionString).InitialCatalog;
-
-    public DbTests()
-    {
-        DbHelper.ConnectionString = ConnectionString.Replace(DbName, "master");
-
-        DbHelper.ExecCommand($"IF DB_ID('{DbName}') IS NULL CREATE DATABASE {DbName};");
-
-        DbHelper.ConnectionString = ConnectionString;
-
-        if (dbOK) return;
-
-        dbOK = true;
-    }
-
-    [Fact]
-    public static void CreateSqlConnectionTests()
-    {
-        DbHelper.ConnectionString = ConnectionString;
-        var connection = DbHelper.CreateSqlConnection();
-
-        Assert.NotNull(connection);
-        Assert.Equal(DbName, connection.Database);
-        Assert.Equal(ConnectionString, connection.ConnectionString);
-    }
-
     //[Theory]
     //[InlineData("SELECT 1", null)]
     //[InlineData("SELECT 1", 1)]

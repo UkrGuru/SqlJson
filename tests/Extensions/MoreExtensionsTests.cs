@@ -1,12 +1,12 @@
 ﻿using System.Text.Json;
 using Xunit;
 
-namespace UkrGuru.Extensions.Tests;
+namespace UkrGuru.Extensions;
 
 public class MoreExtensionsTests
 {
     [Fact]
-    public void AddNewTest()
+    public void CanAddNew()
     {
         More more = new();
         more.AddNew(null);
@@ -35,7 +35,5 @@ public class MoreExtensionsTests
         var files1 = more.GetValue<object[]?>("files");
         Assert.Equal(files[0], Convert.ToString(files1?[0]));
         Assert.Equal(files[1], Convert.ToString(files1?[1]));
-
-        Assert.True(true);
     }
 }

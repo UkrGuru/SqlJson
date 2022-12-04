@@ -16,45 +16,13 @@ public static class WJbLogExtensions
     /// <summary>
     /// 
     /// </summary>
-    public static async Task LogTraceAsync(this SqlConnection connection, string title, object? more = null, CancellationToken cancellationToken = default)
-        => await connection.LogAsync(LogLevel.Trace, title, more, cancellationToken);
-    /// <summary>
-    /// 
-    /// </summary>
-    public static async Task LogDebugAsync(this SqlConnection connection, string title, object? more = null, CancellationToken cancellationToken = default)
-        => await connection.LogAsync(LogLevel.Debug, title, more, cancellationToken);
-    /// <summary>
-    /// 
-    /// </summary>
-    public static async Task LogInformationAsync(this SqlConnection connection, string title, object? more = null, CancellationToken cancellationToken = default)
-        => await connection.LogAsync(LogLevel.Information, title, more, cancellationToken);
-    /// <summary>
-    /// 
-    /// </summary>
-    public static async Task LogWarningAsync(this SqlConnection connection, string title, object? more = null, CancellationToken cancellationToken = default)
-        => await connection.LogAsync(LogLevel.Warning, title, more, cancellationToken);
-    /// <summary>
-    /// 
-    /// </summary>
-    public static async Task LogErrorAsync(this SqlConnection connection, string title, object? more = null, CancellationToken cancellationToken = default)
-        => await connection.LogAsync(LogLevel.Error, title, more, cancellationToken);
-    /// <summary>
-    /// 
-    /// </summary>
-    public static async Task LogCriticalAsync(this SqlConnection connection, string title, object? more = null, CancellationToken cancellationToken = default)
-        => await connection.LogAsync(LogLevel.Critical, title, more, cancellationToken);
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public static async Task LogAsync(this SqlConnection connection, LogLevel logLevel, string title, object? more = null, CancellationToken cancellationToken = default)
+    public static void Log(this SqlConnection connection, LogLevel logLevel, string title, object? more = null)
     {
         if ((byte)logLevel < (byte)WJbLogHelper.MinLogLevel) return;
 
         try
         {
-            _ = await connection.ExecProcAsync("WJbLogs_Ins", new { LogLevel = logLevel, Title = title, LogMore = more is string ? more : JsonSerializer.Serialize(more) },
-                  cancellationToken: cancellationToken);
+            _ = connection.ExecProc("WJbLogs_Ins", new { LogLevel = logLevel, Title = title, LogMore = more is string ? more : JsonSerializer.Serialize(more) });
         }
         catch { }
     }
@@ -84,17 +52,50 @@ public static class WJbLogExtensions
     /// </summary>
     public static void LogCritical(this SqlConnection connection, string title, object? more = null) => connection.Log(LogLevel.Critical, title, more);
 
+
     /// <summary>
     /// 
     /// </summary>
-    public static void Log(this SqlConnection connection, LogLevel logLevel, string title, object? more = null)
+    public static async Task LogAsync(this SqlConnection connection, LogLevel logLevel, string title, object? more = null, CancellationToken cancellationToken = default)
     {
         if ((byte)logLevel < (byte)WJbLogHelper.MinLogLevel) return;
 
         try
         {
-            connection.ExecProc("WJbLogs_Ins", new { LogLevel = logLevel, Title = title, LogMore = more is string ? more : JsonSerializer.Serialize(more) });
+            _ = await connection.ExecProcAsync("WJbLogs_Ins", new { LogLevel = logLevel, Title = title, LogMore = more is string ? more : JsonSerializer.Serialize(more) },
+                  cancellationToken: cancellationToken);
         }
         catch { }
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public static async Task LogTraceAsync(this SqlConnection connection, string title, object? more = null, CancellationToken cancellationToken = default)
+        => await connection.LogAsync(LogLevel.Trace, title, more, cancellationToken);
+    /// <summary>
+    /// 
+    /// </summary>
+    public static async Task LogDebugAsync(this SqlConnection connection, string title, object? more = null, CancellationToken cancellationToken = default)
+        => await connection.LogAsync(LogLevel.Debug, title, more, cancellationToken);
+    /// <summary>
+    /// 
+    /// </summary>
+    public static async Task LogInformationAsync(this SqlConnection connection, string title, object? more = null, CancellationToken cancellationToken = default)
+        => await connection.LogAsync(LogLevel.Information, title, more, cancellationToken);
+    /// <summary>
+    /// 
+    /// </summary>
+    public static async Task LogWarningAsync(this SqlConnection connection, string title, object? more = null, CancellationToken cancellationToken = default)
+        => await connection.LogAsync(LogLevel.Warning, title, more, cancellationToken);
+    /// <summary>
+    /// 
+    /// </summary>
+    public static async Task LogErrorAsync(this SqlConnection connection, string title, object? more = null, CancellationToken cancellationToken = default)
+        => await connection.LogAsync(LogLevel.Error, title, more, cancellationToken);
+    /// <summary>
+    /// 
+    /// </summary>
+    public static async Task LogCriticalAsync(this SqlConnection connection, string title, object? more = null, CancellationToken cancellationToken = default)
+        => await connection.LogAsync(LogLevel.Critical, title, more, cancellationToken);
 }

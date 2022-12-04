@@ -1,6 +1,6 @@
 ﻿namespace SqlJsonTests;
 
-internal class Globals
+public class Globals
 {
-    internal const string ConnectionString = "Server=(localdb)\\mssqllocaldb;Database=SqlJsonTest;Trusted_Connection=True";
+    public const string ConnectionString = "Server=(localdb)\\mssqllocaldb;Database=SqlJsonTest;Trusted_Connection=True";
 }

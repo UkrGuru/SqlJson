@@ -22,7 +22,7 @@ public class DbHelper
     /// <summary>
     /// Initializes a new instance of the Microsoft.Data.SqlClient.SqlConnection class.
     /// </summary>
-    public static SqlConnection CreateSqlConnection() => new(_connectionString);
+    private static SqlConnection CreateSqlConnection() => new(_connectionString);
 
     /// <summary>
     /// Converts a data object to the standard @Data parameter.

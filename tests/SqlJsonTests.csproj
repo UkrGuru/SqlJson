@@ -8,21 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="DbHelperTests.cs" />
+    <Compile Remove="DbHelperTests2.cs" />
     <Compile Remove="DbTests.cs" />
-    <Compile Remove="Extensions\MoreExtensionsTests.cs" />
-    <Compile Remove="Extensions\WJbFileTests.cs" />
-    <Compile Remove="NormalizeTests.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Resources\InitDb.sql" />
-    <None Remove="Resources\SELECT_1.sql" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\InitDb.sql" />
-    <EmbeddedResource Include="Resources\SELECT_1.sql" />
   </ItemGroup>
 
   <ItemGroup>
