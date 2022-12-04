@@ -66,13 +66,13 @@ public static class AssemblyExtensions
         return true;
     }
 
-    private static readonly string cmd_version_get = """
+    private static readonly string cmd_version_get = @"
 SELECT TOP 1 [value]
 FROM sys.extended_properties
 WHERE class = 0 AND class_desc = N'DATABASE' AND [name] = @Data
-""";
+";
 
-    private static readonly string cmd_version_set = """
+    private static readonly string cmd_version_set = @"
 DECLARE @Name nvarchar(100), @Value sql_variant
 
 SELECT @Name = D.[Name], @Value = CAST(D.[Value] AS sql_variant)
@@ -84,5 +84,5 @@ END TRY
 BEGIN CATCH
 	EXEC sp_addextendedproperty @name = @Name, @value = @Value;  
 END CATCH 
-""";
+";
 }

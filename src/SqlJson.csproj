@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <Authors>UkrGuru</Authors>
@@ -11,10 +11,10 @@
         <PackageIcon>ukrguru-logo.jpg</PackageIcon>
         <RepositoryUrl>https://github.com/UkrGuru/SqlJson</RepositoryUrl>
         <Description>This package provides fast and easy access through stored procedures to SQL Server databases, and EF Core is not involved in this.</Description>
-        <Version>5.0.11</Version>
+        <Version>5.0.6</Version>
         <SignAssembly>False</SignAssembly>
         <AssemblyOriginatorKeyFile>UkrGuru.pfx</AssemblyOriginatorKeyFile>
-        <PackageTags>.net7 sql-server stored-procedures json data</PackageTags>
+        <PackageTags>dotnet adonet sqlclient json data sql-server</PackageTags>
         <PackageReleaseNotes>Extensions reorganized.</PackageReleaseNotes>
         <DebugType>none</DebugType>
         <DelaySign>False</DelaySign>
@@ -22,7 +22,6 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <AssemblyName>UkrGuru.SqlJson</AssemblyName>
         <RootNamespace>UkrGuru.SqlJson</RootNamespace>
-
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
       <DebugType>full</DebugType>
@@ -32,12 +31,6 @@
     </PropertyGroup>
     <ItemGroup>
       <None Remove="Resources\InitDb.sql" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.1" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -54,5 +47,11 @@
             <PackagePath>\</PackagePath>
         </EmbeddedResource>
         <EmbeddedResource Include="Resources\InitDb.sql" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.1" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
     </ItemGroup>
 </Project>
