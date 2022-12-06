@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
+        <TargetFrameworks>net7.0;net6.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <Authors>UkrGuru</Authors>
@@ -11,10 +12,10 @@
         <PackageIcon>ukrguru-logo.jpg</PackageIcon>
         <RepositoryUrl>https://github.com/UkrGuru/SqlJson</RepositoryUrl>
         <Description>This package provides fast and easy access through stored procedures to SQL Server databases, and EF Core is not involved in this.</Description>
-        <Version>5.0.6</Version>
-        <SignAssembly>False</SignAssembly>
-        <AssemblyOriginatorKeyFile>UkrGuru.pfx</AssemblyOriginatorKeyFile>
-        <PackageTags>dotnet adonet sqlclient json data sql-server</PackageTags>
+        <Version>5.0.12</Version>
+        <SignAssembly>True</SignAssembly>
+        <AssemblyOriginatorKeyFile>..\..\UkrGuru.snk</AssemblyOriginatorKeyFile>
+        <PackageTags>sqlclient sql-server stored-procedures ado-net json .net6 .net7</PackageTags>
         <PackageReleaseNotes>Extensions reorganized.</PackageReleaseNotes>
         <DebugType>none</DebugType>
         <DelaySign>False</DelaySign>
@@ -22,15 +23,31 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <AssemblyName>UkrGuru.SqlJson</AssemblyName>
         <RootNamespace>UkrGuru.SqlJson</RootNamespace>
+        <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+        <PackageProjectUrl>https://ukrguru.com/sqljson</PackageProjectUrl>
+        <RepositoryType>git</RepositoryType>
+        <IncludeSymbols>True</IncludeSymbols>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-      <DebugType>full</DebugType>
+        <DebugType>full</DebugType>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-      <DebugType>full</DebugType>
+        <DebugType>full</DebugType>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0|AnyCPU'">
+        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0|AnyCPU'">
+        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0|AnyCPU'">
+        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0|AnyCPU'">
+        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     </PropertyGroup>
     <ItemGroup>
-      <None Remove="Resources\InitDb.sql" />
+        <None Remove="Resources\InitDb.sql" />
     </ItemGroup>
 
     <ItemGroup>
@@ -50,8 +67,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.1" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
     </ItemGroup>
 </Project>
