@@ -1,6 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
         <TargetFrameworks>net7.0;net6.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
@@ -16,7 +15,7 @@
         <SignAssembly>True</SignAssembly>
         <AssemblyOriginatorKeyFile>..\..\UkrGuru.snk</AssemblyOriginatorKeyFile>
         <PackageTags>sqlclient sql-server stored-procedures ado-net json .net6 .net7</PackageTags>
-        <PackageReleaseNotes>Extensions reorganized.</PackageReleaseNotes>
+        <PackageReleaseNotes></PackageReleaseNotes>
         <DebugType>none</DebugType>
         <DelaySign>False</DelaySign>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>

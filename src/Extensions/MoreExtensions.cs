@@ -6,12 +6,12 @@ using System.Text.Json;
 namespace UkrGuru.Extensions;
 
 /// <summary>
-/// Additional set of functions for the More dictionary.
+/// Base functions for the More dictionary.
 /// </summary>
 public static class MoreExtensions
 {
     /// <summary>
-    /// Deserialize the text representing a array of key/value pairs then adds to the More dictionary.
+    /// Deserialize the json in a dictionary, then add the non-existing key/value pairs to the More dictionary.
     /// </summary>
     /// <param name="more"></param>
     /// <param name="json"></param>
@@ -19,9 +19,9 @@ public static class MoreExtensions
     {
         if (string.IsNullOrEmpty(json)) return;
 
-        var items = JsonSerializer.Deserialize<More>(json)!;
+        var items = JsonSerializer.Deserialize<More>(json);
 
-        foreach (var item in items.Where(item => !more.ContainsKey(item.Key)))
+        foreach (var item in items!.Where(item => !more.ContainsKey(item.Key)))
             more.Add(item.Key, item.Value);
     }
 

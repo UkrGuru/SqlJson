@@ -40,7 +40,7 @@ public static class AssemblyExtensions
     }
 
     /// <summary>
-    /// 
+    /// Initializes the current database for UkrGuru extensions
     /// </summary>
     /// <param name="assembly"></param>
     /// <returns></returns>
@@ -53,26 +53,26 @@ public static class AssemblyExtensions
 
         string? currectVersion = null;
 
-        try { currectVersion = DbHelper.FromCommand<string?>(cmd_version_get, assemblyName); } catch { }
+        try { currectVersion = DbHelper.FromCommand<string?>(cmd_ver_get, assemblyName); } catch { }
 
         currectVersion ??= "0.0.0.0";
         if (currectVersion.CompareTo(assemblyVersion) != 0)
         {
             assembly.ExecResource($"{assemblyName}.Resources.InitDb.sql");
 
-            try { DbHelper.ExecCommand(cmd_version_set, new { Name = assemblyName, Value = assemblyVersion }); } catch { }
+            try { DbHelper.ExecCommand(cmd_ver_set, new { Name = assemblyName, Value = assemblyVersion }); } catch { }
         }
 
         return true;
     }
 
-    private static readonly string cmd_version_get = @"
+    private static readonly string cmd_ver_get = @"
 SELECT TOP 1 [value]
 FROM sys.extended_properties
 WHERE class = 0 AND class_desc = N'DATABASE' AND [name] = @Data
 ";
 
-    private static readonly string cmd_version_set = @"
+    private static readonly string cmd_ver_set = @"
 DECLARE @Name nvarchar(100), @Value sql_variant
 
 SELECT @Name = D.[Name], @Value = CAST(D.[Value] AS sql_variant)

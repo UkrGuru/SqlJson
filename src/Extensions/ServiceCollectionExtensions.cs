@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using UkrGuru.Extensions;
 using UkrGuru.SqlJson;
@@ -26,7 +25,7 @@ public static class UkrGuruSqlJsonExtensions
 
         DbHelper.ConnectionString = connectionString;
 
-        services.AddScoped<DbService>();
+        services.AddSingleton<DbService>();
 
         return services;
     }

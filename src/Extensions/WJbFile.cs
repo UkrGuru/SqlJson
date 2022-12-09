@@ -3,37 +3,36 @@
 
 using System.ComponentModel.DataAnnotations;
 
-namespace UkrGuru.Extensions
+namespace UkrGuru.Extensions;
+
+/// <summary>
+/// 
+/// </summary>
+public sealed class WJbFile
 {
     /// <summary>
     /// 
     /// </summary>
-    public partial class WJbFile
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        [Key]
-        public Guid? Id { get; set; }
+    [Key]
+    public Guid? Id { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public DateTime? Created { get; set; }
+    /// <summary>
+    /// 
+    /// </summary>
+    public DateTime? Created { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public string? FileName { get; set; }
+    /// <summary>
+    /// 
+    /// </summary>
+    public string? FileName { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public byte[]? FileContent { get; set; }
+    /// <summary>
+    /// 
+    /// </summary>
+    public byte[]? FileContent { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool Safe { get; set; } = false;
-    }
+    /// <summary>
+    /// 
+    /// </summary>
+    public bool Safe { get; set; } = false;
 }

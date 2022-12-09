@@ -11,6 +11,7 @@ public class MoreExtensionsTests
         More more = new();
         more.AddNew(null);
         more.AddNew("");
+        more.AddNew("{}");
         more.AddNew(JsonSerializer.Serialize(new {type = "Rule", data = "", data1 = null as string, boolTrue = true, boolFalse = false, boolNull = (bool?)null }));
 
         var files = new[] { "file1.txt", "file2.txt" };

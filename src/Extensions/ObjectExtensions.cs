@@ -16,7 +16,7 @@ public static class ObjectExtensions
     /// <param name="argument"></param>
     /// <param name="argumentName"></param>
     /// <returns></returns>
-    public static T? ThrowIfNull<T>(this T? argument, string? argumentName)
+    public static T? ThrowIfNull<T>(this T? argument, string? argumentName = null)
     {
         ArgumentNullException.ThrowIfNull(argument, argumentName);
 

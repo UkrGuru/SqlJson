@@ -21,12 +21,14 @@ public static class StringExtensions
     /// <param name="argumentName"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
-    public static string? ThrowIfBlank(this string? argument, string? argumentName)
+    public static string? ThrowIfBlank(this string? argument, string? argumentName = null)
     {
         ArgumentNullException.ThrowIfNull(argument, argumentName);
-
+        
+        argumentName ??= nameof(argument);
+        
         if (string.IsNullOrWhiteSpace(argument))
-            throw new ArgumentException($"'{argumentName}' cannot be blank.", argumentName);
+            throw new ArgumentException($"'{argumentName}' cannot be blank.");
 
         return argument;
     }
