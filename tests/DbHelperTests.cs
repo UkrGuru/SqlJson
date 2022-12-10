@@ -123,10 +123,39 @@ public class DbHelperTests
         _ = DbHelper.ExecProc("ExecProcTest", dt1);
     }
 
-    //[Fact]
-    //public async Task CanExecProcAsync()
-    //{
-    //}
+    [Fact]
+    public async Task CanExecProcAsync()
+    {
+        _ = await DbHelper.ExecCommandAsync("IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[TableAsync]') AND type in (N'U')) DROP TABLE [dbo].[TableAsync]");
+
+        _ = await DbHelper.ExecCommandAsync("CREATE TABLE [dbo].[TableAsync] ([value][sql_variant] NULL) ON [PRIMARY]");
+
+        _ = await DbHelper.ExecCommandAsync("CREATE OR ALTER PROCEDURE [dbo].[ExecProcAsyncTest] @Data sql_variant = NULL AS INSERT INTO [TableAsync] (Value) VALUES(@Data)");
+
+        _ = await DbHelper.ExecProcAsync("ExecProcAsyncTest");
+
+        string? null1 = null;
+        _ = await DbHelper.ExecProcAsync("ExecProcAsyncTest", null1);
+
+        var str1 = "String";
+        _ = await DbHelper.ExecProcAsync("ExecProcAsyncTest", str1);
+
+        var class1 = new { Id = 1, Name = "Region1" };
+        _ = await DbHelper.ExecProcAsync("ExecProcAsyncTest", class1);
+
+        var int1 = 123;
+        _ = await DbHelper.ExecProcAsync("ExecProcAsyncTest", int1);
+
+        var double1 = 123.45;
+        _ = await DbHelper.ExecProcAsync("ExecProcAsyncTest", double1);
+
+        var guid1 = Guid.NewGuid();
+        _ = await DbHelper.ExecProcAsync("ExecProcAsyncTest", guid1);
+
+        var dt1 = new DateTime(2000, 1, 1);
+        _ = await DbHelper.ExecProcAsync("ExecProcAsyncTest", dt1);
+
+    }
 
     [Fact]
     public void CanFromCommand()
@@ -144,10 +173,21 @@ public class DbHelperTests
         Assert.Equal("John", name);
     }
 
-    //[Fact]
-    //public async Task CanFromCommandAsync()
-    //{
-    //}
+    [Fact]
+    public async Task CanFromCommandAsync()
+    {
+        var num1 = await DbHelper.FromCommandAsync<int?>("SELECT CAST(1 as varchar)");
+        Assert.Equal(1, num1);
+
+        var num2 = await DbHelper.FromCommandAsync<int?>("SELECT CAST(NULL as varchar)");
+        Assert.Null(num2);
+
+        var data = await DbHelper.FromCommandAsync<string?>("SELECT @Data", "Data");
+        Assert.Equal("Data", data);
+
+        var name = await DbHelper.FromCommandAsync<string?>("SELECT JSON_VALUE(@Data, '$.Name')", new { Name = "John" });
+        Assert.Equal("John", name);
+    }
 
     [Fact]
     public void CanFromProc()
@@ -171,8 +211,25 @@ public class DbHelperTests
         Assert.Equal("John", name);
     }
 
-    //[Fact]
-    //public async Task CanFromProcAsync()
-    //{
-    //}
+    [Fact]
+    public async Task CanFromProcAsync()
+    {
+        _ = await DbHelper.ExecCommandAsync("CREATE OR ALTER PROCEDURE [dbo].[FromProcIntAsyncTest] @Data int = NULL AS SELECT CAST(@Data as varchar);");
+
+        _ = await DbHelper.ExecCommandAsync("CREATE OR ALTER PROCEDURE [dbo].[FromProcStrAsyncTest] @Data varchar(100) = NULL AS SELECT @Data;");
+
+        _ = await DbHelper.ExecCommandAsync("CREATE OR ALTER PROCEDURE [dbo].[FromProcObjAsyncTest] @Data varchar(100) = NULL AS SELECT JSON_VALUE(@Data, '$.Name');");
+
+        var num1 = DbHelper.FromProc<int?>("FromProcIntAsyncTest", 1);
+        Assert.Equal(1, num1);
+
+        var num2 = await DbHelper.FromProcAsync<int?>("FromProcIntAsyncTest", null);
+        Assert.Null(num2);
+
+        var data = await DbHelper.FromProcAsync<string?>("FromProcStrAsyncTest", "Data");
+        Assert.Equal("Data", data);
+
+        var name = await DbHelper.FromProcAsync<string?>("FromProcObjAsyncTest", new { Name = "John" });
+        Assert.Equal("John", name);
+    }
 }

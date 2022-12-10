@@ -12,7 +12,7 @@ namespace UkrGuru.Extensions;
 public static class WJbFileExtensions
 {
     /// <summary>
-    /// 
+    /// Save file in the current database
     /// </summary>
     /// <param name="file"></param>
     /// <param name="cancellationToken"></param>
@@ -38,7 +38,7 @@ public static class WJbFileExtensions
     }
 
     /// <summary>
-    /// 
+    /// Compression of the file content
     /// </summary>
     /// <param name="file"></param>
     /// <param name="cancellationToken"></param>
@@ -59,7 +59,7 @@ public static class WJbFileExtensions
     }
 
     /// <summary>
-    /// 
+    /// Decompression of the file content
     /// </summary>
     /// <param name="file"></param>
     /// <param name="cancellationToken"></param>

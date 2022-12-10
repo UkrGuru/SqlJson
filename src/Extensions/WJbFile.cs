@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 namespace UkrGuru.Extensions;
 
 /// <summary>
-/// 
+/// UkrGuru's files are stored in the Sql Server database.
 /// </summary>
 public sealed class WJbFile
 {

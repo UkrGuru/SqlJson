@@ -36,12 +36,14 @@ public static class UkrGuruSqlJsonExtensions
     /// <param name="services"></param>
     /// <param name="connectionString"></param>
     /// <param name="logLevel"></param>
-    public static void AddUkrGuruSqlJsonExt(this IServiceCollection services, string? connectionString = null, LogLevel logLevel = LogLevel.Debug)
+    public static IServiceCollection AddUkrGuruSqlJsonExt(this IServiceCollection services, string? connectionString = null, LogLevel logLevel = LogLevel.Debug)
     {
         services.AddUkrGuruSqlJson(connectionString);
 
         WJbLogHelper.MinLogLevel = logLevel;
 
         Assembly.GetExecutingAssembly().InitDb();
+        
+        return services;
     }
 }

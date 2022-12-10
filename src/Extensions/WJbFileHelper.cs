@@ -12,7 +12,7 @@ namespace UkrGuru.Extensions;
 public class WJbFileHelper
 {
     /// <summary>
-    /// 
+    /// Load file from current database
     /// </summary>
     /// <param name="value"></param>
     /// <param name="cancellationToken"></param>
@@ -30,7 +30,7 @@ public class WJbFileHelper
     }
 
     /// <summary>
-    /// 
+    /// Load file from current database
     /// </summary>
     /// <param name="guid"></param>
     /// <param name="cancellationToken"></param>
@@ -45,7 +45,7 @@ public class WJbFileHelper
     }
 
     /// <summary>
-    /// 
+    /// Save file in the current database
     /// </summary>
     /// <param name="value"></param>
     /// <param name="filename"></param>
@@ -65,7 +65,7 @@ public class WJbFileHelper
     }
 
     /// <summary>
-    /// 
+    /// Delete file in the current database
     /// </summary>
     /// <param name="value"></param>
     /// <param name="cancellationToken"></param>
@@ -76,7 +76,7 @@ public class WJbFileHelper
     }
 
     /// <summary>
-    /// 
+    /// Delete file in the current database
     /// </summary>
     /// <param name="guid"></param>
     /// <param name="cancellationToken"></param>
