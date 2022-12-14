@@ -27,7 +27,7 @@ public static class StringExtensions
         
         argumentName ??= nameof(argument);
         
-        if (string.IsNullOrWhiteSpace(argument))
+        if (string.IsNullOrEmpty(argument))
             throw new ArgumentException($"'{argumentName}' cannot be blank.");
 
         return argument;

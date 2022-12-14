@@ -15,7 +15,7 @@
         <SignAssembly>True</SignAssembly>
         <AssemblyOriginatorKeyFile>..\..\UkrGuru.snk</AssemblyOriginatorKeyFile>
         <PackageTags>sqlclient sql-server stored-procedures ado-net json .net6 .net7</PackageTags>
-        <PackageReleaseNotes></PackageReleaseNotes>
+        <PackageReleaseNotes>Actual version.</PackageReleaseNotes>
         <DebugType>none</DebugType>
         <DelaySign>False</DelaySign>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>

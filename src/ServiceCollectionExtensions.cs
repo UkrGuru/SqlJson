@@ -4,7 +4,6 @@
 using System.Reflection;
 using UkrGuru.Extensions;
 using UkrGuru.SqlJson;
-using LogLevel = UkrGuru.Extensions.WJbLog.Level;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -14,7 +13,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 public static class UkrGuruSqlJsonExtensions
 {
     /// <summary>
-    /// Registers the UkrGuru SqlJson services. You must call it in the ConfigureServices method of the Startup class of your project.
+    /// Registers UkrGuru SqlJson services.
     /// </summary>
     /// <param name="services">The IServiceCollection argument the ConfigureServices method receives.</param>
     /// <param name="connectionString">The connection string used to open the SQL Server database.</param>
@@ -31,15 +30,12 @@ public static class UkrGuruSqlJsonExtensions
     }
 
     /// <summary>
-    /// 
+    /// Registers UkrGuru extensions.
     /// </summary>
-    /// <param name="services"></param>
-    /// <param name="connectionString"></param>
+    /// <param name="services">The IServiceCollection argument the ConfigureServices method receives.</param>
     /// <param name="logLevel"></param>
-    public static IServiceCollection AddUkrGuruSqlJsonExt(this IServiceCollection services, string? connectionString = null, LogLevel logLevel = LogLevel.Debug)
+    public static IServiceCollection AddUkrGuruExtensions(this IServiceCollection services, WJbLog.Level logLevel = WJbLog.Level.Debug)
     {
-        services.AddUkrGuruSqlJson(connectionString);
-
         WJbLogHelper.MinLogLevel = logLevel;
 
         Assembly.GetExecutingAssembly().InitDb();

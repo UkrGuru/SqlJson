@@ -9,8 +9,7 @@ namespace UkrGuru.Extensions;
 public static class ObjectExtensions
 {
     /// <summary>
-    /// Throws a System.ArgumentNullException if the argument is null, 
-    /// otherwise the returned argument.
+    /// Throws a System.ArgumentNullException if the argument is null, otherwise the returned argument.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="argument"></param>
