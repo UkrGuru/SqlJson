@@ -29,7 +29,7 @@ public class DbHelper
     /// </summary>
     /// <param name="data">The string or object value to convert.</param>
     /// <returns>The standard value for the @Data parameter.</returns>
-    public static object NormalizeParams(object data)
+    public static object Normalize(object data)
     {
         switch (data.GetType().Name)
         {

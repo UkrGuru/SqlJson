@@ -53,14 +53,14 @@ public static class AssemblyExtensions
 
         string? currectVersion = null;
 
-        try { currectVersion = DbHelper.FromCommand<string?>(cmd_ver_get, assemblyName); } catch { }
+        currectVersion = DbHelper.FromCommand<string?>(cmd_ver_get, assemblyName);
 
         currectVersion ??= "0.0.0.0";
         if (currectVersion.CompareTo(assemblyVersion) != 0)
         {
             assembly.ExecResource($"{assemblyName}.Resources.InitDb.sql");
 
-            try { DbHelper.ExecCommand(cmd_ver_set, new { Name = assemblyName, Value = assemblyVersion }); } catch { }
+            DbHelper.ExecCommand(cmd_ver_set, new { Name = assemblyName, Value = assemblyVersion });
         }
 
         return true;

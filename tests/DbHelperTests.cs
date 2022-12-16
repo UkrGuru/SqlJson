@@ -22,50 +22,50 @@ public class DbHelperTests
     //}
 
     [Fact]
-    public void CanNormalizeParams()
+    public void CanNormalize()
     {
         object data = "str1";
-        Assert.Equal(data, DbHelper.NormalizeParams(data));
+        Assert.Equal(data, DbHelper.Normalize(data));
 
         data = true;
-        Assert.Equal(data, DbHelper.NormalizeParams(data));
+        Assert.Equal(data, DbHelper.Normalize(data));
         data = false;
-        Assert.Equal(data, DbHelper.NormalizeParams(data));
+        Assert.Equal(data, DbHelper.Normalize(data));
 
         data = (byte)1;
-        Assert.Equal(data, DbHelper.NormalizeParams(data));
+        Assert.Equal(data, DbHelper.Normalize(data));
         data = new byte[] { 1, 2 };
-        Assert.Equal(data, DbHelper.NormalizeParams(data));
+        Assert.Equal(data, DbHelper.Normalize(data));
 
         data = new char[] { '1', '2' };
-        Assert.Equal(data, DbHelper.NormalizeParams(data));
+        Assert.Equal(data, DbHelper.Normalize(data));
 
         data = new DateTime(2000, 1, 1);
-        Assert.Equal(data, DbHelper.NormalizeParams(data));
+        Assert.Equal(data, DbHelper.Normalize(data));
 
         data = new DateTimeOffset(new DateTime(2000, 1, 1));
-        Assert.Equal(data, DbHelper.NormalizeParams(data));
+        Assert.Equal(data, DbHelper.Normalize(data));
 
         data = (decimal)123.45;
-        Assert.Equal(data, DbHelper.NormalizeParams(data));
+        Assert.Equal(data, DbHelper.Normalize(data));
 
         data = (double)123.45;
-        Assert.Equal(data, DbHelper.NormalizeParams(data));
+        Assert.Equal(data, DbHelper.Normalize(data));
 
         data = Guid.NewGuid();
-        Assert.Equal(data, DbHelper.NormalizeParams(data));
+        Assert.Equal(data, DbHelper.Normalize(data));
 
         data = (Int16)1;
-        Assert.Equal(data, DbHelper.NormalizeParams(data));
+        Assert.Equal(data, DbHelper.Normalize(data));
 
         data = (Int32)1;
-        Assert.Equal(data, DbHelper.NormalizeParams(data));
+        Assert.Equal(data, DbHelper.Normalize(data));
 
         data = new { Name = "Proc1" };
-        Assert.Equal(JsonSerializer.Serialize(data), DbHelper.NormalizeParams(data));
+        Assert.Equal(JsonSerializer.Serialize(data), DbHelper.Normalize(data));
 
         data = JsonSerializer.Serialize(new { Name = "Proc1" });
-        Assert.Equal(data, DbHelper.NormalizeParams(JsonSerializer.Deserialize<dynamic?>(Convert.ToString(data)!)));
+        Assert.Equal(data, DbHelper.Normalize(JsonSerializer.Deserialize<dynamic?>(Convert.ToString(data)!)));
     }
 
     [Fact]

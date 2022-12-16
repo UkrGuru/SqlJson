@@ -23,15 +23,21 @@ public class WJbLogHelper
     /// <param name="logLevel"></param>
     /// <param name="title"></param>
     /// <param name="more"></param>
-    public static void Log(LogLevel logLevel, string title, object? more = null)
-    {
-        if ((byte)logLevel < (byte)MinLogLevel) return;
+    /// <returns></returns>
+    public static object Normalize(LogLevel logLevel, string title, object? more = null) 
+        => new { LogLevel = logLevel, Title = title, LogMore = more is string ? more : JsonSerializer.Serialize(more) };
 
-        try
-        {
-            _ = DbHelper.ExecProc("WJbLogs_Ins", new { LogLevel = logLevel, Title = title, LogMore = more is string ? more : JsonSerializer.Serialize(more) });
-        }
-        catch { }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="logLevel"></param>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    public static int Log(LogLevel logLevel, string title, object? more = null)
+    {
+        if ((byte)logLevel < (byte)MinLogLevel) return 0;
+
+        return DbHelper.ExecProc("WJbLogs_Ins", Normalize(logLevel, title, more));
     }
 
     /// <summary>
@@ -84,16 +90,11 @@ public class WJbLogHelper
     /// <param name="more"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public static async Task LogAsync(LogLevel logLevel, string title, object? more = null, CancellationToken cancellationToken = default)
+    public static async Task<int> LogAsync(LogLevel logLevel, string title, object? more = null, CancellationToken cancellationToken = default)
     {
-        if ((byte)logLevel < (byte)MinLogLevel) return;
+        if ((byte)logLevel < (byte)MinLogLevel) return await Task.FromResult(0);
 
-        try
-        {
-            _ = await DbHelper.ExecProcAsync("WJbLogs_Ins", new { LogLevel = logLevel, Title = title, LogMore = more is string ? more : JsonSerializer.Serialize(more) },
-                  cancellationToken: cancellationToken);
-        }
-        catch { }
+        return await DbHelper.ExecProcAsync("WJbLogs_Ins", Normalize(logLevel, title, more), cancellationToken: cancellationToken);
     }
 
     /// <summary>

@@ -27,7 +27,7 @@ public static class DbExtensions
         SqlCommand command = new(cmdText, connection);
         command.CommandType = type;
 
-        if (data != null) command.Parameters.AddWithValue("@Data", DbHelper.NormalizeParams(data));
+        if (data != null) command.Parameters.AddWithValue("@Data", DbHelper.Normalize(data));
 
         if (timeout.HasValue) command.CommandTimeout = timeout.Value;
 

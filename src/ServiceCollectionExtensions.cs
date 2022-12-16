@@ -10,7 +10,7 @@ namespace Microsoft.Extensions.DependencyInjection;
 /// <summary>
 /// Class that contains the UkrGuru service extensions.
 /// </summary>
-public static class UkrGuruSqlJsonExtensions
+public static class SqlJsonServiceCollectionExtensions
 {
     /// <summary>
     /// Registers UkrGuru SqlJson services.
