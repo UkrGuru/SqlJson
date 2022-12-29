@@ -1,14 +1,13 @@
 ﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using System.Globalization;
-using System.Text;
 using System.Text.Json;
+using System.Text;
 
 namespace UkrGuru.Extensions;
 
 /// <summary>
-/// Additional set of functions for converting to an object of a specific type.
+/// 
 /// </summary>
 public static class StringExtensions
 {
@@ -24,11 +23,9 @@ public static class StringExtensions
     public static string? ThrowIfBlank(this string? argument, string? argumentName = null)
     {
         ArgumentNullException.ThrowIfNull(argument, argumentName);
-        
-        argumentName ??= nameof(argument);
-        
+
         if (string.IsNullOrEmpty(argument))
-            throw new ArgumentException($"'{argumentName}' cannot be blank.");
+            throw new ArgumentException($"'{argumentName ?? nameof(argument)}' cannot be blank.");
 
         return argument;
     }
@@ -41,7 +38,7 @@ public static class StringExtensions
     /// <param name="defaultValue"></param>
     /// <returns></returns>
     public static T? ToObj<T>(this StringBuilder? jsonResult, T? defaultValue = default)
-        => jsonResult?.Length > 0 ? jsonResult.ToString().ToObj<T>() : defaultValue;
+        => jsonResult?.Length > 0 ? jsonResult.ToString().ToObj<T?>() : defaultValue;
 
     /// <summary>
     /// Converts the string value to an equivalent T object.
@@ -60,17 +57,17 @@ public static class StringExtensions
         if (type == typeof(string))
             return (T?)(object)value;
 
+        else if (type.IsClass)
+            return JsonSerializer.Deserialize<T?>(value);
+
         else if (type == typeof(Guid))
             return (T?)(object)Guid.Parse(value);
-
-        else if (type.IsClass)
-            return JsonSerializer.Deserialize<T>(value);
 
         else if (type.IsEnum)
             return (T?)Enum.Parse(type, value);
 
-        else if (type.IsPrimitive)
-            return (T?)Convert.ChangeType(value, type, CultureInfo.CurrentCulture);
+        //else if (type.IsPrimitive)
+        //    return (T?)Convert.ChangeType(value, type, CultureInfo.CurrentCulture);
 
         else
             return (T?)Convert.ChangeType(value, type);

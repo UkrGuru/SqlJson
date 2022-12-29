@@ -15,63 +15,71 @@ public static class AssemblyExtensions
     /// Extracts and executes sql script from an assembly by resource name.
     /// </summary>
     /// <param name="assembly">Assembly containing the required sql script resource</param>
-    /// <param name="resourceName"></param>
-    public static void ExecResource(this Assembly assembly, string resourceName)
+    /// <param name="resourceFullName"></param>
+    /// <returns></returns>
+    public static void ExecResource(this Assembly assembly, string resourceFullName)
     {
-        using var stream = assembly.GetManifestResourceStream(resourceName);
+        using var stream = assembly.GetManifestResourceStream(resourceFullName);
         ArgumentNullException.ThrowIfNull(stream);
 
         using StreamReader reader = new(stream);
-        DbHelper.ExecCommand(reader.ReadToEnd());
+        DbHelper.Exec(reader.ReadToEnd());
     }
 
     /// <summary>
-    /// Extracts and executes sql script asynchronously from an assembly by resource name.
+    /// Extracts and executes sql script from an assembly by resource name.
     /// </summary>
     /// <param name="assembly">Assembly containing the required sql script resource</param>
-    /// <param name="resourceName"></param>
-    public static async Task ExecResourceAsync(this Assembly assembly, string resourceName)
+    /// <param name="resourceFullName"></param>
+    /// <param name="timeout"></param>
+    /// <returns></returns>
+    public static async Task ExecResourceAsync(this Assembly assembly, string resourceFullName, int? timeout = null)
     {
-        await using var stream = assembly.GetManifestResourceStream(resourceName);
+        using var stream = assembly.GetManifestResourceStream(resourceFullName);
         ArgumentNullException.ThrowIfNull(stream);
 
         using StreamReader reader = new(stream);
-        await DbHelper.ExecCommandAsync(await reader.ReadToEndAsync());
+        await DbHelper.ExecAsync(await reader.ReadToEndAsync(), timeout: timeout);
     }
 
     /// <summary>
     /// Initializes the current database for UkrGuru extensions
     /// </summary>
     /// <param name="assembly"></param>
+    /// <param name="resourceFileName"></param>
     /// <returns></returns>
-    public static bool InitDb(this Assembly? assembly)
+    /// 
+    public static bool InitDb(this Assembly? assembly, string resourceFileName = "InitDb.sql")
     {
         ArgumentNullException.ThrowIfNull(assembly);
 
         var assemblyName = assembly.GetName().Name;
         var assemblyVersion = Convert.ToString(assembly.GetName().Version);
+       
+        var currectVersion = DbHelper.Exec<string?>(cmd_ver_get, assemblyName) ?? "0.0.0.0";
 
-        string? currectVersion = null;
-
-        currectVersion = DbHelper.FromCommand<string?>(cmd_ver_get, assemblyName);
-
-        currectVersion ??= "0.0.0.0";
         if (currectVersion.CompareTo(assemblyVersion) != 0)
         {
-            assembly.ExecResource($"{assemblyName}.Resources.InitDb.sql");
+            assembly.ExecResource($"{assemblyName}.Resources.{resourceFileName}");
 
-            DbHelper.ExecCommand(cmd_ver_set, new { Name = assemblyName, Value = assemblyVersion });
+            DbHelper.Exec(cmd_ver_set, new { Name = assemblyName, Value = assemblyVersion });
         }
 
         return true;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     private static readonly string cmd_ver_get = @"
 SELECT TOP 1 [value]
 FROM sys.extended_properties
 WHERE class = 0 AND class_desc = N'DATABASE' AND [name] = @Data
 ";
 
+    /// <summary>
+    /// 
+    /// </summary>
     private static readonly string cmd_ver_set = @"
 DECLARE @Name nvarchar(100), @Value sql_variant
 

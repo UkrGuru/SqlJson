@@ -6,6 +6,11 @@ using System.Text.Json;
 namespace UkrGuru.Extensions;
 
 /// <summary>
+/// Represents a collection of keys and values.
+/// </summary>
+public class More : Dictionary<string, object?> { }
+
+/// <summary>
 /// Base functions for the More dictionary.
 /// </summary>
 public static class MoreExtensions
@@ -31,7 +36,8 @@ public static class MoreExtensions
     /// <param name="more"></param>
     /// <param name="name"></param>
     /// <returns></returns>
-    public static string? GetValue(this More? more, string name) => more == null ? null : more.TryGetValue(name, out var value) && value != null ? Convert.ToString(value) : null;
+    public static string? GetValue(this More? more, string name) 
+        => more == null ? null : more.TryGetValue(name, out var value) && value != null ? Convert.ToString(value) : null;
 
     /// <summary>
     /// Gets the <typeparamref name="T"/> value associated with the specified name.
@@ -40,5 +46,6 @@ public static class MoreExtensions
     /// <param name="name"></param>
     /// <param name="defaultValue"></param>
     /// <returns></returns>
-    public static T? GetValue<T>(this More? more, string name, T? defaultValue = default) => more.GetValue(name).ToObj<T?>(defaultValue);
+    public static T? GetValue<T>(this More? more, string name, T? defaultValue = default) 
+        => more.GetValue(name).ToObj<T?>(defaultValue);
 }

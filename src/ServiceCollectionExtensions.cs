@@ -3,7 +3,10 @@
 
 using System.Reflection;
 using UkrGuru.Extensions;
+using UkrGuru.Extensions.Data;
+using UkrGuru.Extensions.Logging;
 using UkrGuru.SqlJson;
+using Crud = UkrGuru.SqlJson.Crud;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -13,33 +16,73 @@ namespace Microsoft.Extensions.DependencyInjection;
 public static class SqlJsonServiceCollectionExtensions
 {
     /// <summary>
-    /// Registers UkrGuru SqlJson services.
+    /// Registers UkrGuru SqlJson services for server side application..
     /// </summary>
     /// <param name="services">The IServiceCollection argument the ConfigureServices method receives.</param>
     /// <param name="connectionString">The connection string used to open the SQL Server database.</param>
     /// <returns>The updated IServiceCollection collection argument the ConfigureServices method receives.</returns>
-    public static IServiceCollection AddUkrGuruSqlJson(this IServiceCollection services, string? connectionString = null)
+    public static IServiceCollection AddSqlJson(this IServiceCollection services, string? connectionString = null)
     {
         ArgumentNullException.ThrowIfNull(connectionString);
 
         DbHelper.ConnectionString = connectionString;
 
-        services.AddSingleton<DbService>();
+        services.AddScoped<IDbService, DbService>();
+        services.AddScoped<Crud.IDbService, Crud.DbService>();
 
         return services;
     }
 
     /// <summary>
-    /// Registers UkrGuru extensions.
+    /// Registers UkrGuru Extensions for server side application.
     /// </summary>
     /// <param name="services">The IServiceCollection argument the ConfigureServices method receives.</param>
     /// <param name="logLevel"></param>
-    public static IServiceCollection AddUkrGuruExtensions(this IServiceCollection services, WJbLog.Level logLevel = WJbLog.Level.Debug)
+    public static IServiceCollection AddSqlJsonExt(this IServiceCollection services, DbLogLevel logLevel = DbLogLevel.Information)
     {
-        WJbLogHelper.MinLogLevel = logLevel;
+        DbLogHelper.MinDbLogLevel = logLevel;
 
         Assembly.GetExecutingAssembly().InitDb();
-        
+
+        services.AddScoped<IDbLogService, DbLogService>();
+        services.AddScoped<IDbFileService, DbFileService>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers UkrGuru SqlJson services for client side application.
+    /// </summary>
+    /// <param name="services">The IServiceCollection argument the ConfigureServices method receives.</param>
+    /// <param name="connectionString">The connection string used to open the SQL Server database.</param>
+    /// <returns>The updated IServiceCollection collection argument the ConfigureServices method receives.</returns>
+    public static IServiceCollection AddSqlJsonApi(this IServiceCollection services, string? connectionString = null)
+    {
+        ArgumentNullException.ThrowIfNull(connectionString);
+
+        DbHelper.ConnectionString = connectionString;
+
+        services.AddScoped<IDbService, ApiDbService>();
+        services.AddScoped<Crud.IDbService, Crud.ApiDbService>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers UkrGuru Extensions for client side application.
+    /// </summary>
+    /// <param name="services">The IServiceCollection argument the ConfigureServices method receives.</param>
+    /// <param name="logLevel"></param>
+    /// <returns>The updated IServiceCollection collection argument the ConfigureServices method receives.</returns>
+    public static IServiceCollection AddSqlJsonApiExt(this IServiceCollection services, DbLogLevel logLevel = DbLogLevel.Information)
+    {
+        DbLogHelper.MinDbLogLevel = logLevel;
+
+        Assembly.GetExecutingAssembly().InitDb();
+
+        services.AddScoped<IDbLogService, ApiDbLogService>();
+        services.AddScoped<IDbFileService, ApiDbFileService>();
+
         return services;
     }
 }

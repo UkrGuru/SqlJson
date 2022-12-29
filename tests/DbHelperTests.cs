@@ -1,235 +1,165 @@
-// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
+﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using SqlJsonTests;
 using System.Text.Json;
-using Xunit;
 
 namespace UkrGuru.SqlJson;
 
 public class DbHelperTests
 {
-    public DbHelperTests() => DbHelper.ConnectionString = Globals.ConnectionString;
+    public DbHelperTests() => DbHelper.ConnectionString = GlobalTests.ConnectionString;
 
     //[Fact]
-    //public static void CreateSqlConnectionTests()
+    //public static void CanCreateSqlConnection()
     //{
     //    var connection = DbHelper.CreateSqlConnection();
 
     //    Assert.NotNull(connection);
-    //    Assert.Equal(DbName, connection.Database);
-    //    Assert.Equal(ConnectionString, connection.ConnectionString);
+    //    Assert.Equal(Globals.DbName, connection.Database);
+    //    Assert.Equal(Globals.ConnectionString, connection.ConnectionString);
     //}
 
-    [Fact]
-    public void CanNormalize()
+    [Theory]
+    [InlineData("Proc1", true)]
+    [InlineData("[Proc1]", true)]
+    [InlineData("dbo.Proc1", true)]
+    [InlineData("[dbo].Proc1", true)]
+    [InlineData("[Proc 1]", true)]
+    [InlineData("SELECT 1; /* need more text here for CommandText type */", false)]
+    public void IsNameTests(string cmdText, bool expected)
+        => Assert.Equal(expected, DbHelper.IsName(cmdText));
+
+    [Theory]
+    [InlineData(null, true)]
+    [InlineData("", true)]
+    [InlineData("Boolean", false)]
+    [InlineData("Byte", false)]
+    [InlineData("DateTime", false)]
+    [InlineData("DateTimeOffset", false)]
+    [InlineData("Decimal", false)]
+    [InlineData("Double", false)]
+    [InlineData("Guid", false)]
+    [InlineData("Int16", false)]
+    [InlineData("Int32", false)]
+    [InlineData("Single", false)]
+    [InlineData("TimeSpan", false)]
+    [InlineData("Byte[]", true)]
+    [InlineData("Char[]", true)]
+    [InlineData("Xml", true)]
+    public void IsLongTests(string? typeName, bool expected)
+        => Assert.Equal(expected, DbHelper.IsLong(typeName));
+
+    [Theory]
+    [MemberData(nameof(GetData4CanNormalize), parameters: 16)]
+    public void CanNormalize(object data, object expected)
+        => Assert.Equal(expected, DbHelper.Normalize(data));
+
+    public static IEnumerable<object[]> GetData4CanNormalize(int numTests)
     {
-        object data = "str1";
-        Assert.Equal(data, DbHelper.Normalize(data));
+        var guid = Guid.NewGuid();
+        string data = JsonSerializer.Serialize(new { Name = "Proc1" })!;
+        var allData = new List<object[]>
+        {
+            new object[] { "str1", "str1" },
+            new object[] { true, true },
+            new object[] { false, false },
+            new object[] { (byte)1, (byte)1 },
+            new object[] { new byte[] { 1, 2 }, new byte[] { 1, 2 } },
+            new object[] { new char[] { '1', '2' }, new char[] { '1', '2' } },
+            new object[] { 123.45d, 123.45d },
+            new object[] { 123.45f, 123.45f },
+            new object[] { 123, 123 },
+            new object[] { 12345, 12345 },
+            new object[] { 1234567890, 1234567890 },
+            new object[] { new DateTime(2000, 1, 1), new DateTime(2000, 1, 1) },
+            new object[] { new DateTimeOffset(new DateTime(2000, 1, 1)), new DateTimeOffset(new DateTime(2000, 1, 1)) },
+            new object[] { guid, guid },
+            new object[] { new { Name = "Proc1" }, data },
+            new object[] { JsonSerializer.Deserialize<dynamic?>(data)!, data }
+        };
 
-        data = true;
-        Assert.Equal(data, DbHelper.Normalize(data));
-        data = false;
-        Assert.Equal(data, DbHelper.Normalize(data));
-
-        data = (byte)1;
-        Assert.Equal(data, DbHelper.Normalize(data));
-        data = new byte[] { 1, 2 };
-        Assert.Equal(data, DbHelper.Normalize(data));
-
-        data = new char[] { '1', '2' };
-        Assert.Equal(data, DbHelper.Normalize(data));
-
-        data = new DateTime(2000, 1, 1);
-        Assert.Equal(data, DbHelper.Normalize(data));
-
-        data = new DateTimeOffset(new DateTime(2000, 1, 1));
-        Assert.Equal(data, DbHelper.Normalize(data));
-
-        data = (decimal)123.45;
-        Assert.Equal(data, DbHelper.Normalize(data));
-
-        data = (double)123.45;
-        Assert.Equal(data, DbHelper.Normalize(data));
-
-        data = Guid.NewGuid();
-        Assert.Equal(data, DbHelper.Normalize(data));
-
-        data = (Int16)1;
-        Assert.Equal(data, DbHelper.Normalize(data));
-
-        data = (Int32)1;
-        Assert.Equal(data, DbHelper.Normalize(data));
-
-        data = new { Name = "Proc1" };
-        Assert.Equal(JsonSerializer.Serialize(data), DbHelper.Normalize(data));
-
-        data = JsonSerializer.Serialize(new { Name = "Proc1" });
-        Assert.Equal(data, DbHelper.Normalize(JsonSerializer.Deserialize<dynamic?>(Convert.ToString(data)!)));
+        return allData.Take(numTests);
     }
 
     [Fact]
-    public void CanExecCommand()
+    public void CanExec()
     {
-        var num = DbHelper.ExecCommand("SELECT 1");
-        Assert.Equal(-1, num);
+        var num1 = DbHelper.Exec("DECLARE @num1 int; SET @num1 = 1; /* need more text here for CommandText type */");
+        Assert.Equal(-1, num1);
 
-        _ = DbHelper.ExecCommand("IF @Data = 'Data' SELECT 'OK' ELSE THROW 51000, 'Invalid @Data as String parameter.', 1;", "Data");
+        var num2 = DbHelper.Exec<int?>("SELECT CAST(1 as varchar); /* need more text here for CommandText type */");
+        Assert.Equal(1, num2);
 
-        _ = DbHelper.ExecCommand("IF JSON_VALUE(@Data, '$.Name') = 'John'  SELECT 'OK' ELSE THROW 51000, 'Invalid Name in @Data parameter.', 1;", new { Name = "John" });
-    }
+        var num3 = DbHelper.Exec<int?>("SELECT CAST(NULL as varchar); /* need more text here for CommandText type */");
+        Assert.Null(num3);
 
-    [Fact]
-    public async Task CanExecCommandAsync()
-    {
-        var num = await DbHelper.ExecCommandAsync("SELECT 1");
-        Assert.Equal(-1, num);
-
-        _ = DbHelper.ExecCommandAsync("IF @Data = 'Data' SELECT 'OK' ELSE THROW 51000, 'Invalid @Data as String parameter.', 1;", "Data");
-
-        _ = DbHelper.ExecCommandAsync("IF JSON_VALUE(@Data, '$.Name') = 'John'  SELECT 'OK' ELSE THROW 51000, 'Invalid Name in @Data parameter.', 1;", new { Name = "John" });
-    }
-
-    [Fact]
-    public void CanExecProc()
-    {
-        _ = DbHelper.ExecCommand("IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Table]') AND type in (N'U')) DROP TABLE [dbo].[Table]");
-
-        _ = DbHelper.ExecCommand("CREATE TABLE [dbo].[Table] ([value][sql_variant] NULL) ON [PRIMARY]");
-
-        _ = DbHelper.ExecCommand("CREATE OR ALTER PROCEDURE [dbo].[ExecProcTest] @Data sql_variant = NULL AS INSERT INTO [Table] (Value) VALUES(@Data)");
-
-        _ = DbHelper.ExecProc("ExecProcTest");
-
-        string? null1 = null;
-        _ = DbHelper.ExecProc("ExecProcTest", null1);
-
-        var str1 = "String";
-        _ = DbHelper.ExecProc("ExecProcTest", str1);
-
-        var class1 = new { Id = 1, Name = "Region1" };
-        _ = DbHelper.ExecProc("ExecProcTest", class1);
-
-        var int1 = 123;
-        _ = DbHelper.ExecProc("ExecProcTest", int1);
-
-        var double1 = 123.45;
-        _ = DbHelper.ExecProc("ExecProcTest", double1);
-
-        var guid1 = Guid.NewGuid();
-        _ = DbHelper.ExecProc("ExecProcTest", guid1);
-
-        var dt1 = new DateTime(2000, 1, 1);
-        _ = DbHelper.ExecProc("ExecProcTest", dt1);
-    }
-
-    [Fact]
-    public async Task CanExecProcAsync()
-    {
-        _ = await DbHelper.ExecCommandAsync("IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[TableAsync]') AND type in (N'U')) DROP TABLE [dbo].[TableAsync]");
-
-        _ = await DbHelper.ExecCommandAsync("CREATE TABLE [dbo].[TableAsync] ([value][sql_variant] NULL) ON [PRIMARY]");
-
-        _ = await DbHelper.ExecCommandAsync("CREATE OR ALTER PROCEDURE [dbo].[ExecProcAsyncTest] @Data sql_variant = NULL AS INSERT INTO [TableAsync] (Value) VALUES(@Data)");
-
-        _ = await DbHelper.ExecProcAsync("ExecProcAsyncTest");
-
-        string? null1 = null;
-        _ = await DbHelper.ExecProcAsync("ExecProcAsyncTest", null1);
-
-        var str1 = "String";
-        _ = await DbHelper.ExecProcAsync("ExecProcAsyncTest", str1);
-
-        var class1 = new { Id = 1, Name = "Region1" };
-        _ = await DbHelper.ExecProcAsync("ExecProcAsyncTest", class1);
-
-        var int1 = 123;
-        _ = await DbHelper.ExecProcAsync("ExecProcAsyncTest", int1);
-
-        var double1 = 123.45;
-        _ = await DbHelper.ExecProcAsync("ExecProcAsyncTest", double1);
-
-        var guid1 = Guid.NewGuid();
-        _ = await DbHelper.ExecProcAsync("ExecProcAsyncTest", guid1);
-
-        var dt1 = new DateTime(2000, 1, 1);
-        _ = await DbHelper.ExecProcAsync("ExecProcAsyncTest", dt1);
-
-    }
-
-    [Fact]
-    public void CanFromCommand()
-    {
-        var num1 = DbHelper.FromCommand<int?>("SELECT CAST(1 as varchar)");
-        Assert.Equal(1, num1);
-
-        var num2 = DbHelper.FromCommand<int?>("SELECT CAST(NULL as varchar)");
-        Assert.Null(num2);
-
-        var data = DbHelper.FromCommand<string?>("SELECT @Data", "Data");
+        var data = DbHelper.Exec<string?>("SELECT @Data; /* need more text here for CommandText type */", "Data");
         Assert.Equal("Data", data);
 
-        var name = DbHelper.FromCommand<string?>("SELECT JSON_VALUE(@Data, '$.Name')", new { Name = "John" });
+        var name = DbHelper.Exec<string?>("SELECT JSON_VALUE(@Data, '$.Name'); /* need more text here for CommandText type */", new { Name = "John" });
         Assert.Equal("John", name);
+
+        DbHelper.Exec("CREATE OR ALTER PROCEDURE ProcNull AS /* need more text here for CommandText type */");
+
+        DbHelper.Exec("CREATE OR ALTER PROCEDURE ProcInt @Data int = NULL AS SELECT CAST(@Data as varchar);");
+
+        DbHelper.Exec("CREATE OR ALTER PROCEDURE ProcStr @Data varchar(100) = NULL AS SELECT @Data;");
+
+        DbHelper.Exec("CREATE OR ALTER PROCEDURE ProcObj @Data varchar(100) = NULL AS SELECT JSON_VALUE(@Data, '$.Name');");
+
+        DbHelper.Exec("ProcNull");
+
+        var num4 = DbHelper.Exec<int?>("ProcInt", 1);
+        Assert.Equal(1, num4);
+
+        var num5 = DbHelper.Exec<int?>("ProcInt", null);
+        Assert.Null(num5);
+
+        var data2 = DbHelper.Exec<string?>("ProcStr", "Data");
+        Assert.Equal("Data", data2);
+
+        var name2 = DbHelper.Exec<string?>("ProcObj", new { Name = "John" });
+        Assert.Equal("John", name2);
     }
 
     [Fact]
-    public async Task CanFromCommandAsync()
+    public async Task CanExecAsync()
     {
-        var num1 = await DbHelper.FromCommandAsync<int?>("SELECT CAST(1 as varchar)");
-        Assert.Equal(1, num1);
+        var num1 = await DbHelper.ExecAsync("DECLARE @num1 int; SET @num1 = 1; /* need more text here for CommandText type */");
+        Assert.Equal(-1, num1);
 
-        var num2 = await DbHelper.FromCommandAsync<int?>("SELECT CAST(NULL as varchar)");
-        Assert.Null(num2);
+        var num2 = await DbHelper.ExecAsync<int?>("SELECT CAST(1 as varchar); /* need more text here for CommandText type */");
+        Assert.Equal(1, num2);
 
-        var data = await DbHelper.FromCommandAsync<string?>("SELECT @Data", "Data");
+        var num3 = await DbHelper.ExecAsync<int?>("SELECT CAST(NULL as varchar); /* need more text here for CommandText type */");
+        Assert.Null(num3);
+
+        var data = await DbHelper.ExecAsync<string?>("SELECT @Data; /* need more text here for CommandText type */", "Data");
         Assert.Equal("Data", data);
 
-        var name = await DbHelper.FromCommandAsync<string?>("SELECT JSON_VALUE(@Data, '$.Name')", new { Name = "John" });
+        var name = await DbHelper.ExecAsync<string?>("SELECT JSON_VALUE(@Data, '$.Name'); /* need more text here for CommandText type */", new { Name = "John" });
         Assert.Equal("John", name);
-    }
 
-    [Fact]
-    public void CanFromProc()
-    {
-        _ = DbHelper.ExecCommand("CREATE OR ALTER PROCEDURE [dbo].[FromProcIntTest] @Data int = NULL AS SELECT CAST(@Data as varchar);");
+        await DbHelper.ExecAsync("CREATE OR ALTER PROCEDURE ProcNullAsync AS /* need more text here for CommandText type */");
 
-        _ = DbHelper.ExecCommand("CREATE OR ALTER PROCEDURE [dbo].[FromProcStrTest] @Data varchar(100) = NULL AS SELECT @Data;");
+        await DbHelper.ExecAsync("CREATE OR ALTER PROCEDURE ProcIntAsync @Data int = NULL AS SELECT CAST(@Data as varchar);");
 
-        _ = DbHelper.ExecCommand("CREATE OR ALTER PROCEDURE [dbo].[FromProcObjTest] @Data varchar(100) = NULL AS SELECT JSON_VALUE(@Data, '$.Name');");
+        await DbHelper.ExecAsync("CREATE OR ALTER PROCEDURE ProcStrAsync @Data varchar(100) = NULL AS SELECT @Data;");
 
-        var num1 = DbHelper.FromProc<int?>("FromProcIntTest", 1);
-        Assert.Equal(1, num1);
+        await DbHelper.ExecAsync("CREATE OR ALTER PROCEDURE ProcObjAsync @Data varchar(100) = NULL AS SELECT JSON_VALUE(@Data, '$.Name');");
 
-        var num2 = DbHelper.FromProc<int?>("FromProcIntTest", null);
-        Assert.Null(num2);
+        await DbHelper.ExecAsync("ProcNullAsync");
 
-        var data = DbHelper.FromProc<string?>("FromProcStrTest", "Data");
-        Assert.Equal("Data", data);
+        var num4 = await DbHelper.ExecAsync<int?>("ProcIntAsync", 1);
+        Assert.Equal(1, num4);
 
-        var name = DbHelper.FromProc<string?>("FromProcObjTest", new { Name = "John" });
-        Assert.Equal("John", name);
-    }
+        var num5 = await DbHelper.ExecAsync<int?>("ProcIntAsync", null);
+        Assert.Null(num5);
 
-    [Fact]
-    public async Task CanFromProcAsync()
-    {
-        _ = await DbHelper.ExecCommandAsync("CREATE OR ALTER PROCEDURE [dbo].[FromProcIntAsyncTest] @Data int = NULL AS SELECT CAST(@Data as varchar);");
+        var data2 = await DbHelper.ExecAsync<string?>("ProcStrAsync", "Data");
+        Assert.Equal("Data", data2);
 
-        _ = await DbHelper.ExecCommandAsync("CREATE OR ALTER PROCEDURE [dbo].[FromProcStrAsyncTest] @Data varchar(100) = NULL AS SELECT @Data;");
-
-        _ = await DbHelper.ExecCommandAsync("CREATE OR ALTER PROCEDURE [dbo].[FromProcObjAsyncTest] @Data varchar(100) = NULL AS SELECT JSON_VALUE(@Data, '$.Name');");
-
-        var num1 = DbHelper.FromProc<int?>("FromProcIntAsyncTest", 1);
-        Assert.Equal(1, num1);
-
-        var num2 = await DbHelper.FromProcAsync<int?>("FromProcIntAsyncTest", null);
-        Assert.Null(num2);
-
-        var data = await DbHelper.FromProcAsync<string?>("FromProcStrAsyncTest", "Data");
-        Assert.Equal("Data", data);
-
-        var name = await DbHelper.FromProcAsync<string?>("FromProcObjAsyncTest", new { Name = "John" });
-        Assert.Equal("John", name);
+        var name2 = await DbHelper.ExecAsync<string?>("ProcObjAsync", new { Name = "John" });
+        Assert.Equal("John", name2);
     }
 }

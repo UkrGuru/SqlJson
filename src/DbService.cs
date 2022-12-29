@@ -3,148 +3,274 @@
 
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System.Data;
+using System.Text;
+using System.Threading;
+using UkrGuru.Extensions;
 
 namespace UkrGuru.SqlJson;
 
 /// <summary>
-/// Database Service minimizes the effort to process or retrieve data from SQL Server databases.
+/// 
 /// </summary>
-public class DbService
+public interface IDbService
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    string ConnectionStringName { get; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    SqlConnection CreateSqlConnection();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="cmdText"></param>
+    /// <param name="data"></param>
+    /// <param name="timeout"></param>
+    /// <returns></returns>
+    int Exec(string cmdText, object? data = null, int? timeout = null);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="cmdText"></param>
+    /// <param name="data"></param>
+    /// <param name="timeout"></param>
+    /// <returns></returns>
+    T? Exec<T>(string cmdText, object? data = null, int? timeout = null);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="cmdText"></param>
+    /// <param name="data"></param>
+    /// <param name="timeout"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<int> ExecAsync(string cmdText, object? data = null, int? timeout = null, CancellationToken cancellationToken = default);
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="cmdText"></param>
+    /// <param name="data"></param>
+    /// <param name="timeout"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<T?> ExecAsync<T>(string cmdText, object? data = null, int? timeout = null, CancellationToken cancellationToken = default);
+}
+
+/// <summary>
+/// 
+/// </summary>
+public class DbService : IDbService
+{
+    /// <summary>
+    /// 
+    /// </summary>
     private readonly string? _connectionString;
 
     /// <summary>
-    /// Initializes a new instance of the UkrGuru.SqlJson.DbService class.
+    /// 
     /// </summary>
-    public DbService(IConfiguration configuration) => _connectionString = configuration.GetConnectionString(ConnectionStringName);
+    /// <param name="configuration"></param>
+    public DbService(IConfiguration configuration)
+        => _connectionString = configuration.GetConnectionString(ConnectionStringName);
 
     /// <summary>
-    /// Connection string key to be used when initializing the UkrGuru.SqlJson.DbService class.
+    /// 
     /// </summary>
-    public virtual string ConnectionStringName => "SqlJsonConnection";
+    public virtual string ConnectionStringName => "DefaultConnection";
 
     /// <summary>
-    /// Initializes a new instance of the Microsoft.Data.SqlClient.SqlConnection class
+    /// 
     /// </summary>
+    /// <returns></returns>
     public SqlConnection CreateSqlConnection() => new(_connectionString);
 
     /// <summary>
-    /// Opens a database connection, then executes a Transact-SQL statement
-    /// and returns the number of rows affected.
+    /// 
     /// </summary>
-    /// <param name="cmdText">The text of the query.</param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="type">The type of the cmdText. The default is Text.</param>
-    /// <returns>The number of rows affected.</returns>
-    public int ExecCommand(string cmdText, object? data = null, int? timeout = null, CommandType type = CommandType.Text)
+    /// <param name="cmdText"></param>
+    /// <param name="data"></param>
+    /// <param name="timeout"></param>
+    /// <returns></returns>
+    public int Exec(string cmdText, object? data = null, int? timeout = null)
     {
         using SqlConnection connection = CreateSqlConnection();
         connection.Open();
 
-        return connection.ExecCommand(cmdText, data, timeout, type);
+        return connection.Exec(cmdText, data, timeout);
     }
 
     /// <summary>
-    /// An asynchronous version of UkrGuru.SqlJson.DbService.ExecCommand, which
-    /// Opens a database connection, then executes a Transact-SQL statement and returns the number of rows affected.
+    /// 
     /// </summary>
-    /// <param name="cmdText">The text of the query.</param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="type">The type of the cmdText. The default is Text.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
-    /// <returns>The number of rows affected.</returns>
-    public async Task<int> ExecCommandAsync(string cmdText, object? data = null, int? timeout = null, CommandType type = CommandType.Text, CancellationToken cancellationToken = default)
-    {
-        using SqlConnection connection = CreateSqlConnection();
-        await connection.OpenAsync(cancellationToken);
-
-        return await connection.ExecCommandAsync(cmdText, data, timeout, type, cancellationToken);
-    }
-
-    /// <summary>
-    /// Opens a database connection, then executes the stored procedure with or without '@Data' parameter
-    /// and returns the number of rows affected.
-    /// </summary>
-    /// <param name="name">The name of the stored procedure.</param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <returns>The number of rows affected.</returns>
-    public int ExecProc(string name, object? data = null, int? timeout = null) => ExecCommand(name, data, timeout, CommandType.StoredProcedure);
-
-    /// <summary>
-    /// An asynchronous version of UkrGuru.SqlJson.DbService.ExecProc, which
-    /// Opens a database connection, then executes the stored procedure with or without '@Data' parameter
-    /// and returns the number of rows affected.
-    /// </summary>
-    /// <param name="name">The name of the stored procedure.</param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
-    /// <returns>The number of rows affected.</returns>
-    public async Task<int> ExecProcAsync(string name, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-        => await ExecCommandAsync(name, data, timeout, CommandType.StoredProcedure, cancellationToken);
-
-    /// <summary>
-    /// Executes the stored procedure with or without '@Data' parameter
-    /// and returns the result as object.
-    /// </summary>
-    /// <param name="cmdText">The text of the query.</param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="type">The type of the cmdText. The default is Text.</param>
-    /// <returns>The result as object.</returns>
-    public T? FromCommand<T>(string cmdText, object? data = null, int? timeout = null, CommandType type = CommandType.Text)
+    /// <typeparam name="T"></typeparam>
+    /// <param name="cmdText"></param>
+    /// <param name="data"></param>
+    /// <param name="timeout"></param>
+    /// <returns></returns>
+    public T? Exec<T>(string cmdText, object? data = null, int? timeout = null)
     {
         using SqlConnection connection = CreateSqlConnection();
         connection.Open();
 
-        return connection.FromCommand<T>(cmdText, data, timeout, type);
+        return connection.Exec<T?>(cmdText, data, timeout);
     }
 
     /// <summary>
-    /// An asynchronous version of UkrGuru.SqlJson.DbHelper.FromProc, which
-    /// Opens a database connection, then executes the stored procedure with or without '@Data' parameter
-    /// and returns the result as object.
+    /// 
     /// </summary>
-    /// <param name="cmdText">The name of the stored procedure.</param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="type">The type of the cmdText. The default is Text.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
-    /// <returns>The result as object.</returns>
-    public async Task<T?> FromCommandAsync<T>(string cmdText, object? data = null, int? timeout = null,
-        CommandType type = CommandType.Text, CancellationToken cancellationToken = default)
+    /// <param name="cmdText"></param>
+    /// <param name="data"></param>
+    /// <param name="timeout"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public async Task<int> ExecAsync(string cmdText, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
         using SqlConnection connection = CreateSqlConnection();
         await connection.OpenAsync(cancellationToken);
 
-        return await connection.FromCommandAsync<T>(cmdText, data, timeout, type, cancellationToken);
+        return await connection.ExecAsync(cmdText, data, timeout, cancellationToken);
     }
 
     /// <summary>
-    /// Executes the stored procedure with or without '@Data' parameter
-    /// and returns the result as object.
+    /// 
     /// </summary>
-    /// <param name="name">The name of the stored procedure.</param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <returns>The result as object.</returns>
-    public T? FromProc<T>(string name, object? data = null, int? timeout = null)
-        => FromCommand<T>(name, data, timeout, CommandType.StoredProcedure);
+    /// <typeparam name="T"></typeparam>
+    /// <param name="cmdText"></param>
+    /// <param name="data"></param>
+    /// <param name="timeout"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public async Task<T?> ExecAsync<T>(string cmdText, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+    {
+        using SqlConnection connection = CreateSqlConnection();
+        await connection.OpenAsync(cancellationToken);
+
+        return await connection.ExecAsync<T?>(cmdText, data, timeout, cancellationToken);
+    }
+}
+
+/// <summary>
+/// 
+/// </summary>
+public class ApiDbService : IDbService
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    public virtual string? ApiHoleUri => "ApiHole";
 
     /// <summary>
-    /// An asynchronous version of UkrGuru.SqlJson.DbHelper.FromProc, which
-    /// Opens a database connection, then executes the stored procedure with or without '@Data' parameter
-    /// and returns the result as object.
+    /// 
     /// </summary>
-    /// <param name="name">The name of the stored procedure.</param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
-    /// <returns>The result as object.</returns>
-    public async Task<T?> FromProcAsync<T>(string name, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-        => await FromCommandAsync<T>(name, data, timeout, CommandType.StoredProcedure, cancellationToken);
+    private readonly HttpClient _http;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="http"></param>
+    public ApiDbService(HttpClient http) => _http = http;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public string ConnectionStringName => throw new NotImplementedException();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public SqlConnection CreateSqlConnection() => throw new NotImplementedException();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="proc"></param>
+    /// <param name="data"></param>
+    /// <param name="timeout"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public int Exec(string proc, object? data = null, int? timeout = null) => throw new NotImplementedException();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="proc"></param>
+    /// <param name="data"></param>
+    /// <param name="timeout"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public T? Exec<T>(string proc, object? data = null, int? timeout = null) => throw new NotImplementedException();
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="proc"></param>
+    /// <param name="data"></param>
+    /// <param name="timeout"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public async Task<int> ExecAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+    {
+        ApiHelper.ValidateProcName(proc);
+
+        HttpResponseMessage? httpResponse;
+
+        var sdata = data == null ? null : DbHelper.Normalize(data).ToString();
+        if (sdata?.Length > 1000)
+        {
+            StringContent content = new(sdata, Encoding.UTF8, "application/json");
+
+            httpResponse = await _http.PostAsync(ApiHelper.BuildRequestUri(ApiHoleUri, proc, null), content, cancellationToken);
+        }
+        else
+        {
+            httpResponse = await _http.GetAsync(ApiHelper.BuildRequestUri(ApiHoleUri, proc, data), cancellationToken);
+        }
+
+        await httpResponse.ReadAsync(cancellationToken);
+
+        return 0;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="proc"></param>
+    /// <param name="data"></param>
+    /// <param name="timeout"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public async Task<T?> ExecAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+    {
+        ApiHelper.ValidateProcName(proc);
+
+        HttpResponseMessage? httpResponse;
+
+        var sdata = data == null ? null : DbHelper.Normalize(data).ToString();
+        if (sdata?.Length > 1000)
+        {
+            StringContent content = new(sdata, Encoding.UTF8, "application/json");
+
+            httpResponse = await _http.PostAsync(ApiHelper.BuildRequestUri(ApiHoleUri, proc, null), content, cancellationToken);
+        }
+        else
+        {
+            httpResponse = await _http.GetAsync(ApiHelper.BuildRequestUri(ApiHoleUri, proc, data), cancellationToken);
+        }
+
+        return await httpResponse.ReadAsync<T?>(cancellationToken);
+    }
 }

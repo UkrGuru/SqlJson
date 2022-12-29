@@ -1,1 +1,1 @@
-SELECT 1;
+SELECT 1; /* please more text for CommandText type */

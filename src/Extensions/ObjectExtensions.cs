@@ -11,11 +11,10 @@ public static class ObjectExtensions
     /// <summary>
     /// Throws a System.ArgumentNullException if the argument is null, otherwise the returned argument.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     /// <param name="argument"></param>
     /// <param name="argumentName"></param>
     /// <returns></returns>
-    public static T? ThrowIfNull<T>(this T? argument, string? argumentName = null)
+    public static object? ThrowIfNull(this object? argument, string? argumentName = null)
     {
         ArgumentNullException.ThrowIfNull(argument, argumentName);
 
