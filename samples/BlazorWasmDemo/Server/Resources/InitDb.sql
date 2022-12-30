@@ -33,13 +33,6 @@ WHERE (ProductId = @Data)
 ';
 
 EXEC dbo.sp_executesql @statement = N'
-CREATE OR ALTER PROCEDURE [Products_Del_api]
-    @Data int
-AS
-EXEC Products_Del @Data
-';
-
-EXEC dbo.sp_executesql @statement = N'
 CREATE OR ALTER PROCEDURE [Products_Get]
     @Data int
 AS
@@ -50,24 +43,11 @@ FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
 ';
 
 EXEC dbo.sp_executesql @statement = N'
-CREATE OR ALTER PROCEDURE [Products_Get_api]
-    @Data int
-AS
-EXEC Products_Get @Data
-'; 
-
-EXEC dbo.sp_executesql @statement = N'
 CREATE OR ALTER PROCEDURE [Products_Grd]
 AS
 SELECT ProductId, ProductName, CategoryName, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued
 FROM Products
 FOR JSON PATH
-'; 
-
-EXEC dbo.sp_executesql @statement = N'
-CREATE OR ALTER PROCEDURE [Products_Grd_api]
-AS
-EXEC [Products_Grd]
 '; 
 
 EXEC dbo.sp_executesql @statement = N'
@@ -80,13 +60,6 @@ FROM OPENJSON(@Data)
 WITH (ProductName varchar(50), CategoryName varchar(20), QuantityPerUnit varchar(20), 
 	UnitPrice smallmoney, UnitsInStock int, UnitsOnOrder int, ReorderLevel int, Discontinued bit
 )
-';
-
-EXEC dbo.sp_executesql @statement = N'
-CREATE OR ALTER PROCEDURE [Products_Ins_api]
-	@Data nvarchar(500)  
-AS
-EXEC Products_Ins @Data
 ';
 
 EXEC dbo.sp_executesql @statement = N'
@@ -103,14 +76,6 @@ CROSS JOIN (SELECT * FROM OPENJSON(@Data)
 	UnitPrice smallmoney, UnitsInStock int, UnitsOnOrder int, ReorderLevel int, Discontinued bit)) D
 WHERE P.ProductId = JSON_VALUE(@Data,''$.ProductId'')
 ';
-
-
-EXEC dbo.sp_executesql @statement = N'
-CREATE OR ALTER PROCEDURE [Products_Upd_api]
-	@Data nvarchar(500)  
-AS
-EXEC Products_Upd @Data
-'; 
 
 TRUNCATE TABLE [Products]
 

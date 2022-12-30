@@ -16,6 +16,7 @@ builder.Services.AddTelerikBlazor();
 
 var app = builder.Build();
 
+// Create tables and stored procedures for Demo database.
 Assembly.GetExecutingAssembly().InitDb();
 
 // Configure the HTTP request pipeline.

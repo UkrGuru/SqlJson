@@ -11,80 +11,197 @@ I'm an old software developer with over 20 years of experience and have written 
 ### 1. Add a new DefaultConnection to your database in appsettings.json
 ```json
 "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Database=SqlJsonDemo;Integrated Security=SSPI"
+    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=BlazorAppDemo;Trusted_Connection=True;MultipleActiveResultSets=true"
 }
 ```
 
 ### 2. Open the ~/Program.cs file and register the UkrGuru SqlJson service:
 ```c#
-builder.Services.AddSqlJson(builder.Configuration.GetConnectionString("DefaultConnection"));  
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSqlJson(builder.Configuration.GetConnectionString("DefaultConnection"));
+
+// More other services here ... 
+
+var app = builder.Build();
 ```
 
 ## Samples of code
 
-### DbService: how to use?
-```c#
-[ApiController]
-[Route("api/[controller]")]
-public class ContactController : ControllerBase
-{
-    private readonly DbService _db;
-    public ContactController(DbService db) => _db = db;
-
-    [HttpGet]
-    public async Task<List<Contact>> Get() => await _db.ExecAsync<List<Contact>>("Contacts_Grd");
-
-    [HttpGet("{id}")]
-    public async Task<Contact> Get(int id) => await _db.ExecAsync<Contact>("Contacts_Get", id);
-
-    [HttpPost]
-    public async Task<Contact> Post([FromBody] Contact item) => await _db.ExecAsync<Contact>("Contacts_Ins", item);
-
-    [HttpPut("{id}")]
-    public async Task<int> Put(int id, [FromBody] Contact item) => await _db.ExecAsync("Contacts_Upd", item);
-
-    [HttpDelete("{id}")]
-    public async Task<int> Delete(int id) => await _db.ExecAsync("Contacts_Del", id);
-}
-```
 ### DbHelper: how to use?
 ```c#
-[HttpPost("Post")]
-public async Task<Contact> Post([FromBody] Contact item)
+@code {
+    public List<ProductDto> Products { get; set; } = new();
+
+    protected override async Task InitData() { Title ??= "Products"; await Task.CompletedTask; }
+
+    protected override async Task LoadData() { 
+        Products = await DbHelper.ExecAsync<List<ProductDto>>("Products_Grd") ?? new(); 
+    }
+
+    protected override async Task InsItemAsync(GridCommandEventArgs args) 
+        => await DbHelper.ExecAsync<ProductDto>("Products_Ins", (ProductDto)args.Item);
+
+    protected override async Task UpdItemAsync(GridCommandEventArgs args) 
+        => await DbHelper.ExecAsync("Products_Upd", (ProductDto)args.Item);
+
+    protected override async Task DelItemAsync(GridCommandEventArgs args) 
+        => await DbHelper.ExecAsync("Products_Del", ((ProductDto)args.Item)?.ProductId);
+}
+```
+
+### Crud.DbService: how to use?
+```c#
+public class HttpComponent : ComponentBase
 {
-    return await DbHelper.ExecAsync<Contact>("Contacts_Ins", item);
+    [Inject]
+    private UkrGuru.SqlJson.Crud.IDbService CrudDb { get; set; }
+
+    public async Task<T?> CreateAsync<T>(string cmdText, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+    => await CrudDb.CreateAsync<T?>(cmdText, data, timeout, cancellationToken);
+
+    public async Task<T?> ReadAsync<T>(string cmdText, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+        => await CrudDb.ReadAsync<T?>(cmdText, data, timeout, cancellationToken);
+
+    public async Task UpdateAsync(string cmdText, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+        => await CrudDb.UpdateAsync(cmdText, data, timeout, cancellationToken);
+
+    public async Task DeleteAsync(string cmdText, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+        => await CrudDb.DeleteAsync(cmdText, data, timeout, cancellationToken);
+}
+```
+
+### Crud.ApiDbService: how to use?
+```c#
+[ApiController]
+[Route("[controller]")]
+public class ApiCrudController : ControllerBase
+{
+    public ApiCrudController(Crud.IDbService db) => _db = db;
+
+    private readonly Crud.IDbService _db;
+
+    private readonly string _suffix = "_api";
+
+    [HttpPost("{proc}")]
+    public async Task<string?> Create(string proc, [FromBody] object? data = null)
+    {
+        try
+        {
+            return await _db.CreateAsync<string?>($"{proc}{_suffix}", data);
+        }
+        catch (Exception ex)
+        {
+            return $"Error: {ex.Message}. Proc={proc}";
+        }
+    }
+
+    [HttpGet("{proc}")]
+    public async Task<string?> Read(string proc, string? data = null)
+    {
+        try
+        {
+            return await _db.ReadAsync<string?>($"{proc}{_suffix}", data);
+        }
+        catch (Exception ex)
+        {
+            return $"Error: {ex.Message}. Proc={proc}";
+        }
+    }
+
+
+    [HttpPut("{proc}")]
+    public async Task<string?> Update(string proc, [FromBody] object? data = null)
+    {
+        try
+        {
+            await _db.UpdateAsync($"{proc}{_suffix}", data);
+        }
+        catch (Exception ex)
+        {
+            return $"Error: {ex.Message}. Proc={proc}";
+        }
+        return null;
+    }
+
+    [HttpDelete("{proc}")]
+    public async Task<string?> Delete(string proc, string? data = null)
+    {
+        try
+        {
+            await _db.DeleteAsync($"{proc}{_suffix}", data);
+        }
+        catch (Exception ex)
+        {
+            return $"Error: {ex.Message}. Proc={proc}";
+        }
+        return null;
+    }
 }
 ```
 
 ## Standard for procedures
 
-UkrGuru.SqlJson will automatically normalize the input parameter and deserialize the result.
+UkrGuru.SqlJson automatically normalizes input parameters and deserializes the result.
 
 So you must follow the next requirements:
-1. If cmdText.Lenght is at least 50, then command.CommandType will be set to CommandType.StoredProcedure, otherwise command.CommandType will still be CommandType.Text.
-2. You can use procedures without or with one specific @Data parameter only.
-3. To use FromProcAsync, you need to prepare the result in json format with the "FOR JSON PATH" option for List or "FOR JSON PATH, WITHOUT_ARRAY_WRAPPER" for TEntity.
+1. If cmdText.Lenght is at less 50, then command.CommandType will be set to CommandType.StoredProcedure, otherwise command.CommandType will still be CommandType.Text.
+2. You can use procedures with a single @Data parameter of any type, or no parameter.
+3. It is required to prepare the result in json format with the option "FOR JSON PATH" for List or "FOR JSON PATH, WITHOUT_ARRAY_WRAPPER" for one record.
+
 
 ```sql
-CREATE PROCEDURE [dbo].[Contacts_List] 
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE OR ALTER PROCEDURE [Products_Del]
+    @Data int
 AS
-SELECT Id, FullName, Email, Notes
-FROM Contacts
-FOR JSON PATH
-```
+DELETE Products
+WHERE (ProductId = @Data)
+GO
 
-```sql
-ALTER PROCEDURE [dbo].[Contacts_Ins]
-	@Data nvarchar(max) 
+CREATE OR ALTER PROCEDURE [Products_Get]
+    @Data int
 AS
-INSERT INTO Contacts (FullName, Email, Notes)
-SELECT * FROM OPENJSON(@Data) 
-WITH (FullName nvarchar(50), Email nvarchar(100), Notes nvarchar(max))
-
-DECLARE @Id int = SCOPE_IDENTITY()
-
-SELECT Id, FullName, Email, Notes
-FROM Contacts
-WHERE Id = @Id
+SELECT ProductId, ProductName, CategoryName, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued
+FROM Products
+WHERE (ProductId = @Data)
 FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+GO
+
+CREATE OR ALTER PROCEDURE [Products_Grd]
+AS
+SELECT ProductId, ProductName, CategoryName, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued
+FROM Products
+FOR JSON PATH
+GO
+
+CREATE OR ALTER PROCEDURE [Products_Ins]
+	@Data nvarchar(500)  
+AS
+INSERT INTO Products (ProductName, CategoryName, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued)
+SELECT ProductName, CategoryName, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued
+FROM OPENJSON(@Data) 
+WITH (ProductName varchar(50), CategoryName varchar(20), QuantityPerUnit varchar(20), 
+	UnitPrice smallmoney, UnitsInStock int, UnitsOnOrder int, ReorderLevel int, Discontinued bit
+)
+GO
+
+CREATE OR ALTER PROCEDURE [Products_Upd]
+	@Data nvarchar(500)  
+AS
+UPDATE P
+SET P.ProductName = D.ProductName, P.CategoryName = D.CategoryName, P.QuantityPerUnit = D.QuantityPerUnit,
+	P.UnitPrice = D.UnitPrice, P.UnitsInStock = D.UnitsInStock, P.UnitsOnOrder = D.UnitsOnOrder,
+	P.ReorderLevel = D.ReorderLevel, P.Discontinued = D.Discontinued
+FROM Products P
+CROSS JOIN (SELECT * FROM OPENJSON(@Data) 
+    WITH (ProductName varchar(50), CategoryName varchar(20), QuantityPerUnit varchar(20), 
+	UnitPrice smallmoney, UnitsInStock int, UnitsOnOrder int, ReorderLevel int, Discontinued bit)) D
+WHERE P.ProductId = JSON_VALUE(@Data,'$.ProductId')
+GO
+
+
 ```
