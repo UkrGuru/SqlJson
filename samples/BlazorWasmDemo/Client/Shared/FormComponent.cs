@@ -4,7 +4,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Telerik.Blazor.Components;
-using UkrGuru.SqlJson;
 
 namespace BlazorWasmDemo.Client.Shared;
 

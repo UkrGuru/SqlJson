@@ -3,6 +3,7 @@
 
 using Microsoft.Data.SqlClient;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace UkrGuru.SqlJson;
 
@@ -32,7 +33,7 @@ public class DbHelper
     /// </summary>
     /// <param name="cmdText"></param>
     /// <returns></returns>
-    public static bool IsName(string? cmdText) => (cmdText?.Length > 50) ? false : true; // maybe rewrite in future
+    public static bool IsName(string? cmdText) => (cmdText?.Length > 50) ? false : Regex.IsMatch(cmdText!, @"^(\w+|\[.+?\])(\.(\w+|\[.+?\]))?$"); 
 
     /// <summary>
     /// 

@@ -39,6 +39,48 @@ public class DbLogHelper
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    public static void LogCritical(string title, object? more = null) => Log(DbLogLevel.Critical, title, more);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    public static void LogDebug(string title, object? more = null) => Log(DbLogLevel.Debug, title, more);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    public static void LogError(string title, object? more = null) => Log(DbLogLevel.Error, title, more);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    public static void LogInformation(string title, object? more = null) => Log(DbLogLevel.Information, title, more);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    public static void LogTrace(string title, object? more = null) => Log(DbLogLevel.Trace, title, more);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    public static void LogWarning(string title, object? more = null) => Log(DbLogLevel.Warning, title, more);
+
+    /// <summary>
+    /// 
+    /// </summary>
     /// <param name="logLevel"></param>
     /// <param name="title"></param>
     /// <param name="more"></param>
@@ -50,4 +92,65 @@ public class DbLogHelper
 
         await DbHelper.ExecAsync("WJbLogs_Ins", Normalize(logLevel, title, more), cancellationToken: cancellationToken);
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static async Task LogCriticalAsync(string title, object? more = null, CancellationToken cancellationToken = default)
+        => await LogAsync(DbLogLevel.Critical, title, more, cancellationToken);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static async Task LogDebugAsync(string title, object? more = null, CancellationToken cancellationToken = default)
+        => await LogAsync(DbLogLevel.Debug, title, more, cancellationToken);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static async Task LogErrorAsync(string title, object? more = null, CancellationToken cancellationToken = default)
+        => await LogAsync(DbLogLevel.Error, title, more, cancellationToken);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static async Task LogInformationAsync(string title, object? more = null, CancellationToken cancellationToken = default)
+        => await LogAsync(DbLogLevel.Information, title, more, cancellationToken);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static async Task LogTraceAsync(string title, object? more = null, CancellationToken cancellationToken = default)
+        => await LogAsync(DbLogLevel.Trace, title, more, cancellationToken);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static async Task LogWarningAsync(string title, object? more = null, CancellationToken cancellationToken = default)
+        => await LogAsync(DbLogLevel.Warning, title, more, cancellationToken);
+
 }

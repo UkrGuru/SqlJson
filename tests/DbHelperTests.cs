@@ -24,8 +24,8 @@ public class DbHelperTests
     [InlineData("[Proc1]", true)]
     [InlineData("dbo.Proc1", true)]
     [InlineData("[dbo].Proc1", true)]
-    [InlineData("[Proc 1]", true)]
-    [InlineData("SELECT 1; /* need more text here for CommandText type */", false)]
+    [InlineData("dbo.[Proc 1]", true)]
+    [InlineData("SELECT 1", false)]
     public void IsNameTests(string cmdText, bool expected)
         => Assert.Equal(expected, DbHelper.IsName(cmdText));
 
