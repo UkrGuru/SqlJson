@@ -38,7 +38,7 @@ public static class DbExtensions
     /// and returns the number of rows affected.
     /// </summary>
     /// <param name="connection">The connection instance to bind.</param>
-    /// <param name="cmdText">The text of the query or stored procedure. Important: any short CmdText less 50 characters is accepted as a stored procedure name.</param>
+    /// <param name="cmdText">The text of the query or stored procedure. </param>
     /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>The number of rows affected.</returns>
@@ -55,7 +55,7 @@ public static class DbExtensions
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="connection">The connection instance to bind.</param>
-    /// <param name="cmdText">The text of the query or stored procedure. Important: any short CmdText less 50 characters is accepted as a stored procedure name.</param>
+    /// <param name="cmdText">The text of the query or stored procedure. </param>
     /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>Result as an object</returns>
@@ -92,7 +92,7 @@ public static class DbExtensions
     /// and returns the number of rows affected.
     /// </summary>
     /// <param name="connection">The connection instance to bind.</param>
-    /// <param name="cmdText">The text of the query or stored procedure. Important: any short CmdText less 50 characters is accepted as a stored procedure name.</param>
+    /// <param name="cmdText">The text of the query or stored procedure. </param>
     /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
@@ -110,7 +110,7 @@ public static class DbExtensions
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="connection">The connection instance to bind.</param>
-    /// <param name="cmdText">The text of the query or stored procedure. Important: any short CmdText less 50 characters is accepted as a stored procedure name.</param>
+    /// <param name="cmdText">The text of the query or stored procedure. </param>
     /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>

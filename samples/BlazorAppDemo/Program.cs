@@ -1,12 +1,12 @@
 using BlazorAppDemo.Data;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using System.Reflection;
 using UkrGuru.Extensions;
+using UkrGuru.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSqlJson(builder.Configuration.GetConnectionString("DefaultConnection"));
+builder.Services.AddSqlJson(builder.Configuration.GetConnectionString("DefaultConnection"))
+    .AddSqlJsonExt(builder.Configuration.GetValue<DbLogLevel>("Logging:LogLevel:UkrGuru.SqlJson"));
 
 // Add services to the container.
 builder.Services.AddRazorPages();

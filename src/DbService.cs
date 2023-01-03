@@ -3,13 +3,11 @@
 
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System.Text;
-using UkrGuru.Extensions;
 
 namespace UkrGuru.SqlJson;
 
 /// <summary>
-/// IDbService - the base interface of a database service for processing or retrieving data from SQL Server databases.
+/// The base interface of a database service for processing or retrieving data.
 /// </summary>
 public interface IDbService
 {
@@ -27,7 +25,7 @@ public interface IDbService
     /// <summary>
     /// Synchronous method that opens a database connection, then executes a Transact-SQL statement and returns the number of rows affected.
     /// </summary>
-    /// <param name="cmdText">The text of the query or stored procedure. Important: any short CmdText less 50 characters is accepted as a stored procedure name.</param>
+    /// <param name="cmdText">The text of the query or stored procedure. </param>
     /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>The number of rows affected.</returns>
@@ -38,7 +36,7 @@ public interface IDbService
     /// and returns the result as an object.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="cmdText">The text of the query or stored procedure. Important: any short CmdText less 50 characters is accepted as a stored procedure name.</param>
+    /// <param name="cmdText">The text of the query or stored procedure. </param>
     /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>Result as an object</returns>
@@ -47,7 +45,7 @@ public interface IDbService
     /// <summary>
     /// Asynchronous method that opens a database connection, then executes a Transact-SQL statement and returns the number of rows affected.
     /// </summary>
-    /// <param name="cmdText">The text of the query or stored procedure. Important: any short CmdText less 50 characters is accepted as a stored procedure name.</param>
+    /// <param name="cmdText">The text of the query or stored procedure. </param>
     /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
@@ -59,7 +57,7 @@ public interface IDbService
     /// and returns the result as an object.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="cmdText">The text of the query or stored procedure. Important: any short CmdText less 50 characters is accepted as a stored procedure name.</param>
+    /// <param name="cmdText">The text of the query or stored procedure. </param>
     /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
@@ -98,7 +96,7 @@ public class DbService : IDbService
     /// <summary>
     /// Synchronous method that opens a database connection, then executes a Transact-SQL statement and returns the number of rows affected.
     /// </summary>
-    /// <param name="cmdText">The text of the query or stored procedure. Important: any short CmdText less 50 characters is accepted as a stored procedure name.</param>
+    /// <param name="cmdText">The text of the query or stored procedure. </param>
     /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>The number of rows affected.</returns>
@@ -115,7 +113,7 @@ public class DbService : IDbService
     /// and returns the result as an object.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="cmdText">The text of the query or stored procedure. Important: any short CmdText less 50 characters is accepted as a stored procedure name.</param>
+    /// <param name="cmdText">The text of the query or stored procedure. </param>
     /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>Result as an object</returns>
@@ -130,7 +128,7 @@ public class DbService : IDbService
     /// <summary>
     /// Asynchronous method that opens a database connection, then executes a Transact-SQL statement and returns the number of rows affected.
     /// </summary>
-    /// <param name="cmdText">The text of the query or stored procedure. Important: any short CmdText less 50 characters is accepted as a stored procedure name.</param>
+    /// <param name="cmdText">The text of the query or stored procedure. </param>
     /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
@@ -148,7 +146,7 @@ public class DbService : IDbService
     /// and returns the result as an object.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="cmdText">The text of the query or stored procedure. Important: any short CmdText less 50 characters is accepted as a stored procedure name.</param>
+    /// <param name="cmdText">The text of the query or stored procedure. </param>
     /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
@@ -162,118 +160,3 @@ public class DbService : IDbService
     }
 }
 
-/// <summary>
-/// 
-/// </summary>
-public class ApiDbService : IDbService
-{
-    /// <summary>
-    /// 
-    /// </summary>
-    public virtual string? ApiHoleUri => "ApiHole";
-
-    /// <summary>
-    /// 
-    /// </summary>
-    private readonly HttpClient _http;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="http"></param>
-    public ApiDbService(HttpClient http) => _http = http;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public string ConnectionStringName => throw new NotImplementedException();
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public SqlConnection CreateSqlConnection() => throw new NotImplementedException();
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="proc"></param>
-    /// <param name="data"></param>
-    /// <param name="timeout"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public int Exec(string proc, object? data = null, int? timeout = null) => throw new NotImplementedException();
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="proc"></param>
-    /// <param name="data"></param>
-    /// <param name="timeout"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public T? Exec<T>(string proc, object? data = null, int? timeout = null) => throw new NotImplementedException();
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="proc"></param>
-    /// <param name="data"></param>
-    /// <param name="timeout"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public async Task<int> ExecAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-    {
-        ApiHelper.ValidateProcName(proc);
-
-        HttpResponseMessage? httpResponse;
-
-        var sdata = data == null ? null : DbHelper.Normalize(data).ToString();
-        if (sdata?.Length > 1000)
-        {
-            StringContent content = new(sdata, Encoding.UTF8, "application/json");
-
-            httpResponse = await _http.PostAsync(ApiHelper.BuildRequestUri(ApiHoleUri, proc, null), content, cancellationToken);
-        }
-        else
-        {
-            httpResponse = await _http.GetAsync(ApiHelper.BuildRequestUri(ApiHoleUri, proc, data), cancellationToken);
-        }
-
-        await httpResponse.ReadAsync(cancellationToken);
-
-        return 0;
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="proc"></param>
-    /// <param name="data"></param>
-    /// <param name="timeout"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public async Task<T?> ExecAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-    {
-        ApiHelper.ValidateProcName(proc);
-
-        HttpResponseMessage? httpResponse;
-
-        var sdata = data == null ? null : DbHelper.Normalize(data).ToString();
-        if (sdata?.Length > 1000)
-        {
-            StringContent content = new(sdata, Encoding.UTF8, "application/json");
-
-            httpResponse = await _http.PostAsync(ApiHelper.BuildRequestUri(ApiHoleUri, proc, null), content, cancellationToken);
-        }
-        else
-        {
-            httpResponse = await _http.GetAsync(ApiHelper.BuildRequestUri(ApiHoleUri, proc, data), cancellationToken);
-        }
-
-        return await httpResponse.ReadAsync<T?>(cancellationToken);
-    }
-}

@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <PackageReference Include="Telerik.UI.for.Blazor.Trial" Version="3.7.0" />
-    <PackageReference Include="UkrGuru.SqlJson" Version="6.0.0" />
+    <PackageReference Include="UkrGuru.SqlJson" Version="6.0.3" />
   </ItemGroup>
 
 </Project>

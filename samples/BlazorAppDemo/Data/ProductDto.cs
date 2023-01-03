@@ -8,12 +8,14 @@ public class ProductDto
 
     [Required]
     [StringLength(40)]
-    public string ProductName { get; set; }
+    public string? ProductName { get; set; }
 
-    public string CategoryName { get; set; }
+    [Required]
+    public string? CategoryName { get; set; }
 
+    [Required]
     [StringLength(20)]
-    public string QuantityPerUnit { get; set; }
+    public string? QuantityPerUnit { get; set; }
 
     public decimal? UnitPrice { get; set; }
 

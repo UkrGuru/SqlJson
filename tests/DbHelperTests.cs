@@ -84,22 +84,22 @@ public class DbHelperTests
     [Fact]
     public void CanExec()
     {
-        var num1 = DbHelper.Exec("DECLARE @num1 int; SET @num1 = 1; /* need more text here for CommandText type */");
+        var num1 = DbHelper.Exec("DECLARE @num1 int; SET @num1 = 1;");
         Assert.Equal(-1, num1);
 
-        var num2 = DbHelper.Exec<int?>("SELECT CAST(1 as varchar); /* need more text here for CommandText type */");
+        var num2 = DbHelper.Exec<int?>("SELECT CAST(1 as varchar);");
         Assert.Equal(1, num2);
 
-        var num3 = DbHelper.Exec<int?>("SELECT CAST(NULL as varchar); /* need more text here for CommandText type */");
+        var num3 = DbHelper.Exec<int?>("SELECT CAST(NULL as varchar);");
         Assert.Null(num3);
 
-        var data = DbHelper.Exec<string?>("SELECT @Data; /* need more text here for CommandText type */", "Data");
+        var data = DbHelper.Exec<string?>("SELECT @Data;", "Data");
         Assert.Equal("Data", data);
 
-        var name = DbHelper.Exec<string?>("SELECT JSON_VALUE(@Data, '$.Name'); /* need more text here for CommandText type */", new { Name = "John" });
+        var name = DbHelper.Exec<string?>("SELECT JSON_VALUE(@Data, '$.Name');", new { Name = "John" });
         Assert.Equal("John", name);
 
-        DbHelper.Exec("CREATE OR ALTER PROCEDURE ProcNull AS /* need more text here for CommandText type */");
+        DbHelper.Exec("CREATE OR ALTER PROCEDURE ProcNull AS");
 
         DbHelper.Exec("CREATE OR ALTER PROCEDURE ProcInt @Data int = NULL AS SELECT CAST(@Data as varchar);");
 
@@ -125,22 +125,22 @@ public class DbHelperTests
     [Fact]
     public async Task CanExecAsync()
     {
-        var num1 = await DbHelper.ExecAsync("DECLARE @num1 int; SET @num1 = 1; /* need more text here for CommandText type */");
+        var num1 = await DbHelper.ExecAsync("DECLARE @num1 int; SET @num1 = 1;");
         Assert.Equal(-1, num1);
 
-        var num2 = await DbHelper.ExecAsync<int?>("SELECT CAST(1 as varchar); /* need more text here for CommandText type */");
+        var num2 = await DbHelper.ExecAsync<int?>("SELECT CAST(1 as varchar); ");
         Assert.Equal(1, num2);
 
-        var num3 = await DbHelper.ExecAsync<int?>("SELECT CAST(NULL as varchar); /* need more text here for CommandText type */");
+        var num3 = await DbHelper.ExecAsync<int?>("SELECT CAST(NULL as varchar); ");
         Assert.Null(num3);
 
-        var data = await DbHelper.ExecAsync<string?>("SELECT @Data; /* need more text here for CommandText type */", "Data");
+        var data = await DbHelper.ExecAsync<string?>("SELECT @Data; ", "Data");
         Assert.Equal("Data", data);
 
-        var name = await DbHelper.ExecAsync<string?>("SELECT JSON_VALUE(@Data, '$.Name'); /* need more text here for CommandText type */", new { Name = "John" });
+        var name = await DbHelper.ExecAsync<string?>("SELECT JSON_VALUE(@Data, '$.Name'); ", new { Name = "John" });
         Assert.Equal("John", name);
 
-        await DbHelper.ExecAsync("CREATE OR ALTER PROCEDURE ProcNullAsync AS /* need more text here for CommandText type */");
+        await DbHelper.ExecAsync("CREATE OR ALTER PROCEDURE ProcNullAsync AS ");
 
         await DbHelper.ExecAsync("CREATE OR ALTER PROCEDURE ProcIntAsync @Data int = NULL AS SELECT CAST(@Data as varchar);");
 

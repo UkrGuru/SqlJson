@@ -33,7 +33,7 @@ public class DbHelper
     /// </summary>
     /// <param name="cmdText"></param>
     /// <returns></returns>
-    public static bool IsName(string? cmdText) => (cmdText?.Length > 50) ? false : Regex.IsMatch(cmdText!, @"^(\w+|\[.+?\])(\.(\w+|\[.+?\]))?$"); 
+    public static bool IsName(string? cmdText) => (cmdText?.Length > 100) ? false : Regex.IsMatch(cmdText!, @"^(\w+|\[.+?\])(\.(\w+|\[.+?\]))?$"); 
 
     /// <summary>
     /// 
@@ -64,7 +64,7 @@ public class DbHelper
     /// <summary>
     /// Opens a database connection, then executes a Transact-SQL statement and returns the number of rows affected.
     /// </summary>
-    /// <param name="cmdText">The text of the query or stored procedure. Important: any short CmdText less 50 characters is accepted as a stored procedure name.</param>
+    /// <param name="cmdText">The text of the query or stored procedure. </param>
     /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>The number of rows affected.</returns>
@@ -81,7 +81,7 @@ public class DbHelper
     /// and returns the result as an object.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="cmdText">The text of the query or stored procedure. Important: any short CmdText less 50 characters is accepted as a stored procedure name.</param>
+    /// <param name="cmdText">The text of the query or stored procedure. </param>
     /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>Result as an object</returns>
@@ -96,7 +96,7 @@ public class DbHelper
     /// <summary>
     /// Opens a database connection, then executes a Transact-SQL statement and returns the number of rows affected.
     /// </summary>
-    /// <param name="cmdText">The text of the query or stored procedure. Important: any short CmdText less 50 characters is accepted as a stored procedure name.</param>
+    /// <param name="cmdText">The text of the query or stored procedure. </param>
     /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
@@ -114,7 +114,7 @@ public class DbHelper
     /// and returns the result as an object.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="cmdText">The text of the query or stored procedure. Important: any short CmdText less 50 characters is accepted as a stored procedure name.</param>
+    /// <param name="cmdText">The text of the query or stored procedure. </param>
     /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>

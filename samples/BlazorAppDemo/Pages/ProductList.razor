@@ -15,7 +15,7 @@
             <Template>
                 @{
                     var product = context as ProductDto;
-                    if (product.Discontinued.GetValueOrDefault())
+                    if (product!.Discontinued.GetValueOrDefault())
                     {
                         <span class="k-badge k-badge-md k-badge-solid k-badge-solid-error k-rounded-md">Discontinued</span>
                     }
@@ -31,7 +31,7 @@
             <Template>
                 @{
                     var product = context as ProductDto;
-                    var value = product.UnitsInStock.GetValueOrDefault();
+                    var value = product!.UnitsInStock.GetValueOrDefault();
                 }
                 <TelerikProgressBar Class="width-100" Max="125" Value="(double)value">
                     <ProgressBarLabel Visible="true" Position="@ProgressBarLabelPosition.Center">
@@ -61,20 +61,22 @@
 </TelerikGrid>
 
 @code {
-    public List<ProductDto> Products { get; set; } = new();
+    public List<ProductDto>? Products { get; set; }
 
     protected override async Task InitData() { Title ??= "Products"; await Task.CompletedTask; }
 
-    protected override async Task LoadData() { Products = await ReadAsync<List<ProductDto>>("Products_Grd") ?? new(); }
+    protected override async Task LoadData() {
+        Products = await db.ReadAsync<List<ProductDto>>("Products_Grd");
+    }
 
     protected override async Task InsItemAsync(GridCommandEventArgs args) 
-        => await CreateAsync<ProductDto>("Products_Ins", (ProductDto)args.Item);
+        => await db.CreateAsync<ProductDto>("Products_Ins", (ProductDto)args.Item);
 
     protected override async Task UpdItemAsync(GridCommandEventArgs args) 
-        => await UpdateAsync("Products_Upd", (ProductDto)args.Item);
+        => await db.UpdateAsync("Products_Upd", (ProductDto)args.Item);
 
     protected override async Task DelItemAsync(GridCommandEventArgs args) 
-        => await DeleteAsync("Products_Del", ((ProductDto)args.Item)?.ProductId);
+        => await db.DeleteAsync("Products_Del", ((ProductDto)args.Item)?.ProductId);
 }
 
 <style>

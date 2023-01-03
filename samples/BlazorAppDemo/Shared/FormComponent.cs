@@ -4,14 +4,22 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Telerik.Blazor.Components;
+using UkrGuru.Extensions.Logging;
+using UkrGuru.SqlJson;
 
 namespace BlazorAppDemo.Shared;
 
 /// <summary>
 /// 
 /// </summary>
-public class FormComponent : HttpComponent
+public class FormComponent : ComponentBase
 {
+    [Inject]
+    protected ICrudDbService db { get; set; }
+
+    [Inject]
+    protected IDbLogService dbLog { get; set; }
+
     [Parameter]
     public string? Title { get; set; }
 
@@ -21,6 +29,9 @@ public class FormComponent : HttpComponent
 
     protected int PageSize { get; set; } = 100;
     protected List<int?> PageSizes = new() { 10, 25, 50, 100, null };
+
+    protected string? WinTitle { get; set; }
+    protected bool WindowVisible { get { return !string.IsNullOrEmpty(WinTitle); } set { if (!value) WinTitle = null; } }
 
     protected virtual object? ID { get; }
 
@@ -46,14 +57,14 @@ public class FormComponent : HttpComponent
         catch (Exception ex)
         {
             ErrMsg = $"Error: {ex.Message}";
-            // await LogHelper.LogErrorAsync($"{Title}/OnInitializedAsync", new { ex.Message, ex.StackTrace });
+            await dbLog.LogErrorAsync($"{Title}/OnInitializedAsync", new { ex.Message, ex.StackTrace });
         }
         Loading = false;
     }
 
-    protected async Task Refresh()
+    protected async Task RefreshHandler()
     {
-        ErrMsg = null;
+        ErrMsg = null; Loading = true;
         try
         {
             await LoadData();
@@ -61,13 +72,14 @@ public class FormComponent : HttpComponent
         catch (Exception ex)
         {
             ErrMsg = $"Error: {ex.Message}";
-            //await LogHelper.LogErrorAsync($"{Title}/Refresh", new { ex.Message, ex.StackTrace });
+            await dbLog.LogErrorAsync($"{Title}/RefreshHandler", new { ex.Message, ex.StackTrace });
         }
+        Loading = false;
     }
 
     protected async Task CreateHandler(GridCommandEventArgs args)
     {
-        ErrMsg = null;
+        ErrMsg = null; Loading = true;
         try
         {
             await InsItemAsync(args);
@@ -75,19 +87,20 @@ public class FormComponent : HttpComponent
             await LoadData();
 
             ErrMsg = "Created successfully.";
-            //await LogHelper.LogInformationAsync($"{Title}/CreateHandler", ErrMsg);
+            await dbLog.LogInformationAsync($"{Title}/CreateHandler", ErrMsg);
         }
         catch (Exception ex)
         {
             ErrMsg = $"Error: {ex.Message}";
-            //await LogHelper.LogErrorAsync($"{Title}/CreateHandler", new { ex.Message, ex.StackTrace });
+            await dbLog.LogErrorAsync($"{Title}/CreateHandler", new { ex.Message, ex.StackTrace });
             args.IsCancelled = true;
         }
+        Loading = false;
     }
 
     protected async Task UpdateHandler(GridCommandEventArgs args)
     {
-        ErrMsg = null;
+        ErrMsg = null; Loading = true;
         try
         {
             await UpdItemAsync(args);
@@ -95,19 +108,20 @@ public class FormComponent : HttpComponent
             await LoadData();
 
             ErrMsg = "Updated successfully.";
-            //await LogHelper.LogInformationAsync($"{Title}/UpdateHandler/{ID}", ErrMsg);
+            await dbLog.LogInformationAsync($"{Title}/UpdateHandler/{ID}", ErrMsg);
         }
         catch (Exception ex)
         {
             ErrMsg = $"Error: {ex.Message}";
-            //await LogHelper.LogErrorAsync($"{Title}/UpdateHandler/{ID}", new { ex.Message, ex.StackTrace });
+            await dbLog.LogErrorAsync($"{Title}/UpdateHandler/{ID}", new { ex.Message, ex.StackTrace });
             args.IsCancelled = true;
         }
+        Loading = false;
     }
 
     protected async Task DeleteHandler(GridCommandEventArgs args)
     {
-        ErrMsg = null;
+        ErrMsg = null; Loading = true;
         try
         {
             await DelItemAsync(args);
@@ -115,29 +129,31 @@ public class FormComponent : HttpComponent
             await LoadData();
 
             ErrMsg = "Deleted successfully.";
-            //await LogHelper.LogInformationAsync($"{Title}/DeleteHandler/{ID}", ErrMsg);
+            await dbLog.LogInformationAsync($"{Title}/DeleteHandler/{ID}", ErrMsg);
         }
         catch (Exception ex)
         {
             ErrMsg = $"Error: {ex.Message}";
-            //await LogHelper.LogErrorAsync($"{Title}/DeleteHandler/{ID}", new { ex.Message, ex.StackTrace });
+            await dbLog.LogErrorAsync($"{Title}/DeleteHandler/{ID}", new { ex.Message, ex.StackTrace });
         }
+        Loading = false;
     }
 
     protected async Task SubmitHandler(EditContext editContext)
     {
-        ErrMsg = null;
+        ErrMsg = null; Loading = true;
         if (editContext.Validate())
         {
             await SetItemAsync(editContext);
 
             ErrMsg = "Submit successfully.";
-            //await LogHelper.LogInformationAsync($"{Title}/SubmitHandler/{ID}", ErrMsg);
+            await dbLog.LogInformationAsync($"{Title}/SubmitHandler/{ID}", ErrMsg);
         }
         else
         {
             ErrMsg = $"Error: Invalid Data. Submit canceled.";
-            //await LogHelper.LogErrorAsync($"{Title}/SubmitHandler/{ID}", ErrMsg);
+            await dbLog.LogErrorAsync($"{Title}/SubmitHandler/{ID}", ErrMsg);
         }
+        Loading = false;
     }
 }

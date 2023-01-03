@@ -11,7 +11,7 @@
         <PackageIcon>ukrguru-logo.jpg</PackageIcon>
         <RepositoryUrl>https://github.com/UkrGuru/SqlJson</RepositoryUrl>
         <Description>The UkrGuru.SqlJson package provides easy and fast database connectivity to SQL Server for .NET applications.</Description>
-        <Version>6.0.2</Version>
+        <Version>6.0.3</Version>
         <SignAssembly>True</SignAssembly>
         <AssemblyOriginatorKeyFile>..\..\UkrGuru.snk</AssemblyOriginatorKeyFile>
         <PackageTags>sqlclient ado-net sql json .net6 .net7</PackageTags>
@@ -25,7 +25,6 @@
         <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
         <PackageProjectUrl>https://ukrguru.com/sqljson</PackageProjectUrl>
         <RepositoryType>git</RepositoryType>
-        <IncludeSymbols>True</IncludeSymbols>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <DebugType>full</DebugType>
@@ -49,9 +48,6 @@
         <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
         <DebugType>portable</DebugType>
     </PropertyGroup>
-    <ItemGroup>
-      <None Remove="Resources\InitDb.sql" />
-    </ItemGroup>
 
     <ItemGroup>
         <EmbeddedResource Include="..\LICENSE.txt">

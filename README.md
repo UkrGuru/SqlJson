@@ -8,18 +8,29 @@ The UkrGuru.SqlJson package provides easy and fast database connectivity to SQL 
 I'm an old software developer with over 20 years of experience and have written a lot of unique code in my life. In my practice of working with data, I usually use SQL Server and stored procedures to execute queries of any complexity. Last year I tried to use the Microsoft EF Core framework, but I always lacked the power that I had when using the procedures earlier. Eventually my patience ran out and I created a minimally simple UkrGuru.SqlJson package for modern data processing, and now I want to share this knowledge with you...
 ## Installation
 
-### 1. Add a new DefaultConnection to your database in appsettings.json
+### 1. Add "DefaultConnection" and "UkrGuru.SqlJson" elements in AppSettings.json
 ```json
-"ConnectionStrings": {
+{
+  "ConnectionStrings": {
     "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=BlazorAppDemo;Trusted_Connection=True;MultipleActiveResultSets=true"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning",
+      "UkrGuru.SqlJson": "Debug"
+    }
+  },
+  "AllowedHosts": "*"
 }
 ```
 
-### 2. Open the ~/Program.cs file and register the UkrGuru SqlJson service:
+### 2. Open the ~/Program.cs file and register the UkrGuru SqlJson services and Extensions:
 ```c#
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSqlJson(builder.Configuration.GetConnectionString("DefaultConnection"));
+builder.Services.AddSqlJson(builder.Configuration.GetConnectionString("DefaultConnection"))
+    .AddSqlJsonExt(builder.Configuration.GetValue<DbLogLevel>("Logging:LogLevel:UkrGuru.SqlJson"));
 
 // More other services here ... 
 
@@ -28,115 +39,24 @@ var app = builder.Build();
 
 ## Samples of code
 
-### DbHelper: how to use?
 ```c#
 @code {
-    public List<ProductDto> Products { get; set; } = new();
+    public List<ProductDto>? Products { get; set; }
 
     protected override async Task InitData() { Title ??= "Products"; await Task.CompletedTask; }
 
-    protected override async Task LoadData() { 
-        Products = await DbHelper.ExecAsync<List<ProductDto>>("Products_Grd") ?? new(); 
+    protected override async Task LoadData() {
+        Products = await db.ReadAsync<List<ProductDto>>("Products_Grd");
     }
 
     protected override async Task InsItemAsync(GridCommandEventArgs args) 
-        => await DbHelper.ExecAsync<ProductDto>("Products_Ins", (ProductDto)args.Item);
+        => await db.CreateAsync<ProductDto>("Products_Ins", (ProductDto)args.Item);
 
     protected override async Task UpdItemAsync(GridCommandEventArgs args) 
-        => await DbHelper.ExecAsync("Products_Upd", (ProductDto)args.Item);
+        => await db.UpdateAsync("Products_Upd", (ProductDto)args.Item);
 
     protected override async Task DelItemAsync(GridCommandEventArgs args) 
-        => await DbHelper.ExecAsync("Products_Del", ((ProductDto)args.Item)?.ProductId);
-}
-```
-
-### Crud.DbService: how to use?
-```c#
-public class HttpComponent : ComponentBase
-{
-    [Inject]
-    private UkrGuru.SqlJson.Crud.IDbService CrudDb { get; set; }
-
-    public async Task<T?> CreateAsync<T>(string cmdText, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-    => await CrudDb.CreateAsync<T?>(cmdText, data, timeout, cancellationToken);
-
-    public async Task<T?> ReadAsync<T>(string cmdText, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-        => await CrudDb.ReadAsync<T?>(cmdText, data, timeout, cancellationToken);
-
-    public async Task UpdateAsync(string cmdText, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-        => await CrudDb.UpdateAsync(cmdText, data, timeout, cancellationToken);
-
-    public async Task DeleteAsync(string cmdText, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-        => await CrudDb.DeleteAsync(cmdText, data, timeout, cancellationToken);
-}
-```
-
-### Crud.ApiDbService: how to use?
-```c#
-[ApiController]
-[Route("[controller]")]
-public class ApiCrudController : ControllerBase
-{
-    public ApiCrudController(Crud.IDbService db) => _db = db;
-
-    private readonly Crud.IDbService _db;
-
-    private readonly string _suffix = "_api";
-
-    [HttpPost("{proc}")]
-    public async Task<string?> Create(string proc, [FromBody] object? data = null)
-    {
-        try
-        {
-            return await _db.CreateAsync<string?>($"{proc}{_suffix}", data);
-        }
-        catch (Exception ex)
-        {
-            return $"Error: {ex.Message}. Proc={proc}";
-        }
-    }
-
-    [HttpGet("{proc}")]
-    public async Task<string?> Read(string proc, string? data = null)
-    {
-        try
-        {
-            return await _db.ReadAsync<string?>($"{proc}{_suffix}", data);
-        }
-        catch (Exception ex)
-        {
-            return $"Error: {ex.Message}. Proc={proc}";
-        }
-    }
-
-
-    [HttpPut("{proc}")]
-    public async Task<string?> Update(string proc, [FromBody] object? data = null)
-    {
-        try
-        {
-            await _db.UpdateAsync($"{proc}{_suffix}", data);
-        }
-        catch (Exception ex)
-        {
-            return $"Error: {ex.Message}. Proc={proc}";
-        }
-        return null;
-    }
-
-    [HttpDelete("{proc}")]
-    public async Task<string?> Delete(string proc, string? data = null)
-    {
-        try
-        {
-            await _db.DeleteAsync($"{proc}{_suffix}", data);
-        }
-        catch (Exception ex)
-        {
-            return $"Error: {ex.Message}. Proc={proc}";
-        }
-        return null;
-    }
+        => await db.DeleteAsync("Products_Del", ((ProductDto)args.Item)?.ProductId);
 }
 ```
 
@@ -145,9 +65,8 @@ public class ApiCrudController : ControllerBase
 UkrGuru.SqlJson automatically normalizes input parameters and deserializes the result.
 
 So you must follow the next requirements:
-1. If cmdText.Lenght is at less 50, then command.CommandType will be set to CommandType.StoredProcedure, otherwise command.CommandType will still be CommandType.Text.
-2. You can use procedures with a single @Data parameter of any type, or no parameter.
-3. It is required to prepare the result in json format with the option "FOR JSON PATH" for List or "FOR JSON PATH, WITHOUT_ARRAY_WRAPPER" for one record.
+1. You can use procedures with a single @Data parameter of any type, or no parameter.
+2. It is required to prepare the result in json format with the option "FOR JSON PATH" for List or "FOR JSON PATH, WITHOUT_ARRAY_WRAPPER" for one record.
 
 
 ```sql
