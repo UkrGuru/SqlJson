@@ -6,6 +6,7 @@ using UkrGuru.Extensions;
 using UkrGuru.Extensions.Data;
 using UkrGuru.Extensions.Logging;
 using UkrGuru.SqlJson;
+using UkrGuru.SqlJson.Client;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -45,6 +46,33 @@ public static class SqlJsonServiceCollectionExtensions
 
         services.AddScoped<IDbLogService, DbLogService>();
         services.AddScoped<IDbFileService, DbFileService>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers UkrGuru SqlJson services for client side application.
+    /// </summary>
+    /// <param name="services">The IServiceCollection argument the ConfigureServices method receives.</param>
+    /// <returns>The updated IServiceCollection collection argument the ConfigureServices method receives.</returns>
+    public static IServiceCollection AddSqlJsonApi(this IServiceCollection services)
+    {
+        services.AddScoped<IDbService, ApiDbService>();
+        services.AddScoped<ICrudDbService, ApiCrudDbService>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers UkrGuru Extensions for client side application.
+    /// </summary>
+    /// <param name="services">The IServiceCollection argument the ConfigureServices method receives.</param>
+    /// <param name="logLevel"></param>
+    /// <returns>The updated IServiceCollection collection argument the ConfigureServices method receives.</returns>
+    public static IServiceCollection AddSqlJsonApiExt(this IServiceCollection services, DbLogLevel logLevel = DbLogLevel.Information)
+    {
+        services.AddScoped<IDbLogService, ApiDbLogService>();
+        services.AddScoped<IDbFileService, ApiDbFileService>();
 
         return services;
     }

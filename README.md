@@ -84,7 +84,8 @@ GO
 CREATE OR ALTER PROCEDURE [Products_Get]
     @Data int
 AS
-SELECT ProductId, ProductName, CategoryName, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued
+SELECT ProductId, ProductName, CategoryName, QuantityPerUnit, UnitPrice, UnitsInStock, 
+    UnitsOnOrder, ReorderLevel, Discontinued
 FROM Products
 WHERE (ProductId = @Data)
 FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
@@ -92,7 +93,8 @@ GO
 
 CREATE OR ALTER PROCEDURE [Products_Grd]
 AS
-SELECT ProductId, ProductName, CategoryName, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued
+SELECT ProductId, ProductName, CategoryName, QuantityPerUnit, UnitPrice, UnitsInStock, 
+    UnitsOnOrder, ReorderLevel, Discontinued
 FROM Products
 FOR JSON PATH
 GO
@@ -100,25 +102,30 @@ GO
 CREATE OR ALTER PROCEDURE [Products_Ins]
 	@Data nvarchar(500)  
 AS
-INSERT INTO Products (ProductName, CategoryName, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued)
-SELECT ProductName, CategoryName, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued
+INSERT INTO Products (ProductName, CategoryName, QuantityPerUnit, UnitPrice, 
+    UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued)
+SELECT ProductName, CategoryName, QuantityPerUnit, UnitPrice, 
+    UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued
 FROM OPENJSON(@Data) 
 WITH (ProductName varchar(50), CategoryName varchar(20), QuantityPerUnit varchar(20), 
-	UnitPrice smallmoney, UnitsInStock int, UnitsOnOrder int, ReorderLevel int, Discontinued bit
-)
+	UnitPrice smallmoney, UnitsInStock int, UnitsOnOrder int, 
+    ReorderLevel int, Discontinued bit)
 GO
 
 CREATE OR ALTER PROCEDURE [Products_Upd]
 	@Data nvarchar(500)  
 AS
 UPDATE P
-SET P.ProductName = D.ProductName, P.CategoryName = D.CategoryName, P.QuantityPerUnit = D.QuantityPerUnit,
-	P.UnitPrice = D.UnitPrice, P.UnitsInStock = D.UnitsInStock, P.UnitsOnOrder = D.UnitsOnOrder,
+SET P.ProductName = D.ProductName, P.CategoryName = D.CategoryName, 
+    P.QuantityPerUnit = D.QuantityPerUnit, P.UnitPrice = D.UnitPrice, 
+    P.UnitsInStock = D.UnitsInStock, P.UnitsOnOrder = D.UnitsOnOrder,
 	P.ReorderLevel = D.ReorderLevel, P.Discontinued = D.Discontinued
 FROM Products P
 CROSS JOIN (SELECT * FROM OPENJSON(@Data) 
-    WITH (ProductName varchar(50), CategoryName varchar(20), QuantityPerUnit varchar(20), 
-	UnitPrice smallmoney, UnitsInStock int, UnitsOnOrder int, ReorderLevel int, Discontinued bit)) D
+    WITH (ProductName varchar(50), CategoryName varchar(20), 
+    QuantityPerUnit varchar(20), UnitPrice smallmoney, 
+    UnitsInStock int, UnitsOnOrder int, 
+    ReorderLevel int, Discontinued bit)) D
 WHERE P.ProductId = JSON_VALUE(@Data,'$.ProductId')
 GO
 

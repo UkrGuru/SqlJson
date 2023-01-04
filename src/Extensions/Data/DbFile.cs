@@ -8,7 +8,7 @@ namespace UkrGuru.Extensions.Data;
 /// <summary>
 /// UkrGuru's files are stored in the Sql Server database.
 /// </summary>
-public record class DbFile
+public class DbFile
 {
     /// <summary>
     /// 

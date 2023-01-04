@@ -6,7 +6,7 @@ namespace UkrGuru.Extensions.Logging;
 /// <summary>
 /// UkrGuru's logs are stored in the Sql Server database.
 /// </summary>
-public record class DbLog
+public class DbLog
 {
     /// <summary>
     /// Date/Time of the log
