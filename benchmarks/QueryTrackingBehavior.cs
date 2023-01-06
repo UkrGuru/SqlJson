@@ -27,6 +27,13 @@ public class QueryTrackingBehavior
         Console.WriteLine("Setup complete.");
 
         DbHelper.ConnectionString = context.Database.GetConnectionString();
+        DbHelper.Exec(@"CREATE OR ALTER PROCEDURE Posts_Grd_With_Blog AS 
+SELECT Posts.PostId, Posts.Title, Posts.[Content], Posts.BlogId, 
+    Blogs.BlogId AS 'Blog.BlogId', Blogs.Url 'Blog.Url', Blogs.Rating 'Blog.Rating' 
+FROM Posts 
+LEFT JOIN Blogs ON Posts.BlogId = Blogs.BlogId
+FOR JSON PATH
+");
     }
 
     [Benchmark(Baseline = true)]
@@ -45,7 +52,7 @@ public class QueryTrackingBehavior
 
     [Benchmark]
     public List<Post> AsSqlJson() 
-        => DbHelper.Exec<List<Post>>("SELECT * FROM Posts FOR JSON PATH");
+        => DbHelper.Exec<List<Post>>("Posts_Grd_With_Blog");
 
     public class BloggingContext : DbContext
     {

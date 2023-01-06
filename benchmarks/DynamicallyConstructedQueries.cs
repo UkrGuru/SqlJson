@@ -21,7 +21,14 @@ public class DynamicallyConstructedQueries
         context.Database.EnsureCreated();
 
         DbHelper.ConnectionString = context.Database.GetConnectionString();
-        DbHelper.Exec("CREATE OR ALTER PROCEDURE Blogs_Get_Count @Data nvarchar(1000) AS SELECT CAST(COUNT(BlogId) AS varchar(10)) FROM Blogs WHERE LEN(@Data) > 0 AND Url = @Data");
+        DbHelper.Exec(@"
+CREATE OR ALTER PROCEDURE Blogs_Get_Count 
+    @Data nvarchar(1000) 
+AS 
+SELECT CAST(COUNT(BlogId) AS varchar(10)) 
+FROM Blogs 
+WHERE LEN(@Data) > 0 AND Url = @Data
+");
     }
 
     #region WithConstant
