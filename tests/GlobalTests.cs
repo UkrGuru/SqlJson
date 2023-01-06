@@ -11,9 +11,6 @@ public class GlobalTests
 
     public const string ConnectionString = $"Data Source=(localdb)\\mssqllocaldb;Database=master;Integrated Security=True;Connect Timeout=30;ConnectRetryCount=0";
 
-    Server=;Database={DbName
-}; Trusted_Connection=True
-
     public static bool DbOk { get; set; }
 
     public static string CommandTest = "SELECT 1;";
