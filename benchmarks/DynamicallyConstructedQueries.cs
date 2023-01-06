@@ -6,7 +6,6 @@ using System.Threading;
 using BenchmarkDotNet.Attributes;
 using Microsoft.EntityFrameworkCore;
 using UkrGuru.SqlJson;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 [MemoryDiagnoser]
 public class DynamicallyConstructedQueries
