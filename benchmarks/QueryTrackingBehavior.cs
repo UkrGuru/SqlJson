@@ -33,7 +33,6 @@ public class QueryTrackingBehavior
     public List<Post> AsTracking()
     {
         using var context = new BloggingContext();
-
         return context.Posts.AsTracking().Include(p => p.Blog).ToList();
     }
 
@@ -41,11 +40,12 @@ public class QueryTrackingBehavior
     public List<Post> AsNoTracking()
     {
         using var context = new BloggingContext();
-
         return context.Posts.AsNoTracking().Include(p => p.Blog).ToList();
     }
 
-    public List<Post> AsSqlJson() => DbHelper.Exec<List<Post>>("SELECT * FROM Posts FOR JSON PATH");
+    [Benchmark]
+    public List<Post> AsSqlJson() 
+        => DbHelper.Exec<List<Post>>("SELECT * FROM Posts FOR JSON PATH");
 
     public class BloggingContext : DbContext
     {
