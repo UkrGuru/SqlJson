@@ -77,8 +77,8 @@ public interface IDbLogService
     /// <param name="logLevel"></param>
     /// <param name="title"></param>
     /// <param name="more"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
     Task LogAsync(DbLogLevel logLevel, string title, object? more = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -86,8 +86,8 @@ public interface IDbLogService
     /// </summary>
     /// <param name="title"></param>
     /// <param name="more"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
     public async Task LogCriticalAsync(string title, object? more = null, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Critical, title, more, cancellationToken);
 
@@ -96,8 +96,8 @@ public interface IDbLogService
     /// </summary>
     /// <param name="title"></param>
     /// <param name="more"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
     public async Task LogDebugAsync(string title, object? more = null, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Debug, title, more, cancellationToken);
 
@@ -106,8 +106,8 @@ public interface IDbLogService
     /// </summary>
     /// <param name="title"></param>
     /// <param name="more"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
     public async Task LogErrorAsync(string title, object? more = null, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Error, title, more, cancellationToken);
 
@@ -116,8 +116,8 @@ public interface IDbLogService
     /// </summary>
     /// <param name="title"></param>
     /// <param name="more"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
     public async Task LogInformationAsync(string title, object? more = null, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Information, title, more, cancellationToken);
 
@@ -126,8 +126,8 @@ public interface IDbLogService
     /// </summary>
     /// <param name="title"></param>
     /// <param name="more"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
     public async Task LogTraceAsync(string title, object? more = null, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Trace, title, more, cancellationToken);
 
@@ -136,8 +136,8 @@ public interface IDbLogService
     /// </summary>
     /// <param name="title"></param>
     /// <param name="more"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
     public async Task LogWarningAsync(string title, object? more = null, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Warning, title, more, cancellationToken);
 }
@@ -188,8 +188,8 @@ public class DbLogService : DbService, IDbLogService
     /// <param name="logLevel"></param>
     /// <param name="title"></param>
     /// <param name="more"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
     public async Task LogAsync(DbLogLevel logLevel, string title, object? more = null, CancellationToken cancellationToken = default)
     {
         if ((byte)logLevel < (byte)MinDbLogLevel) { await Task.CompletedTask; return; }

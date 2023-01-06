@@ -21,9 +21,9 @@ public class ApiDbFileService : ApiDbService, IDbFileService
     /// 
     /// </summary>
     /// <param name="guid"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public async Task DelAsync(Guid guid, CancellationToken cancellationToken = default)
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
+    public async Task DelAsync(object? guid, CancellationToken cancellationToken = default)
         => await ExecAsync("WJbFiles_Del", guid, cancellationToken: cancellationToken);
 
     /// <summary>
@@ -31,8 +31,8 @@ public class ApiDbFileService : ApiDbService, IDbFileService
     /// </summary>
     /// <param name="guid"></param>
     /// <param name="timeout"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
     public async Task<DbFile?> GetAsync(Guid guid, int? timeout = null, CancellationToken cancellationToken = default)
     {
         var file = await ExecAsync<DbFile>("WJbFiles_Get", guid, timeout, cancellationToken);
@@ -49,8 +49,8 @@ public class ApiDbFileService : ApiDbService, IDbFileService
     /// <param name="filename"></param>
     /// <param name="safe"></param>
     /// <param name="timeout"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
     public async Task<string?> SetAsync(string? value, string? filename = "file.txt", bool safe = false, int? timeout = null, CancellationToken cancellationToken = default)
     {
         if (value?.Length > 1024)

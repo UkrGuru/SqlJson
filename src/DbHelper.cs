@@ -33,7 +33,7 @@ public class DbHelper
     /// </summary>
     /// <param name="cmdText"></param>
     /// <returns></returns>
-    public static bool IsName(string? cmdText) => (cmdText?.Length > 100) ? false : Regex.IsMatch(cmdText!, @"^(\w+|\[.+?\])(\.(\w+|\[.+?\]))?$"); 
+    public static bool IsName(string? cmdText) => (cmdText?.Length > 100) ? false : Regex.IsMatch(cmdText!, @"^(\w+|\[.+?\])(\.(\w+|\[.+?\]))?$");
 
     /// <summary>
     /// 
@@ -80,7 +80,7 @@ public class DbHelper
     /// Opens a database connection, then executes a Transact-SQL statement with or without '@Data' parameter
     /// and returns the result as an object.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of results to return.</typeparam>
     /// <param name="cmdText">The text of the query or stored procedure. </param>
     /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
@@ -113,7 +113,7 @@ public class DbHelper
     /// Opens a database connection, then executes a Transact-SQL statement with or without '@Data' parameter
     /// and returns the result as an object.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of results to return.</typeparam>
     /// <param name="cmdText">The text of the query or stored procedure. </param>
     /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>

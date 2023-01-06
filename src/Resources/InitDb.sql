@@ -66,7 +66,7 @@ END
 BEGIN /*** WJbFiles Procs ***/
 EXEC dbo.sp_executesql @statement = N'
 CREATE OR ALTER PROCEDURE [WJbFiles_Get]
-	@Data uniqueidentifier
+	@Data uniqueidentifier = NULL
 AS
 SELECT Id, Created, FileName, FileContent, CAST(CASE WHEN Created = CAST(Created as smalldatetime) THEN 1 ELSE 0 END AS bit) Safe
 FROM WJbFiles
@@ -75,7 +75,7 @@ FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
 ';
 EXEC dbo.sp_executesql @statement = N'
 CREATE OR ALTER PROCEDURE [WJbFiles_Get_api]
-	@Data uniqueidentifier
+	@Data uniqueidentifier = NULL
 AS
 EXEC WJbFiles_Get @Data
 ';
@@ -112,7 +112,7 @@ EXEC WJbFiles_Ins @Data
 ';
 EXEC dbo.sp_executesql @statement = N'
 CREATE OR ALTER PROCEDURE [WJbFiles_Del]
-	@Data uniqueidentifier
+	@Data uniqueidentifier = NULL
 AS
 DELETE WJbFiles
 WHERE Id = @Data
@@ -120,7 +120,7 @@ WHERE Id = @Data
 END
 EXEC dbo.sp_executesql @statement = N'
 CREATE OR ALTER PROCEDURE [WJbFiles_Del_api]
-	@Data uniqueidentifier
+	@Data uniqueidentifier = NULL
 AS
 EXEC WJbFiles_Del @Data
 ';

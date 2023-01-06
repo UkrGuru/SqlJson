@@ -53,7 +53,7 @@ public class ApiDbService : IDbService
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of results to return.</typeparam>
     /// <param name="proc"></param>
     /// <param name="data"></param>
     /// <param name="timeout"></param>
@@ -67,8 +67,8 @@ public class ApiDbService : IDbService
     /// <param name="proc"></param>
     /// <param name="data"></param>
     /// <param name="timeout"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
     public async Task<int> ExecAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
         ApiHelper.ValidateProcName(proc);
@@ -95,12 +95,12 @@ public class ApiDbService : IDbService
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of results to return.</typeparam>
     /// <param name="proc"></param>
     /// <param name="data"></param>
     /// <param name="timeout"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
     public async Task<T?> ExecAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
         ApiHelper.ValidateProcName(proc);

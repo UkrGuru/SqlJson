@@ -35,7 +35,7 @@ public interface IDbService
     /// Synchronous method that opens a database connection, then executes a Transact-SQL statement with or without '@Data' parameter
     /// and returns the result as an object.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of results to return.</typeparam>
     /// <param name="cmdText">The text of the query or stored procedure. </param>
     /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
@@ -56,7 +56,7 @@ public interface IDbService
     /// Asynchronous method that opens a database connection, then executes a Transact-SQL statement with or without '@Data' parameter
     /// and returns the result as an object.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of results to return.</typeparam>
     /// <param name="cmdText">The text of the query or stored procedure. </param>
     /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
@@ -112,7 +112,7 @@ public class DbService : IDbService
     /// Synchronous method that opens a database connection, then executes a Transact-SQL statement with or without '@Data' parameter
     /// and returns the result as an object.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of results to return.</typeparam>
     /// <param name="cmdText">The text of the query or stored procedure. </param>
     /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
@@ -145,7 +145,7 @@ public class DbService : IDbService
     /// Asynchronous method that opens a database connection, then executes a Transact-SQL statement with or without '@Data' parameter
     /// and returns the result as an object.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of results to return.</typeparam>
     /// <param name="cmdText">The text of the query or stored procedure. </param>
     /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>

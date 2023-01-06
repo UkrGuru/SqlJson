@@ -1,1 +1,3 @@
-SELECT 1; /* please more text for CommandText type */
+TRUNCATE TABLE [dbo].[WJbFiles]
+
+TRUNCATE TABLE [dbo].[WJbLogs]

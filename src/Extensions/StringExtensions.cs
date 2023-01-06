@@ -3,6 +3,7 @@
 
 using System.Text.Json;
 using System.Text;
+using System.Globalization;
 
 namespace UkrGuru.Extensions;
 
@@ -33,17 +34,17 @@ public static class StringExtensions
     /// <summary>
     /// Converts the StringBuilder value to an equivalent T object.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">The type of results to return.</typeparam>
     /// <param name="jsonResult"></param>
     /// <param name="defaultValue"></param>
     /// <returns></returns>
     public static T? ToObj<T>(this StringBuilder? jsonResult, T? defaultValue = default)
-        => jsonResult?.Length > 0 ? jsonResult.ToString().ToObj<T?>() : defaultValue;
+        => jsonResult?.Length > 0 ? jsonResult.ToString().ToObj<T?>(defaultValue) : defaultValue;
 
     /// <summary>
     /// Converts the string value to an equivalent T object.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">The type of results to return.</typeparam>
     /// <param name="value"></param>
     /// <param name="defaultValue"></param>
     /// <returns></returns>
@@ -66,8 +67,8 @@ public static class StringExtensions
         else if (type.IsEnum)
             return (T?)Enum.Parse(type, value);
 
-        //else if (type.IsPrimitive)
-        //    return (T?)Convert.ChangeType(value, type, CultureInfo.CurrentCulture);
+        else if (type.IsPrimitive)
+            return (T?)Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
 
         else
             return (T?)Convert.ChangeType(value, type);

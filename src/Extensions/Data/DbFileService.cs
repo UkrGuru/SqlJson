@@ -15,29 +15,18 @@ public interface IDbFileService
     /// <summary>
     /// Delete file in the current database
     /// </summary>
-    /// <param name="value"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public async Task DelAsync(string? value, CancellationToken cancellationToken = default)
-    {
-        if (Guid.TryParse(value, out Guid guid)) await DelAsync(guid, cancellationToken);
-    }
-
-    /// <summary>
-    /// Delete file in the current database
-    /// </summary>
     /// <param name="guid"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    Task DelAsync(Guid guid, CancellationToken cancellationToken = default);
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
+    Task DelAsync(object? guid, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Load file from current database
     /// </summary>
     /// <param name="value"></param>
     /// <param name="timeout"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
     public async Task<string?> GetAsync(string? value, int? timeout = null, CancellationToken cancellationToken = default)
     {
         if (Guid.TryParse(value, out Guid guid))
@@ -56,8 +45,8 @@ public interface IDbFileService
     /// </summary>
     /// <param name="guid"></param>
     /// <param name="timeout"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
     Task<DbFile?> GetAsync(Guid guid, int? timeout = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -67,8 +56,8 @@ public interface IDbFileService
     /// <param name="filename"></param>
     /// <param name="safe"></param>
     /// <param name="timeout"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
     Task<string?> SetAsync(string? value, string? filename = "file.txt", bool safe = default, int? timeout = null, CancellationToken cancellationToken = default);
 }
 
@@ -87,9 +76,9 @@ public class DbFileService : DbService, IDbFileService
     /// 
     /// </summary>
     /// <param name="guid"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public async Task DelAsync(Guid guid, CancellationToken cancellationToken = default)
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
+    public async Task DelAsync(object? guid, CancellationToken cancellationToken = default)
         => await ExecAsync("WJbFiles_Del", guid, cancellationToken: cancellationToken);
 
     /// <summary>
@@ -97,8 +86,8 @@ public class DbFileService : DbService, IDbFileService
     /// </summary>
     /// <param name="guid"></param>
     /// <param name="timeout"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
     public async Task<DbFile?> GetAsync(Guid guid, int? timeout = null, CancellationToken cancellationToken = default)
     {
         var file = await ExecAsync<DbFile>("WJbFiles_Get", guid, timeout, cancellationToken);
@@ -115,8 +104,8 @@ public class DbFileService : DbService, IDbFileService
     /// <param name="filename"></param>
     /// <param name="safe"></param>
     /// <param name="timeout"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
     public async Task<string?> SetAsync(string? value, string? filename = "file.txt", bool safe = false, int? timeout = null, CancellationToken cancellationToken = default)
     {
         if (value?.Length > 1024)

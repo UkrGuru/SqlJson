@@ -11,10 +11,10 @@ public static class HttpClientExtensions
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="httpResponse"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <typeparam name="T">The type of results to return.</typeparam>
+    /// <param name="httpResponse">The response message.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
     /// <exception cref="HttpRequestException"></exception>
     public static async Task<T?> ReadAsync<T>(this HttpResponseMessage httpResponse, CancellationToken cancellationToken = default)
     {
@@ -31,9 +31,9 @@ public static class HttpClientExtensions
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="httpResponse"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="httpResponse">The response message.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
     /// <exception cref="HttpRequestException"></exception>
     public static async Task ReadAsync(this HttpResponseMessage httpResponse, CancellationToken cancellationToken = default)
     {

@@ -53,8 +53,8 @@ public class ApiDbLogService : ApiDbService, IDbLogService
     /// <param name="logLevel"></param>
     /// <param name="title"></param>
     /// <param name="more"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
     public async Task LogAsync(DbLogLevel logLevel, string title, object? more = null, CancellationToken cancellationToken = default)
     {
         if ((byte)logLevel < (byte)MinDbLogLevel) { await Task.CompletedTask; return; }

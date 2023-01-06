@@ -53,7 +53,7 @@ public static class DbExtensions
     /// Executes a Transact-SQL statement or stored procedure with or without '@Data' parameter
     /// and returns the result as an object.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">The type of results to return.</typeparam>
     /// <param name="connection">The connection instance to bind.</param>
     /// <param name="cmdText">The text of the query or stored procedure. </param>
     /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
@@ -108,7 +108,7 @@ public static class DbExtensions
     /// Executes a Transact-SQL statement or stored procedure with or without '@Data' parameter
     /// and returns the result as an object.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">The type of results to return.</typeparam>
     /// <param name="connection">The connection instance to bind.</param>
     /// <param name="cmdText">The text of the query or stored procedure. </param>
     /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>

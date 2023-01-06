@@ -15,8 +15,8 @@ public static class DbFileExtensions
     /// Save file in the current database
     /// </summary>
     /// <param name="file"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
     public static async Task<string?> SetAsync(this DbFile file, CancellationToken cancellationToken = default)
     {
         if (file?.FileContent == null || file.FileContent.Length == 0) return await Task.FromResult(null as string);
@@ -30,8 +30,8 @@ public static class DbFileExtensions
     /// Compression of the file content
     /// </summary>
     /// <param name="file"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
     public static async Task CompressAsync(this DbFile? file, CancellationToken cancellationToken = default)
     {
         if (file?.FileContent == null || file.FileContent.Length == 0) return;
@@ -65,8 +65,8 @@ public static class DbFileExtensions
     /// Decompression of the file content
     /// </summary>
     /// <param name="file"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
     public static async Task DecompressAsync(this DbFile? file, CancellationToken cancellationToken = default)
     {
         if (file?.FileName == null || !file.FileName.EndsWith(".gzip")) return;
