@@ -5,6 +5,8 @@ using System.Linq.Expressions;
 using System.Threading;
 using BenchmarkDotNet.Attributes;
 using Microsoft.EntityFrameworkCore;
+using UkrGuru.SqlJson;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 [MemoryDiagnoser]
 public class DynamicallyConstructedQueries
@@ -17,6 +19,9 @@ public class DynamicallyConstructedQueries
         using var context = new BloggingContext();
         context.Database.EnsureDeleted();
         context.Database.EnsureCreated();
+
+        DbHelper.ConnectionString = context.Database.GetConnectionString();
+        DbHelper.Exec("CREATE OR ALTER PROCEDURE Blogs_Get_Count @Data nvarchar(1000) AS SELECT CAST(COUNT(BlogId) AS varchar(10)) FROM Blogs WHERE LEN(@Data) > 0 AND Url = @Data");
     }
 
     #region WithConstant
@@ -70,6 +75,16 @@ public class DynamicallyConstructedQueries
 
             return blogs.Count();
         }
+    }
+    #endregion
+
+    #region SqlJsonWithParameter
+    [Benchmark]
+    public int SqlJsonWithParameter()
+    {
+        return GetBlogCount("blog" + Interlocked.Increment(ref _blogNumber));
+
+        int GetBlogCount(string url) => DbHelper.Exec<int>("Blogs_Get_Count", url);
     }
     #endregion
 
