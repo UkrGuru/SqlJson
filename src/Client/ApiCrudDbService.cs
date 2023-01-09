@@ -7,7 +7,7 @@ using UkrGuru.Extensions;
 namespace UkrGuru.SqlJson.Client;
 
 /// <summary>
-/// 
+/// Client service that allows to Create, Read, Update and Delete records in a table.
 /// </summary>
 public class ApiCrudDbService : ICrudDbService
 {
@@ -29,10 +29,10 @@ public class ApiCrudDbService : ICrudDbService
     /// </summary>
     /// <typeparam name="T">The type of results to return.</typeparam>
     /// <param name="proc">The name of the stored procedure that will be used to create the T object. </param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the standard.</param>
+    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
-    /// <returns>The async task.</returns>
+    /// <returns>The async task with T object.</returns>
     public async Task<T?> CreateAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
         ApiHelper.ValidateProcName(proc); ArgumentNullException.ThrowIfNull(data);
@@ -49,10 +49,10 @@ public class ApiCrudDbService : ICrudDbService
     /// </summary>
     /// <typeparam name="T">The type of results to return.</typeparam>
     /// <param name="proc">The name of the stored procedure that will be used to read the T or List<typeparamref name="T"/> object(s). </param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the standard.</param>
+    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
-    /// <returns>The async task.</returns>
+    /// <returns>The async task with T object.</returns>
     public async Task<T?> ReadAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
         ApiHelper.ValidateProcName(proc);
@@ -66,7 +66,7 @@ public class ApiCrudDbService : ICrudDbService
     /// Update, or edit existing entries
     /// </summary>
     /// <param name="proc">The name of the stored procedure that will be used to update the T object. </param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the standard.</param>
+    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The async task.</returns>
@@ -85,7 +85,7 @@ public class ApiCrudDbService : ICrudDbService
     /// Delete, deactivate, or remove existing entries
     /// </summary>
     /// <param name="proc">The name of the stored procedure that will be used to delete the T object. </param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the standard.</param>
+    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The async task.</returns>

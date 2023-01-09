@@ -26,7 +26,7 @@ public interface IDbService
     /// Synchronous method that opens a database connection, then executes a Transact-SQL statement and returns the number of rows affected.
     /// </summary>
     /// <param name="cmdText">The text of the query or stored procedure. </param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
+    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>The number of rows affected.</returns>
     int Exec(string cmdText, object? data = null, int? timeout = null);
@@ -37,7 +37,7 @@ public interface IDbService
     /// </summary>
     /// <typeparam name="T">The type of results to return.</typeparam>
     /// <param name="cmdText">The text of the query or stored procedure. </param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
+    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>Result as an object</returns>
     T? Exec<T>(string cmdText, object? data = null, int? timeout = null);
@@ -46,7 +46,7 @@ public interface IDbService
     /// Asynchronous method that opens a database connection, then executes a Transact-SQL statement and returns the number of rows affected.
     /// </summary>
     /// <param name="cmdText">The text of the query or stored procedure. </param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
+    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The number of rows affected.</returns>
@@ -58,7 +58,7 @@ public interface IDbService
     /// </summary>
     /// <typeparam name="T">The type of results to return.</typeparam>
     /// <param name="cmdText">The text of the query or stored procedure. </param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
+    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>Result as an object</returns>
@@ -71,7 +71,7 @@ public interface IDbService
 public class DbService : IDbService
 {
     /// <summary>
-    /// 
+    /// Specifies the string used to open a SQL Server database.
     /// </summary>
     private readonly string? _connectionString;
 
@@ -97,7 +97,7 @@ public class DbService : IDbService
     /// Synchronous method that opens a database connection, then executes a Transact-SQL statement and returns the number of rows affected.
     /// </summary>
     /// <param name="cmdText">The text of the query or stored procedure. </param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
+    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>The number of rows affected.</returns>
     public int Exec(string cmdText, object? data = null, int? timeout = null)
@@ -114,7 +114,7 @@ public class DbService : IDbService
     /// </summary>
     /// <typeparam name="T">The type of results to return.</typeparam>
     /// <param name="cmdText">The text of the query or stored procedure. </param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
+    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>Result as an object</returns>
     public T? Exec<T>(string cmdText, object? data = null, int? timeout = null)
@@ -129,7 +129,7 @@ public class DbService : IDbService
     /// Asynchronous method that opens a database connection, then executes a Transact-SQL statement and returns the number of rows affected.
     /// </summary>
     /// <param name="cmdText">The text of the query or stored procedure. </param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
+    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The number of rows affected.</returns>
@@ -147,7 +147,7 @@ public class DbService : IDbService
     /// </summary>
     /// <typeparam name="T">The type of results to return.</typeparam>
     /// <param name="cmdText">The text of the query or stored procedure. </param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
+    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>Result as an object</returns>

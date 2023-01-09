@@ -1,4 +1,7 @@
-﻿global using Xunit;
+﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
+// Licensed under the MIT License. See License.txt in the project root for license information.
+
+global using Xunit;
 using System.Reflection;
 using UkrGuru.Extensions;
 using UkrGuru.Extensions.Data;

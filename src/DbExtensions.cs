@@ -18,7 +18,7 @@ public static class DbExtensions
     /// </summary>
     /// <param name="connection">The connection instance to bind.</param>
     /// <param name="cmdText">The text of the query.</param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
+    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>New instance of the SqlCommand class with initialize parameters</returns>
     private static SqlCommand CreateSqlCommand(this SqlConnection connection, string cmdText, object? data = null, int? timeout = null)
@@ -39,7 +39,7 @@ public static class DbExtensions
     /// </summary>
     /// <param name="connection">The connection instance to bind.</param>
     /// <param name="cmdText">The text of the query or stored procedure. </param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
+    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>The number of rows affected.</returns>
     public static int Exec(this SqlConnection connection, string cmdText, object? data = null, int? timeout = null)
@@ -53,10 +53,10 @@ public static class DbExtensions
     /// Executes a Transact-SQL statement or stored procedure with or without '@Data' parameter
     /// and returns the result as an object.
     /// </summary>
-        /// <typeparam name="T">The type of results to return.</typeparam>
+    /// <typeparam name="T">The type of results to return.</typeparam>
     /// <param name="connection">The connection instance to bind.</param>
     /// <param name="cmdText">The text of the query or stored procedure. </param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
+    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>Result as an object</returns>
     public static T? Exec<T>(this SqlConnection connection, string cmdText, object? data = null, int? timeout = null)
@@ -93,7 +93,7 @@ public static class DbExtensions
     /// </summary>
     /// <param name="connection">The connection instance to bind.</param>
     /// <param name="cmdText">The text of the query or stored procedure. </param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
+    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The number of rows affected.</returns>
@@ -108,10 +108,10 @@ public static class DbExtensions
     /// Executes a Transact-SQL statement or stored procedure with or without '@Data' parameter
     /// and returns the result as an object.
     /// </summary>
-        /// <typeparam name="T">The type of results to return.</typeparam>
+    /// <typeparam name="T">The type of results to return.</typeparam>
     /// <param name="connection">The connection instance to bind.</param>
     /// <param name="cmdText">The text of the query or stored procedure. </param>
-    /// <param name="data">The only @Data parameter available for the stored procedure. The data object will be automatically normalized to the parameter standard.</param>
+    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>Result as an object</returns>

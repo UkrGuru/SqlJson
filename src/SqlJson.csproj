@@ -10,7 +10,7 @@
         <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
         <PackageIcon>ukrguru-logo.jpg</PackageIcon>
         <RepositoryUrl>https://github.com/UkrGuru/SqlJson</RepositoryUrl>
-        <Description>The UkrGuru.SqlJson package provides easy and fast database connectivity to SQL Server for .NET applications.</Description>
+        <Description>UkrGuru.SqlJson is very easy and fast access to the Sql Server database and EF Core is not involved in this.</Description>
         <Version>6.0.4</Version>
         <SignAssembly>True</SignAssembly>
         <AssemblyOriginatorKeyFile>..\..\UkrGuru.snk</AssemblyOriginatorKeyFile>

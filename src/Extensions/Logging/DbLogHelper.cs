@@ -1,4 +1,7 @@
-﻿using System.Text.Json;
+﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
+// Licensed under the MIT License. See License.txt in the project root for license information.
+
+using System.Text.Json;
 using UkrGuru.SqlJson;
 
 namespace UkrGuru.Extensions.Logging;

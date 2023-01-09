@@ -9,10 +9,10 @@ namespace UkrGuru.SqlJson;
 public class DbExtensionsTests
 {
     //[Theory]
-    //[InlineData("SELECT 1; /* need more text for CommandText type */", null)]
-    //[InlineData("SELECT 1; /* need more text for CommandText type */", 1)]
-    //[InlineData("SELECT 1; /* need more text for CommandText type */", null, 15)]
-    //[InlineData("SELECT 1; /* need more text for CommandText type */", null, 45)]
+    //[InlineData("SELECT 1;", null)]
+    //[InlineData("SELECT 1;", 1)]
+    //[InlineData("SELECT 1;", null, 15)]
+    //[InlineData("SELECT 1;", null, 45)]
     //[InlineData("ProcTest", null, null, CommandType.StoredProcedure)]
     //public static void CanCreateSqlCommand(string cmdText, object? data = null, int? timeout = null, CommandType expected = CommandType.Text)
     //{
