@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 global using Xunit;
+using Microsoft.Extensions.Configuration;
 using System.Reflection;
 using UkrGuru.Extensions;
 using UkrGuru.Extensions.Data;
@@ -12,11 +13,9 @@ public class GlobalTests
 {
     public const string DbName = "SqlJsonTest";
 
-    public const string ConnectionString = $"Data Source=(localdb)\\mssqllocaldb;Database=master;Integrated Security=True;Connect Timeout=30;ConnectRetryCount=0";
-
     public static bool DbOk { get; set; }
 
-    public static string CommandTest = "SELECT 1;";
+    public static IConfiguration Configuration { get; set; } 
 
     public GlobalTests()
     {
@@ -28,11 +27,19 @@ public class GlobalTests
 
         DbHelper.Exec($"IF DB_ID('{DbName}') IS NULL CREATE DATABASE {DbName};");
 
-        DbHelper.ConnectionString = GlobalTests.ConnectionString;
+        DbHelper.ConnectionString = connectionString;
 
         Assembly.GetAssembly(typeof(DbFile)).InitDb();
 
         Assembly.GetExecutingAssembly().InitDb();
+
+        var inMemorySettings = new Dictionary<string, string?>() {
+            {"ConnectionStrings:DefaultConnection", connectionString }
+        };
+
+        Configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(inMemorySettings)
+            .Build();
 
         DbOk = true;
     }

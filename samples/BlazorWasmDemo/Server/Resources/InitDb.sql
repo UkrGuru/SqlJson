@@ -59,7 +59,7 @@ EXEC Products_Get @Data
 EXEC dbo.sp_executesql @statement = N'
 CREATE OR ALTER PROCEDURE [Products_Grd]
 AS
-SELECT ProductId, ProductName, CategoryName, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued
+SELECT *
 FROM Products
 FOR JSON PATH
 '; 
@@ -74,12 +74,10 @@ EXEC dbo.sp_executesql @statement = N'
 CREATE OR ALTER PROCEDURE [Products_Ins]
 	@Data nvarchar(500)  
 AS
-INSERT INTO Products (ProductName, CategoryName, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued)
-SELECT ProductName, CategoryName, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued
-FROM OPENJSON(@Data) 
+INSERT INTO Products 
+SELECT * FROM OPENJSON(@Data) 
 WITH (ProductName varchar(50), CategoryName varchar(20), QuantityPerUnit varchar(20), 
-	UnitPrice smallmoney, UnitsInStock int, UnitsOnOrder int, ReorderLevel int, Discontinued bit
-)
+	UnitPrice smallmoney, UnitsInStock int, UnitsOnOrder int, ReorderLevel int, Discontinued bit)
 ';
 
 EXEC dbo.sp_executesql @statement = N'
@@ -93,15 +91,14 @@ EXEC dbo.sp_executesql @statement = N'
 CREATE OR ALTER PROCEDURE [Products_Upd]
 	@Data nvarchar(500)  
 AS
-UPDATE P
-SET P.ProductName = D.ProductName, P.CategoryName = D.CategoryName, P.QuantityPerUnit = D.QuantityPerUnit,
-	P.UnitPrice = D.UnitPrice, P.UnitsInStock = D.UnitsInStock, P.UnitsOnOrder = D.UnitsOnOrder,
-	P.ReorderLevel = D.ReorderLevel, P.Discontinued = D.Discontinued
-FROM Products P
-CROSS JOIN (SELECT * FROM OPENJSON(@Data) 
-    WITH (ProductName varchar(50), CategoryName varchar(20), QuantityPerUnit varchar(20), 
-	UnitPrice smallmoney, UnitsInStock int, UnitsOnOrder int, ReorderLevel int, Discontinued bit)) D
-WHERE P.ProductId = JSON_VALUE(@Data,''$.ProductId'')
+UPDATE Products
+SET ProductName = D.ProductName, CategoryName = D.CategoryName, QuantityPerUnit = D.QuantityPerUnit,
+	UnitPrice = D.UnitPrice, UnitsInStock = D.UnitsInStock, UnitsOnOrder = D.UnitsOnOrder,
+	ReorderLevel = D.ReorderLevel, Discontinued = D.Discontinued
+FROM OPENJSON(@Data) 
+WITH (ProductId int, ProductName varchar(50), CategoryName varchar(20), QuantityPerUnit varchar(20), 
+	UnitPrice smallmoney, UnitsInStock int, UnitsOnOrder int, ReorderLevel int, Discontinued bit) D
+WHERE Products.ProductId = D.ProductId
 ';
 
 

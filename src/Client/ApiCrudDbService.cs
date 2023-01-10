@@ -29,7 +29,7 @@ public class ApiCrudDbService : ICrudDbService
     /// </summary>
     /// <typeparam name="T">The type of results to return.</typeparam>
     /// <param name="proc">The name of the stored procedure that will be used to create the T object. </param>
-    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
+    /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The async task with T object.</returns>
@@ -48,8 +48,8 @@ public class ApiCrudDbService : ICrudDbService
     /// Read, retrieve, search, or view existing entries
     /// </summary>
     /// <typeparam name="T">The type of results to return.</typeparam>
-    /// <param name="proc">The name of the stored procedure that will be used to read the T or List<typeparamref name="T"/> object(s). </param>
-    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
+    /// <param name="proc">The name of the stored procedure that will be used to read the T object.</param>
+    /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The async task with T object.</returns>
@@ -66,7 +66,7 @@ public class ApiCrudDbService : ICrudDbService
     /// Update, or edit existing entries
     /// </summary>
     /// <param name="proc">The name of the stored procedure that will be used to update the T object. </param>
-    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
+    /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The async task.</returns>
@@ -85,7 +85,7 @@ public class ApiCrudDbService : ICrudDbService
     /// Delete, deactivate, or remove existing entries
     /// </summary>
     /// <param name="proc">The name of the stored procedure that will be used to delete the T object. </param>
-    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
+    /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The async task.</returns>

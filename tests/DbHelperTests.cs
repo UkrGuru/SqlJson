@@ -7,8 +7,7 @@ namespace UkrGuru.SqlJson;
 
 public class DbHelperTests
 {
-    public DbHelperTests() => DbHelper.ConnectionString = GlobalTests.ConnectionString;
-
+    public DbHelperTests() { int i = 0; while (!GlobalTests.DbOk && i++ < 100) { Thread.Sleep(100); } }
     //[Fact]
     //public static void CanCreateSqlConnection()
     //{
@@ -99,27 +98,20 @@ public class DbHelperTests
         var name = DbHelper.Exec<string?>("SELECT JSON_VALUE(@Data, '$.Name');", new { Name = "John" });
         Assert.Equal("John", name);
 
-        DbHelper.Exec("CREATE OR ALTER PROCEDURE ProcNull AS");
+        var num4 = DbHelper.Exec("ProcNull");
+        Assert.Equal(-1, num4);
 
-        DbHelper.Exec("CREATE OR ALTER PROCEDURE ProcInt @Data int = NULL AS SELECT CAST(@Data as varchar);");
+        var num5 = DbHelper.Exec<int?>("ProcInt", 1);
+        Assert.Equal(1, num5);
 
-        DbHelper.Exec("CREATE OR ALTER PROCEDURE ProcStr @Data varchar(100) = NULL AS SELECT @Data;");
+        var num6 = DbHelper.Exec<int?>("ProcInt", null);
+        Assert.Null(num6);
 
-        DbHelper.Exec("CREATE OR ALTER PROCEDURE ProcObj @Data varchar(100) = NULL AS SELECT JSON_VALUE(@Data, '$.Name');");
+        var data7 = DbHelper.Exec<string?>("ProcStr", "Data");
+        Assert.Equal("Data", data7);
 
-        DbHelper.Exec("ProcNull");
-
-        var num4 = DbHelper.Exec<int?>("ProcInt", 1);
-        Assert.Equal(1, num4);
-
-        var num5 = DbHelper.Exec<int?>("ProcInt", null);
-        Assert.Null(num5);
-
-        var data2 = DbHelper.Exec<string?>("ProcStr", "Data");
-        Assert.Equal("Data", data2);
-
-        var name2 = DbHelper.Exec<string?>("ProcObj", new { Name = "John" });
-        Assert.Equal("John", name2);
+        var name8 = DbHelper.Exec<string?>("ProcObj", new { Name = "John" });
+        Assert.Equal("John", name8);
     }
 
     [Fact]
@@ -140,26 +132,19 @@ public class DbHelperTests
         var name = await DbHelper.ExecAsync<string?>("SELECT JSON_VALUE(@Data, '$.Name'); ", new { Name = "John" });
         Assert.Equal("John", name);
 
-        await DbHelper.ExecAsync("CREATE OR ALTER PROCEDURE ProcNullAsync AS ");
+        var num4 = await DbHelper.ExecAsync("ProcNull");
+        Assert.Equal(-1, num4);
 
-        await DbHelper.ExecAsync("CREATE OR ALTER PROCEDURE ProcIntAsync @Data int = NULL AS SELECT CAST(@Data as varchar);");
+        var num5 = await DbHelper.ExecAsync<int?>("ProcInt", 1);
+        Assert.Equal(1, num5);
 
-        await DbHelper.ExecAsync("CREATE OR ALTER PROCEDURE ProcStrAsync @Data varchar(100) = NULL AS SELECT @Data;");
+        var num6 = await DbHelper.ExecAsync<int?>("ProcInt", null);
+        Assert.Null(num6);
 
-        await DbHelper.ExecAsync("CREATE OR ALTER PROCEDURE ProcObjAsync @Data varchar(100) = NULL AS SELECT JSON_VALUE(@Data, '$.Name');");
-
-        await DbHelper.ExecAsync("ProcNullAsync");
-
-        var num4 = await DbHelper.ExecAsync<int?>("ProcIntAsync", 1);
-        Assert.Equal(1, num4);
-
-        var num5 = await DbHelper.ExecAsync<int?>("ProcIntAsync", null);
-        Assert.Null(num5);
-
-        var data2 = await DbHelper.ExecAsync<string?>("ProcStrAsync", "Data");
+        var data2 = await DbHelper.ExecAsync<string?>("ProcStr", "Data");
         Assert.Equal("Data", data2);
 
-        var name2 = await DbHelper.ExecAsync<string?>("ProcObjAsync", new { Name = "John" });
+        var name2 = await DbHelper.ExecAsync<string?>("ProcObj", new { Name = "John" });
         Assert.Equal("John", name2);
     }
 }

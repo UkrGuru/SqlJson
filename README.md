@@ -25,7 +25,7 @@ I'm an old software developer with over 20 years of experience and have written 
 }
 ```
 
-### 2. Open the ~/Program.cs file and register the UkrGuru SqlJson services and Extensions:
+### 2. Open ~/Program.cs file and register UkrGuru SqlJson services and extensions:
 ```c#
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,9 +64,9 @@ var app = builder.Build();
 
 UkrGuru.SqlJson automatically normalizes input parameters and deserializes the result.
 
-So you must follow the next requirements:
-1. You can use procedures with a single @Data parameter of any type, or no parameter.
-2. It is required to prepare the result in json format with the option "FOR JSON PATH" for List or "FOR JSON PATH, WITHOUT_ARRAY_WRAPPER" for one record.
+Requirements:
+1. INPUT: Must use a query or procedure with only one @Data parameter of any type, or no parameter.
+2. OUTPUT: Should prepare the result in one column SELECT varchar or json types. See more examples bellow ...
 
 
 ```sql
@@ -78,23 +78,21 @@ CREATE OR ALTER PROCEDURE [Products_Del]
     @Data int
 AS
 DELETE Products
-WHERE (ProductId = @Data)
+WHERE ProductId = @Data
 GO
 
 CREATE OR ALTER PROCEDURE [Products_Get]
     @Data int
 AS
-SELECT ProductId, ProductName, CategoryName, QuantityPerUnit, UnitPrice, UnitsInStock, 
-    UnitsOnOrder, ReorderLevel, Discontinued
+SELECT *
 FROM Products
-WHERE (ProductId = @Data)
+WHERE ProductId = @Data
 FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
 GO
 
 CREATE OR ALTER PROCEDURE [Products_Grd]
 AS
-SELECT ProductId, ProductName, CategoryName, QuantityPerUnit, UnitPrice, UnitsInStock, 
-    UnitsOnOrder, ReorderLevel, Discontinued
+SELECT *
 FROM Products
 FOR JSON PATH
 GO
@@ -102,32 +100,22 @@ GO
 CREATE OR ALTER PROCEDURE [Products_Ins]
 	@Data nvarchar(500)  
 AS
-INSERT INTO Products (ProductName, CategoryName, QuantityPerUnit, UnitPrice, 
-    UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued)
-SELECT ProductName, CategoryName, QuantityPerUnit, UnitPrice, 
-    UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued
-FROM OPENJSON(@Data) 
+INSERT INTO Products 
+SELECT * FROM OPENJSON(@Data) 
 WITH (ProductName varchar(50), CategoryName varchar(20), QuantityPerUnit varchar(20), 
-	UnitPrice smallmoney, UnitsInStock int, UnitsOnOrder int, 
-    ReorderLevel int, Discontinued bit)
+	UnitPrice smallmoney, UnitsInStock int, UnitsOnOrder int, ReorderLevel int, Discontinued bit)
 GO
 
 CREATE OR ALTER PROCEDURE [Products_Upd]
 	@Data nvarchar(500)  
 AS
-UPDATE P
-SET P.ProductName = D.ProductName, P.CategoryName = D.CategoryName, 
-    P.QuantityPerUnit = D.QuantityPerUnit, P.UnitPrice = D.UnitPrice, 
-    P.UnitsInStock = D.UnitsInStock, P.UnitsOnOrder = D.UnitsOnOrder,
-	P.ReorderLevel = D.ReorderLevel, P.Discontinued = D.Discontinued
-FROM Products P
-CROSS JOIN (SELECT * FROM OPENJSON(@Data) 
-    WITH (ProductName varchar(50), CategoryName varchar(20), 
-    QuantityPerUnit varchar(20), UnitPrice smallmoney, 
-    UnitsInStock int, UnitsOnOrder int, 
-    ReorderLevel int, Discontinued bit)) D
-WHERE P.ProductId = JSON_VALUE(@Data,'$.ProductId')
+UPDATE Products
+SET ProductName = D.ProductName, CategoryName = D.CategoryName, QuantityPerUnit = D.QuantityPerUnit,
+	UnitPrice = D.UnitPrice, UnitsInStock = D.UnitsInStock, UnitsOnOrder = D.UnitsOnOrder,
+	ReorderLevel = D.ReorderLevel, Discontinued = D.Discontinued
+FROM OPENJSON(@Data) 
+WITH (ProductId int, ProductName varchar(50), CategoryName varchar(20), QuantityPerUnit varchar(20), 
+	UnitPrice smallmoney, UnitsInStock int, UnitsOnOrder int, ReorderLevel int, Discontinued bit) D
+WHERE Products.ProductId = D.ProductId
 GO
-
-
 ```
