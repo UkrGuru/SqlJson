@@ -70,7 +70,7 @@
     }
 
     protected override async Task InsItemAsync(GridCommandEventArgs args) 
-        => await db.CreateAsync<ProductDto>("Products_Ins", (ProductDto)args.Item);
+        => await db.CreateAsync<int?>("Products_Ins", (ProductDto)args.Item);
 
     protected override async Task UpdItemAsync(GridCommandEventArgs args) 
         => await db.UpdateAsync("Products_Upd", (ProductDto)args.Item);
