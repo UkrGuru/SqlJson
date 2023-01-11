@@ -104,6 +104,8 @@ INSERT INTO Products
 SELECT * FROM OPENJSON(@Data) 
 WITH (ProductName varchar(50), CategoryName varchar(20), QuantityPerUnit varchar(20), 
 	UnitPrice smallmoney, UnitsInStock int, UnitsOnOrder int, ReorderLevel int, Discontinued bit)
+
+SELECT CAST(SCOPE_IDENTITY() AS varchar(10))
 GO
 
 CREATE OR ALTER PROCEDURE [Products_Upd]

@@ -67,7 +67,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.1" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.2" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
     </ItemGroup>
 </Project>

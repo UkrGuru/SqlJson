@@ -26,6 +26,27 @@ public class ApiDbFileService : ApiDbService, IDbFileService
     public async Task DelAsync(object? guid, CancellationToken cancellationToken = default)
         => await ExecAsync("WJbFiles_Del", guid, cancellationToken: cancellationToken);
 
+
+    /// <summary>
+    /// Load file from current database
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="timeout"></param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
+    public async Task<string?> GetAsync(string? value, int? timeout = null, CancellationToken cancellationToken = default)
+    {
+        if (Guid.TryParse(value, out Guid guid))
+        {
+            var file = await GetAsync(guid, timeout, cancellationToken);
+
+            if (file?.FileContent != null)
+                return Encoding.UTF8.GetString(file.FileContent);
+        }
+
+        return await Task.FromResult(value);
+    }
+
     /// <summary>
     /// 
     /// </summary>
