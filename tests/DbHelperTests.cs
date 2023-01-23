@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace UkrGuru.SqlJson;
 
@@ -112,6 +113,17 @@ public class DbHelperTests
 
         var name8 = DbHelper.Exec<string?>("ProcObj", new { Name = "John" });
         Assert.Equal("John", name8);
+
+        var rec1 = DbHelper.Exec<JsonObject>("SELECT 1 Id, 'John' Name FOR JSON PATH, WITHOUT_ARRAY_WRAPPER");
+        Assert.Equal(1, (int?)rec1?["Id"]);
+        Assert.Equal("John", (string?)rec1?["Name"]);
+
+        var recs = DbHelper.Exec<List<JsonObject>>("SELECT 1 Id, 'John' Name UNION ALL SELECT 2 Id, 'Mike' Name FOR JSON PATH");
+        Assert.Equal(2, recs?.Count);
+        Assert.Equal(1, (int?)recs?[0]?["Id"]);
+        Assert.Equal("John", (string?)recs?[0]?["Name"]);
+        Assert.Equal(2, (int?)recs?[1]?["Id"]);
+        Assert.Equal("Mike", (string?)recs?[1]?["Name"]);
     }
 
     [Fact]
@@ -146,5 +158,16 @@ public class DbHelperTests
 
         var name2 = await DbHelper.ExecAsync<string?>("ProcObj", new { Name = "John" });
         Assert.Equal("John", name2);
+
+        var rec1 = await DbHelper.ExecAsync<JsonObject>("SELECT 1 Id, 'John' Name FOR JSON PATH, WITHOUT_ARRAY_WRAPPER");
+        Assert.Equal(1, (int?)rec1?["Id"]);
+        Assert.Equal("John", (string?)rec1?["Name"]);
+
+        var recs = await DbHelper.ExecAsync<List<JsonObject>>("SELECT 1 Id, 'John' Name UNION ALL SELECT 2 Id, 'Mike' Name FOR JSON PATH");
+        Assert.Equal(2, recs?.Count);
+        Assert.Equal(1, (int?)recs?[0]?["Id"]);
+        Assert.Equal("John", (string?)recs?[0]?["Name"]);
+        Assert.Equal(2, (int?)recs?[1]?["Id"]);
+        Assert.Equal("Mike", (string?)recs?[1]?["Name"]);
     }
 }

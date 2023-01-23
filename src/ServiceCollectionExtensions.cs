@@ -38,11 +38,12 @@ public static class SqlJsonServiceCollectionExtensions
     /// </summary>
     /// <param name="services">The IServiceCollection argument the ConfigureServices method receives.</param>
     /// <param name="logLevel"></param>
-    public static IServiceCollection AddSqlJsonExt(this IServiceCollection services, DbLogLevel logLevel = DbLogLevel.Information)
+    /// <param name="initDb"></param>
+    public static IServiceCollection AddSqlJsonExt(this IServiceCollection services, DbLogLevel logLevel = DbLogLevel.Information, bool initDb = true)
     {
         DbLogHelper.MinDbLogLevel = logLevel;
 
-        Assembly.GetExecutingAssembly().InitDb();
+        if (initDb) Assembly.GetExecutingAssembly().InitDb();
 
         services.AddScoped<IDbLogService, DbLogService>();
         services.AddScoped<IDbFileService, DbFileService>();
