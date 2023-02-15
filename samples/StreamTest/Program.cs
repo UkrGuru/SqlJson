@@ -1,12 +1,4 @@
-# UkrGuru.SqlJson Samples
-[![Donate](https://img.shields.io/badge/Donate-PayPal-yellow.svg)](https://www.paypal.com/donate/?hosted_button_id=BPUF3H86X96YN)
-
-
-![UkrGuru.SqlJson Demo](demo1.gif)
-
-
-```cs
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using UkrGuru.SqlJson;
 
 DbHelper.ConnectionString = "Server=(localdb)\\mssqllocaldb;Database=SqlJsonTest;Trusted_Connection=True";
@@ -36,6 +28,3 @@ void WriteInfo(string path)
     Console.WriteLine($"\r\n{path} lenght = {stream.Length}.");
     Console.WriteLine($"sha256 = {BitConverter.ToString(sha256.ComputeHash(stream))}.\r\n");
 }
-```
-
-![UkrGuru.SqlJson Demo](demo2.png)
