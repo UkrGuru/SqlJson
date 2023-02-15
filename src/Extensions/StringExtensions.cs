@@ -34,12 +34,12 @@ public static class StringExtensions
     /// <summary>
     /// Converts the StringBuilder value to an equivalent T object.
     /// </summary>
-        /// <typeparam name="T">The type of results to return.</typeparam>
-    /// <param name="jsonResult"></param>
+    /// <typeparam name="T">The type of results to return.</typeparam>
+    /// <param name="value"></param>
     /// <param name="defaultValue"></param>
     /// <returns></returns>
-    public static T? ToObj<T>(this StringBuilder? jsonResult, T? defaultValue = default)
-        => jsonResult?.Length > 0 ? jsonResult.ToString().ToObj<T?>(defaultValue) : defaultValue;
+    public static T? ToObj<T>(this StringBuilder? value, T? defaultValue = default)
+        => value?.Length > 0 ? value.ToString().ToObj(defaultValue) : defaultValue;
 
     /// <summary>
     /// Converts the string value to an equivalent T object.

@@ -25,21 +25,21 @@ EXEC dbo.sp_executesql @statement = N'
 CREATE OR ALTER PROCEDURE ProcInt 
 	@Data int = NULL 
 AS 
-	SELECT CAST(@Data as varchar);
+SELECT @Data;
 ';
 
 EXEC dbo.sp_executesql @statement = N'
 CREATE OR ALTER PROCEDURE ProcStr 
 	@Data varchar(100) = NULL 
 AS 
-	SELECT @Data;
+SELECT @Data;
 ';
 
 EXEC dbo.sp_executesql @statement = N'
 CREATE OR ALTER PROCEDURE ProcObj 
 	@Data varchar(100) = NULL 
 AS 
-	SELECT JSON_VALUE(@Data, ''$.Name'');
+SELECT JSON_VALUE(@Data, ''$.Name'');
 ';
 
 EXEC dbo.sp_executesql @statement = N'
@@ -49,5 +49,5 @@ AS
 INSERT INTO TestItems 
 SELECT * FROM OPENJSON(@Data) 
 WITH (Name	nvarchar(50))
-SELECT CAST(SCOPE_IDENTITY() AS varchar(10))
+SELECT CAST(SCOPE_IDENTITY() AS int)
 ';

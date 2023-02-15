@@ -66,7 +66,7 @@ UkrGuru.SqlJson automatically normalizes input parameters and deserializes the r
 
 Requirements:
 1. INPUT: Must use a query or procedure with only one @Data parameter of any type, or no parameter.
-2. OUTPUT: Should prepare the result in one column SELECT varchar or json types. See more examples bellow ...
+2. OUTPUT: Should prepare the result in one column SELECT sqltype or json types. See more examples bellow ...
 
 
 ```sql
@@ -105,7 +105,7 @@ SELECT * FROM OPENJSON(@Data)
 WITH (ProductName varchar(50), CategoryName varchar(20), QuantityPerUnit varchar(20), 
 	UnitPrice smallmoney, UnitsInStock int, UnitsOnOrder int, ReorderLevel int, Discontinued bit)
 
-SELECT CAST(SCOPE_IDENTITY() AS varchar(10))
+SELECT SCOPE_IDENTITY()
 GO
 
 CREATE OR ALTER PROCEDURE [Products_Upd]

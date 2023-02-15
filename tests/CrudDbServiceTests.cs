@@ -1,9 +1,6 @@
 ﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using System.IO;
-using UkrGuru.Extensions;
-
 namespace UkrGuru.SqlJson;
 
 public class CrudDbServiceTests
@@ -28,7 +25,7 @@ INSERT INTO TestItems
 SELECT * FROM OPENJSON(@Data)
 WITH(Name nvarchar(50))
 
-SELECT CAST(SCOPE_IDENTITY() AS varchar(10))
+SELECT CAST(SCOPE_IDENTITY() AS int)
 """, item1);
 
         Assert.NotNull(id);
@@ -44,7 +41,7 @@ FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
         Assert.Equal(id, item2.Id);
         Assert.Equal(item1.Name, item2.Name);
 
-        item2.Name = "Name2"; 
+        item2.Name = "Name2";
 
         await db.UpdateAsync("""
 UPDATE TestItems

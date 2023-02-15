@@ -68,9 +68,8 @@ public static class SqlJsonServiceCollectionExtensions
     /// Registers UkrGuru Extensions for client side application.
     /// </summary>
     /// <param name="services">The IServiceCollection argument the ConfigureServices method receives.</param>
-    /// <param name="logLevel"></param>
     /// <returns>The updated IServiceCollection collection argument the ConfigureServices method receives.</returns>
-    public static IServiceCollection AddSqlJsonApiExt(this IServiceCollection services, DbLogLevel logLevel = DbLogLevel.Information)
+    public static IServiceCollection AddSqlJsonApiExt(this IServiceCollection services)
     {
         services.AddScoped<IDbLogService, ApiDbLogService>();
         services.AddScoped<IDbFileService, ApiDbFileService>();

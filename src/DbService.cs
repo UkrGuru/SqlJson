@@ -1,4 +1,4 @@
-﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
+﻿ // Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using Microsoft.Data.SqlClient;
@@ -25,44 +25,44 @@ public interface IDbService
     /// <summary>
     /// Synchronous method that opens a database connection, then executes a Transact-SQL statement and returns the number of rows affected.
     /// </summary>
-    /// <param name="cmdText">The text of the query or stored procedure. </param>
+    /// <param name="tsql">The text of the query or stored procedure name.</param>
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>The number of rows affected.</returns>
-    int Exec(string cmdText, object? data = null, int? timeout = null);
+    int Exec(string tsql, object? data = null, int? timeout = null);
 
     /// <summary>
     /// Synchronous method that opens a database connection, then executes a Transact-SQL statement with or without '@Data' parameter
     /// and returns the result as an object.
     /// </summary>
     /// <typeparam name="T">The type of results to return.</typeparam>
-    /// <param name="cmdText">The text of the query or stored procedure. </param>
+    /// <param name="tsql">The text of the query or stored procedure name.</param>
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>Result as an object</returns>
-    T? Exec<T>(string cmdText, object? data = null, int? timeout = null);
+    T? Exec<T>(string tsql, object? data = null, int? timeout = null);
 
     /// <summary>
     /// Asynchronous method that opens a database connection, then executes a Transact-SQL statement and returns the number of rows affected.
     /// </summary>
-    /// <param name="cmdText">The text of the query or stored procedure. </param>
+    /// <param name="tsql">The text of the query or stored procedure name.</param>
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The number of rows affected.</returns>
-    Task<int> ExecAsync(string cmdText, object? data = null, int? timeout = null, CancellationToken cancellationToken = default);
+    Task<int> ExecAsync(string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Asynchronous method that opens a database connection, then executes a Transact-SQL statement with or without '@Data' parameter
     /// and returns the result as an object.
     /// </summary>
     /// <typeparam name="T">The type of results to return.</typeparam>
-    /// <param name="cmdText">The text of the query or stored procedure. </param>
+    /// <param name="tsql">The text of the query or stored procedure name.</param>
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>Result as an object</returns>
-    Task<T?> ExecAsync<T>(string cmdText, object? data = null, int? timeout = null, CancellationToken cancellationToken = default);
+    Task<T?> ExecAsync<T>(string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default);
 }
 
 /// <summary>
@@ -96,16 +96,16 @@ public class DbService : IDbService
     /// <summary>
     /// Synchronous method that opens a database connection, then executes a Transact-SQL statement and returns the number of rows affected.
     /// </summary>
-    /// <param name="cmdText">The text of the query or stored procedure. </param>
+    /// <param name="tsql">The text of the query or stored procedure name.</param>
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>The number of rows affected.</returns>
-    public int Exec(string cmdText, object? data = null, int? timeout = null)
+    public int Exec(string tsql, object? data = null, int? timeout = null)
     {
         using SqlConnection connection = CreateSqlConnection();
         connection.Open();
 
-        return connection.Exec(cmdText, data, timeout);
+        return connection.Exec(tsql, data, timeout);
     }
 
     /// <summary>
@@ -113,32 +113,32 @@ public class DbService : IDbService
     /// and returns the result as an object.
     /// </summary>
     /// <typeparam name="T">The type of results to return.</typeparam>
-    /// <param name="cmdText">The text of the query or stored procedure. </param>
+    /// <param name="tsql">The text of the query or stored procedure name.</param>
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>Result as an object</returns>
-    public T? Exec<T>(string cmdText, object? data = null, int? timeout = null)
+    public T? Exec<T>(string tsql, object? data = null, int? timeout = null)
     {
         using SqlConnection connection = CreateSqlConnection();
         connection.Open();
 
-        return connection.Exec<T?>(cmdText, data, timeout);
+        return connection.Exec<T?>(tsql, data, timeout);
     }
 
     /// <summary>
     /// Asynchronous method that opens a database connection, then executes a Transact-SQL statement and returns the number of rows affected.
     /// </summary>
-    /// <param name="cmdText">The text of the query or stored procedure. </param>
+    /// <param name="tsql">The text of the query or stored procedure name.</param>
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The number of rows affected.</returns>
-    public async Task<int> ExecAsync(string cmdText, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+    public async Task<int> ExecAsync(string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
         using SqlConnection connection = CreateSqlConnection();
         await connection.OpenAsync(cancellationToken);
 
-        return await connection.ExecAsync(cmdText, data, timeout, cancellationToken);
+        return await connection.ExecAsync(tsql, data, timeout, cancellationToken);
     }
 
     /// <summary>
@@ -146,17 +146,17 @@ public class DbService : IDbService
     /// and returns the result as an object.
     /// </summary>
     /// <typeparam name="T">The type of results to return.</typeparam>
-    /// <param name="cmdText">The text of the query or stored procedure. </param>
+    /// <param name="tsql">The text of the query or stored procedure name.</param>
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>Result as an object</returns>
-    public async Task<T?> ExecAsync<T>(string cmdText, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+    public async Task<T?> ExecAsync<T>(string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
         using SqlConnection connection = CreateSqlConnection();
         await connection.OpenAsync(cancellationToken);
 
-        return await connection.ExecAsync<T?>(cmdText, data, timeout, cancellationToken);
+        return await connection.ExecAsync<T?>(tsql, data, timeout, cancellationToken);
     }
 }
 

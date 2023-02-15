@@ -14,17 +14,30 @@ namespace UkrGuru.SqlJson;
 public static class DbExtensions
 {
     /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public static bool IsLong(this Type type) => type.Name switch
+    {
+        // or "SByte" or "UInt16"  or "UInt32" or "UInt64" 
+        "Boolean" or "Byte" or "Int16" or "Int32" or "Int64" or "Single" or "Double" or "Decimal" or
+        "DateOnly" or "DateTime" or "DateTimeOffset" or "TimeOnly" or "TimeSpan" or "Guid" or "Char" => false,
+        _ => true,
+    };
+
+    /// <summary>
     /// Creates a new instance of the SqlCommand class with initialization parameters.
     /// </summary>
     /// <param name="connection">The connection instance to bind.</param>
-    /// <param name="cmdText">The text of the query.</param>
+    /// <param name="tsql">The text of the query.</param>
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>New instance of the SqlCommand class with initialize parameters</returns>
-    private static SqlCommand CreateSqlCommand(this SqlConnection connection, string cmdText, object? data = null, int? timeout = null)
+    private static SqlCommand CreateSqlCommand(this SqlConnection connection, string tsql, object? data = null, int? timeout = null)
     {
-        SqlCommand command = new(cmdText, connection);
-        if (DbHelper.IsName(cmdText)) command.CommandType = CommandType.StoredProcedure;
+        SqlCommand command = new(tsql, connection);
+        if (DbHelper.IsName(tsql)) command.CommandType = CommandType.StoredProcedure;
 
         if (data != null) command.Parameters.AddWithValue("@Data", DbHelper.Normalize(data));
 
@@ -38,13 +51,13 @@ public static class DbExtensions
     /// and returns the number of rows affected.
     /// </summary>
     /// <param name="connection">The connection instance to bind.</param>
-    /// <param name="cmdText">The text of the query or stored procedure. </param>
+    /// <param name="tsql">The text of the query or stored procedure name.</param>
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>The number of rows affected.</returns>
-    public static int Exec(this SqlConnection connection, string cmdText, object? data = null, int? timeout = null)
+    public static int Exec(this SqlConnection connection, string tsql, object? data = null, int? timeout = null)
     {
-        using SqlCommand command = connection.CreateSqlCommand(cmdText, data, timeout);
+        using SqlCommand command = connection.CreateSqlCommand(tsql, data, timeout);
 
         return command.ExecuteNonQuery();
     }
@@ -55,33 +68,47 @@ public static class DbExtensions
     /// </summary>
     /// <typeparam name="T">The type of results to return.</typeparam>
     /// <param name="connection">The connection instance to bind.</param>
-    /// <param name="cmdText">The text of the query or stored procedure. </param>
+    /// <param name="tsql">The text of the query or stored procedure name.</param>
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>Result as an object</returns>
-    public static T? Exec<T>(this SqlConnection connection, string cmdText, object? data = null, int? timeout = null)
+    public static T? Exec<T>(this SqlConnection connection, string tsql, object? data = null, int? timeout = null)
     {
         StringBuilder result = new();
 
-        using (var command = connection.CreateSqlCommand(cmdText, data, timeout))
+        var type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
+
+        using var command = connection.CreateSqlCommand(tsql, data, timeout);
+        if (type.IsLong())
         {
-            var type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
-
-            if (DbHelper.IsLong(type?.Name))
-            {
-                var reader = command.ExecuteReader();
-
-                if (reader.HasRows)
-                    while (reader.Read())
-                        if (!reader.IsDBNull(0))
-                            result.Append(reader.GetString(0));
-
-                reader.Close();
-            }
-            else
-            {
-                result.Append(command.ExecuteScalar());
-            }
+            using SqlDataReader reader = command.ExecuteReader(CommandBehavior.CloseConnection);
+            if (reader.HasRows)
+                while (reader.Read())
+                    if (!reader.IsDBNull(0))
+                        if (type == typeof(byte[]))
+                        {
+                            return (T?)reader.GetValue(0);
+                        }
+                        else if (type == typeof(char[]))
+                        {
+                            return (T?)(object)reader.GetSqlChars(0).Value;
+                        }
+                        else if (type == typeof(Stream))
+                        {
+                            return (T?)(object)reader.GetStream(0);
+                        }
+                        else if (type == typeof(TextReader))
+                        {
+                            return (T?)(object)reader.GetTextReader(0);
+                        }
+                        else
+                        {
+                            result.Append(reader.GetValue(0));
+                        }
+        }
+        else
+        {
+            return ParseScalar<T?>(command.ExecuteScalar());
         }
 
         return result.ToObj<T?>();
@@ -92,14 +119,14 @@ public static class DbExtensions
     /// and returns the number of rows affected.
     /// </summary>
     /// <param name="connection">The connection instance to bind.</param>
-    /// <param name="cmdText">The text of the query or stored procedure. </param>
+    /// <param name="tsql">The text of the query or stored procedure name.</param>
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The number of rows affected.</returns>
-    public static async Task<int> ExecAsync(this SqlConnection connection, string cmdText, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+    public static async Task<int> ExecAsync(this SqlConnection connection, string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
-        using SqlCommand command = connection.CreateSqlCommand(cmdText, data, timeout);
+        using SqlCommand command = connection.CreateSqlCommand(tsql, data, timeout);
 
         return await command.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -110,36 +137,75 @@ public static class DbExtensions
     /// </summary>
     /// <typeparam name="T">The type of results to return.</typeparam>
     /// <param name="connection">The connection instance to bind.</param>
-    /// <param name="cmdText">The text of the query or stored procedure. </param>
+    /// <param name="tsql">The text of the query or stored procedure name.</param>
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>Result as an object</returns>
-    public static async Task<T?> ExecAsync<T>(this SqlConnection connection, string cmdText, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+    public static async Task<T?> ExecAsync<T>(this SqlConnection connection, string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
         StringBuilder result = new();
 
-        using (var command = connection.CreateSqlCommand(cmdText, data, timeout))
+        var type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
+
+        using var command = connection.CreateSqlCommand(tsql, data, timeout);
+        if (type.IsLong())
         {
-            var type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
-
-            if (DbHelper.IsLong(type?.Name))
-            {
-                var reader = await command.ExecuteReaderAsync(cancellationToken);
-
-                if (reader.HasRows)
-                    while (await reader.ReadAsync(cancellationToken))
-                        if (!await reader.IsDBNullAsync(0, cancellationToken))
-                            result.Append(reader.GetString(0));
-
-                await reader.CloseAsync();
-            }
-            else
-            {
-                result.Append(await command.ExecuteScalarAsync(cancellationToken));
-            }
+            using SqlDataReader reader = await command.ExecuteReaderAsync(CommandBehavior.CloseConnection, cancellationToken);
+            if (reader.HasRows)
+                while (await reader.ReadAsync(cancellationToken))
+                    if (!await reader.IsDBNullAsync(0, cancellationToken))
+                    {
+                        if (type == typeof(byte[]))
+                        {
+                            return (T?)reader.GetValue(0);
+                        }
+                        else if (type == typeof(char[]))
+                        {
+                            return (T?)(object)reader.GetSqlChars(0).Value;
+                        }
+                        else if (type == typeof(Stream))
+                        {
+                            return (T?)(object)reader.GetStream(0);
+                        }
+                        else if (type == typeof(TextReader))
+                        {
+                            return (T?)(object)reader.GetTextReader(0);
+                        }
+                        else
+                        {
+                            result.Append(reader.GetValue(0));
+                        }
+                    }
+        }
+        else
+        {
+            return ParseScalar<T?>(await command.ExecuteScalarAsync(cancellationToken));
         }
 
         return result.ToObj<T?>();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="value"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    private static T? ParseScalar<T>(object? value, T? defaultValue = default)
+    {
+        if (value == null || value == DBNull.Value) return defaultValue;
+
+        var type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
+
+        if (type == typeof(DateOnly))
+            return (T)(object)DateOnly.FromDateTime((DateTime)value);
+        else if (type == typeof(TimeOnly))
+            return (T)(object)TimeOnly.FromTimeSpan((TimeSpan)value);
+        else if (type == typeof(char))
+            return (T)(object)char.Parse((string)value);
+
+        return (T)value;
     }
 }
