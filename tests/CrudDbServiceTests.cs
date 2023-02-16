@@ -22,10 +22,10 @@ public class CrudDbServiceTests
 
         var id = await db.CreateAsync<int?>("""
 INSERT INTO TestItems 
-SELECT * FROM OPENJSON(@Data)
-WITH(Name nvarchar(50))
+SELECT * FROM OPENJSON(@Data) 
+WITH (Name	nvarchar(50))
 
-SELECT CAST(SCOPE_IDENTITY() AS int)
+SELECT SCOPE_IDENTITY()
 """, item1);
 
         Assert.NotNull(id);

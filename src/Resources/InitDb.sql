@@ -103,7 +103,7 @@ END
 ELSE IF @Safe = 1
 	UPDATE WJbFiles SET Created = CAST(Created as smalldatetime) WHERE Id = @Id   
 
-SELECT CAST(@Id as varchar(50)) Id
+SELECT @Id
 ';
 EXEC dbo.sp_executesql @statement = N'
 CREATE OR ALTER PROCEDURE [WJbFiles_Ins_api]

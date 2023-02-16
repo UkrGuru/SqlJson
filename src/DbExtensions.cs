@@ -203,9 +203,9 @@ public static class DbExtensions
             return (T)(object)DateOnly.FromDateTime((DateTime)value);
         else if (type == typeof(TimeOnly))
             return (T)(object)TimeOnly.FromTimeSpan((TimeSpan)value);
-        else if (type == typeof(char))
-            return (T)(object)char.Parse((string)value);
+        //else if (type == typeof(char))
+        //    return (T)(object)char.Parse((string)value);
 
-        return (T)value;
+        return (T?)Convert.ChangeType(value, type);
     }
 }

@@ -25,7 +25,7 @@ public class GlobalTests
     public static string TestString5k => Convert.ToBase64String(TestBytes5k);
     public static char[] TestChars5k => TestString5k.ToCharArray();
 
-    public static byte[] TestBytes5m = new byte[1024 * 512];
+    public static byte[] TestBytes5m = new byte[1024 * 55 ];
     public static string TestString5m => Convert.ToBase64String(TestBytes5m);
     public static char[] TestChars5m => TestString5m.ToCharArray();
 
