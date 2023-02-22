@@ -177,9 +177,8 @@ public class DbLogService : DbService, IDbLogService
     /// <param name="more"></param>
     public void Log(DbLogLevel logLevel, string title, object? more = null)
     {
-        if ((byte)logLevel < (byte)MinDbLogLevel) return;
-
-        Exec("WJbLogs_Ins", DbLogHelper.Normalize(logLevel, title, more));
+        try { if ((byte)logLevel >= (byte)MinDbLogLevel) Exec("WJbLogs_Ins", DbLogHelper.Normalize(logLevel, title, more)); }
+        finally { }
     }
 
     /// <summary>
@@ -192,9 +191,8 @@ public class DbLogService : DbService, IDbLogService
     /// <returns>The async task.</returns>
     public async Task LogAsync(DbLogLevel logLevel, string title, object? more = null, CancellationToken cancellationToken = default)
     {
-        if ((byte)logLevel < (byte)MinDbLogLevel) { await Task.CompletedTask; return; }
-
-        await ExecAsync("WJbLogs_Ins", DbLogHelper.Normalize(logLevel, title, more), cancellationToken : cancellationToken);
+        try { if ((byte)logLevel >= (byte)MinDbLogLevel) await ExecAsync("WJbLogs_Ins", DbLogHelper.Normalize(logLevel, title, more), cancellationToken: cancellationToken); }
+        finally { await Task.CompletedTask; }
     }
 }
 

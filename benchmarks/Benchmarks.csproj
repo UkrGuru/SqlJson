@@ -6,9 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.2" />
-    <PackageReference Include="UkrGuru.SqlJson" Version="6.1.0" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.3" />
+    <PackageReference Include="UkrGuru.SqlJson" Version="6.2.2" />
   </ItemGroup>
 </Project>

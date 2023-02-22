@@ -11,11 +11,11 @@
         <PackageIcon>ukrguru-logo.jpg</PackageIcon>
         <RepositoryUrl>https://github.com/UkrGuru/SqlJson</RepositoryUrl>
         <Description>UkrGuru.SqlJson is very easy and fast access to the Sql Server database and EF Core is not involved in this.</Description>
-        <Version>6.2.1</Version>
+        <Version>6.2.3</Version>
         <SignAssembly>True</SignAssembly>
         <AssemblyOriginatorKeyFile>..\..\UkrGuru.snk</AssemblyOriginatorKeyFile>
         <PackageTags>sqlclient ado-net sql json .net6 .net7</PackageTags>
-        <PackageReleaseNotes>Stream and TextReader on the board now</PackageReleaseNotes>
+        <PackageReleaseNotes>Added Try-Finally in DbLog for prevent crash.</PackageReleaseNotes>
         <DebugType>none</DebugType>
         <DelaySign>False</DelaySign>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>

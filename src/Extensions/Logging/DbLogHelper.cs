@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using System.Text.Json;
+using System.Threading;
 using UkrGuru.SqlJson;
 
 namespace UkrGuru.Extensions.Logging;
@@ -34,9 +35,8 @@ public class DbLogHelper
     /// <param name="more"></param>
     public static void Log(DbLogLevel logLevel, string title, object? more = null)
     {
-        if ((byte)logLevel < (byte)MinDbLogLevel) return;
-
-        DbHelper.Exec("WJbLogs_Ins", Normalize(logLevel, title, more));
+        try { if ((byte)logLevel >= (byte)MinDbLogLevel) DbHelper.Exec("WJbLogs_Ins", Normalize(logLevel, title, more)); }
+        finally { }
     }
 
     /// <summary>
@@ -91,9 +91,8 @@ public class DbLogHelper
     /// <returns>The async task.</returns>
     public static async Task LogAsync(DbLogLevel logLevel, string title, object? more = null, CancellationToken cancellationToken = default)
     {
-        if ((byte)logLevel < (byte)MinDbLogLevel) { await Task.CompletedTask; return; }
-
-        await DbHelper.ExecAsync("WJbLogs_Ins", Normalize(logLevel, title, more), cancellationToken: cancellationToken);
+        try { if ((byte)logLevel >= (byte)MinDbLogLevel) await DbHelper.ExecAsync("WJbLogs_Ins", Normalize(logLevel, title, more), cancellationToken: cancellationToken); }
+        finally { await Task.CompletedTask; }
     }
 
     /// <summary>

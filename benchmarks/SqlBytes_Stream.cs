@@ -36,7 +36,7 @@ public class SqlBytes_Stream
 
         return result;
 
-        static Stream? GetStream()
+        static Stream GetStream()
         {
             Stream stream = null;
 
