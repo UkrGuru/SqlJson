@@ -13,7 +13,7 @@ public class DbLogTests
     [Fact]
     public async Task CanDbLog()
     {
-        var db = new DbLogService(GlobalTests.Configuration);
+        IDbLogService db = new DbLogService(GlobalTests.Configuration);
 
         DbHelper.Exec("TRUNCATE TABLE WJbLogs");
 
