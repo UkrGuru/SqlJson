@@ -18,13 +18,13 @@ public static class DbFileExtensions
     /// <param name="timeout"></param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The async task.</returns>
-    public static async Task<string?> SetAsync(this DbFile file, int? timeout = null, CancellationToken cancellationToken = default)
+    public static async Task<T?> SetAsync<T>(this DbFile file, int? timeout = null, CancellationToken cancellationToken = default)
     {
-        if (file?.FileContent == null || file.FileContent.Length == 0) return await Task.FromResult(null as string);
+        if (file?.FileContent == null || file.FileContent.Length == 0) return await Task.FromResult<T?>(default);
 
         await file.CompressAsync(cancellationToken);
 
-        return await DbHelper.ExecAsync<string>("WJbFiles_Ins", file, timeout, cancellationToken);
+        return await DbHelper.ExecAsync<T?>("WJbFiles_Ins", file, timeout, cancellationToken);
     }
 
     /// <summary>
@@ -39,6 +39,7 @@ public static class DbFileExtensions
 
         switch (Path.GetExtension(file.FileName ?? "file.txt").ToLower())
         {
+            case ".bin":
             case ".bmp":
             case ".csv":
             case ".json":

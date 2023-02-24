@@ -40,7 +40,7 @@ public class DbFileHelper
     /// <param name="timeout"></param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The async task.</returns>
-    public static async Task<DbFile?> GetAsync(Guid guid, int? timeout = null, CancellationToken cancellationToken = default)
+    public static async Task<DbFile?> GetAsync(Guid? guid, int? timeout = null, CancellationToken cancellationToken = default)
     {
         var file = await DbHelper.ExecAsync<DbFile>("WJbFiles_Get", guid, timeout, cancellationToken);
 
@@ -64,7 +64,7 @@ public class DbFileHelper
         {
             DbFile file = new() { FileName = filename, FileContent = Encoding.UTF8.GetBytes(value), Safe = safe };
 
-            return await file.SetAsync(timeout, cancellationToken);
+            return await file.SetAsync<string?>(timeout, cancellationToken);
         }
 
         return await Task.FromResult(value);

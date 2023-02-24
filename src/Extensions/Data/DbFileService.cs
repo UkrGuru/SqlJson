@@ -13,53 +13,26 @@ namespace UkrGuru.Extensions.Data;
 public interface IDbFileService
 {
     /// <summary>
-    /// Delete file in the current database
+    /// Asynchronous method that opens a database connection, then executes a Transact-SQL statement and returns the number of rows affected.
     /// </summary>
-    /// <param name="guid"></param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>The async task.</returns>
-    Task DelAsync(object? guid, CancellationToken cancellationToken = default);
+    /// <param name="tsql">The text of the query or stored procedure name.</param>
+    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
+    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
+    /// <param name="cancellationToken">The cancellation instruction.</param>
+    /// <returns>The number of rows affected.</returns>
+    Task<int> ExecAsync(string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Load file from current database
+    /// Asynchronous method that opens a database connection, then executes a Transact-SQL statement with or without '@Data' parameter
+    /// and returns the result as an object.
     /// </summary>
-    /// <param name="value"></param>
-    /// <param name="timeout"></param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>The async task.</returns>
-    Task<string?> GetAsync(string? value, int? timeout = null, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Load file from current database
-    /// </summary>
-    /// <param name="guid"></param>
-    /// <param name="timeout"></param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>The async task.</returns>
-    Task<DbFile?> GetAsync(Guid guid, int? timeout = null, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Save file in the current database
-    /// </summary>
-    /// <param name="value"></param>
-    /// <param name="filename"></param>
-    /// <param name="safe"></param>
-    /// <param name="timeout"></param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>The async task.</returns>
-    Task<string?> SetAsync(string? value, string? filename = "file.txt", bool safe = default, int? timeout = null, CancellationToken cancellationToken = default);
-}
-
-/// <summary>
-/// 
-/// </summary>
-public class DbFileService : DbService, IDbFileService
-{
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="configuration"></param>
-    public DbFileService(IConfiguration configuration) : base(configuration) { }
+    /// <typeparam name="T">The type of results to return.</typeparam>
+    /// <param name="tsql">The text of the query or stored procedure name.</param>
+    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
+    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
+    /// <param name="cancellationToken">The cancellation instruction.</param>
+    /// <returns>Result as an object</returns>
+    Task<T?> ExecAsync<T>(string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// 
@@ -99,7 +72,7 @@ public class DbFileService : DbService, IDbFileService
     /// <param name="timeout"></param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The async task.</returns>
-    public async Task<DbFile?> GetAsync(Guid guid, int? timeout = null, CancellationToken cancellationToken = default)
+    public async Task<DbFile?> GetAsync(Guid? guid, int? timeout = null, CancellationToken cancellationToken = default)
     {
         var file = await ExecAsync<DbFile>("WJbFiles_Get", guid, timeout, cancellationToken);
 
@@ -130,4 +103,32 @@ public class DbFileService : DbService, IDbFileService
 
         return await Task.FromResult(value);
     }
+
+    /// <summary>
+    /// Save file in the current database
+    /// </summary>
+    /// <param name="file"></param>
+    /// <param name="timeout"></param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
+    public async Task<T?> SetAsync<T>(DbFile file, int? timeout = null, CancellationToken cancellationToken = default)
+    {
+        if (file?.FileContent == null || file.FileContent.Length == 0) return await Task.FromResult<T?>(default);
+
+        await file.CompressAsync(cancellationToken);
+
+        return await ExecAsync<T?>("WJbFiles_Ins", file, timeout, cancellationToken);
+    }
+}
+
+/// <summary>
+/// 
+/// </summary>
+public class DbFileService : DbService, IDbFileService
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="configuration"></param>
+    public DbFileService(IConfiguration configuration) : base(configuration) { }
 }

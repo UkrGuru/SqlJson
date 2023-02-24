@@ -3,7 +3,6 @@
 
 global using Xunit;
 using Microsoft.Extensions.Configuration;
-using Microsoft.VisualBasic;
 using System.Reflection;
 using UkrGuru.Extensions;
 using UkrGuru.Extensions.Data;
@@ -27,14 +26,14 @@ public class GlobalTests
     public static char[] TestChars5k => TestString5k.ToCharArray();
 
     public static byte[] TestBytes55k = new byte[1024 * 55];
-    public static string TestString5m => Convert.ToBase64String(TestBytes55k);
-    public static char[] TestChars5m => TestString5m.ToCharArray();
+    public static string TestString55k => Convert.ToBase64String(TestBytes55k);
+    public static char[] TestChars55k => TestString55k.ToCharArray();
 
     public static Random Random = new Random(2511);
 
     //public static byte[] TestBytes55k_Hash256 { get; set; }
-    //public static byte[] TestString5m_Hash256 { get; set; }
-    //public static byte[] TestChars5m_Hash256 { get; set; }
+    //public static byte[] TestString55k_Hash256 { get; set; }
+    //public static byte[] TestChars55k_Hash256 { get; set; }
 
     public GlobalTests()
     {
@@ -68,7 +67,7 @@ public class GlobalTests
         //using (var sha256 = SHA256.Create())
         //{
         //    TestBytes55k_Hash256 = sha256.ComputeHash(TestBytes55k);
-        //    TestChars5m_Hash256 = TestString5m_Hash256 = sha256.ComputeHash(Convert.FromBase64String(TestString5m));
+        //    TestChars55k_Hash256 = TestString55k_Hash256 = sha256.ComputeHash(Convert.FromBase64String(TestString55k));
         //}
 
         DbOk = true;

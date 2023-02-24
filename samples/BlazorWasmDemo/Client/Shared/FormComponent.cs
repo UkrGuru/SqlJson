@@ -57,7 +57,7 @@ public class FormComponent : ComponentBase
         catch (Exception ex)
         {
             ErrMsg = $"Error: {ex.Message}";
-            await dbLog.LogErrorAsync($"{Title}/OnInitializedAsync", new { ex.Message, ex.StackTrace });
+            dbLog.LogError($"{Title}/OnInitializedAsync", new { ex.Message, ex.StackTrace });
         }
         Loading = false;
     }

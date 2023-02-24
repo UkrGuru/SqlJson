@@ -85,4 +85,21 @@ public class ApiDbFileService : ApiDbService, IDbFileService
 
         return await Task.FromResult(value);
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="file"></param>
+    /// <param name="timeout"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public async Task<T?> SetAsync<T>(DbFile file, int? timeout = null, CancellationToken cancellationToken = default)
+    {
+        if (file?.FileContent == null || file.FileContent.Length == 0) return await Task.FromResult<T?>(default);
+
+        await file.CompressAsync(cancellationToken);
+
+        return await ExecAsync<T?>("WJbFiles_Ins", file, timeout, cancellationToken);
+    }
 }

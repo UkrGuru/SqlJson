@@ -83,7 +83,7 @@ public class DbService : IDbService
         => _connectionString = configuration.GetConnectionString(ConnectionStringName);
 
     /// <summary>
-    /// The connectionString name used to open the SQL Server database.
+    /// The ConnectionString name used to open the SQL Server database.
     /// </summary>
     public virtual string ConnectionStringName => "DefaultConnection";
 

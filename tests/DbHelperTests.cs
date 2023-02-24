@@ -229,7 +229,7 @@ public class DbHelperTests
             new object[] { Array.Empty<char>() },
             new object[] { GlobalTests.TestChars1k },
             new object[] { GlobalTests.TestChars5k },
-            new object[] { GlobalTests.TestChars5m }
+            new object[] { GlobalTests.TestChars55k }
         };
 
         return allData.Take(numTests);
@@ -249,7 +249,7 @@ public class DbHelperTests
         {
             new object[] { GlobalTests.TestString1k },
             new object[] { GlobalTests.TestString5k },
-            new object[] { GlobalTests.TestString5m }
+            new object[] { GlobalTests.TestString55k }
         };
 
         return allData.Take(numTests);
@@ -264,7 +264,7 @@ public class DbHelperTests
     public async Task CanExecAsync_String(string str) => Assert.Equal(str, await DbHelper.ExecAsync<string?>("SELECT @Data", str));
 
     [Theory]
-    [MemberData(nameof(GetTestString), parameters: 4)]
+    [MemberData(nameof(GetTestString), parameters: 3)]
     public void CanExec_TextReader(string text)
     {
         using TextReader readerSource = new StringReader(text);
@@ -275,7 +275,7 @@ public class DbHelperTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestString), parameters: 4)]
+    [MemberData(nameof(GetTestString), parameters: 3)]
     public async Task CanExecAsync_TextReader(string text)
     {
         using TextReader readerSource = new StringReader(text);

@@ -17,24 +17,30 @@ public class DbLogTests
 
         DbHelper.Exec("TRUNCATE TABLE WJbLogs");
 
-        DbLogHelper.LogInformation("Information Title #1", "Information More #1");
-        DbLogHelper.LogDebug("Debug Title", "Debug More");
-        DbLogHelper.LogInformation("Information Title #2", new { id = 2 });
+        DbLogHelper.LogInformation("Information Helper #1", "Information More #1");
+        DbLogHelper.LogDebug("Debug Helper", "Debug More");
+        DbLogHelper.LogError("Error Helper #2", new { id = 2 });
         Assert.Equal(2, DbHelper.Exec<int?>("SELECT COUNT(*) FROM WJbLogs"));
 
-        db.LogInformation("Information Title #3", "Information More #3");
-        db.LogDebug("Debug Title", "Debug More");
-        db.LogInformation("Information Title #4", new { id = 4 });
+        db.LogInformation("Information Service #3", "Information More #3");
+        db.LogDebug("Debug Service", "Debug More");
+        db.LogError("Error Service #4", new { id = 4 });
         Assert.Equal(4, DbHelper.Exec<int?>("SELECT COUNT(*) FROM WJbLogs"));
 
-        await DbLogHelper.LogInformationAsync("Information Title Async #5", "Information More Async #5");
-        await DbLogHelper.LogDebugAsync("Debug Title Async", "Debug More Async");
-        await DbLogHelper.LogInformationAsync("Information Title Async #6", new { id = 6 });
+        await DbLogHelper.LogInformationAsync("Information Helper Async #5", "Information More Async #5");
+        await DbLogHelper.LogDebugAsync("Debug Helper Async", "Debug More Async");
+        await DbLogHelper.LogErrorAsync("Error Helper Async #6", new { id = 6 });
         Assert.Equal(6, DbHelper.Exec<int?>("SELECT COUNT(*) FROM WJbLogs"));
 
-        await db.LogInformationAsync("Information Title Async #7", "Information More Async #7");
-        await db.LogDebugAsync("Debug Title Async", "Debug More Async");
-        await db.LogInformationAsync("Information Title Async #8", new { id = 8 });
+        await db.LogInformationAsync("Information Service Async #7", "Information More Async #7");
+        await db.LogDebugAsync("Debug Service Async", "Debug More Async");
+        await db.LogErrorAsync("Error Service Async #8", new { id = 8 });
         Assert.Equal(8, DbHelper.Exec<int?>("SELECT COUNT(*) FROM WJbLogs"));
+
+        Assert.Equal(4, DbHelper.Exec<int?>("SELECT COUNT(*) FROM WJbLogs WHERE Title LIKE 'Information%'"));
+        Assert.Equal(4, DbHelper.Exec<int?>("SELECT COUNT(*) FROM WJbLogs WHERE Title LIKE 'Error%'"));
+
+        Assert.Equal(4, DbHelper.Exec<int?>("SELECT COUNT(*) FROM WJbLogs WHERE LogLevel = 2"));
+        Assert.Equal(4, DbHelper.Exec<int?>("SELECT COUNT(*) FROM WJbLogs WHERE LogLevel = 4"));
     }
 }

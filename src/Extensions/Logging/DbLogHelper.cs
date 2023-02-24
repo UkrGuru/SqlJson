@@ -6,7 +6,7 @@ using UkrGuru.SqlJson;
 namespace UkrGuru.Extensions.Logging;
 
 /// <summary>
-/// 
+/// Helper for logging to the database.
 /// </summary>
 public class DbLogHelper
 {

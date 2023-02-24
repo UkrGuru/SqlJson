@@ -22,16 +22,12 @@ IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[WJbFiles
 	) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, 
 	ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 
-IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'WJbFiles') AND name = N'SHA1') 
-    ALTER TABLE WJbFiles ADD SHA1 [binary](20)
-
-IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[WJbFiles]') AND name = N'IX_WJbFiles_SHA1_FileName')
-	CREATE NONCLUSTERED INDEX [IX_WJbFiles_SHA1_FileName] ON [dbo].[WJbFiles]
-	(
-		[SHA1] ASC,
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[WJbFiles]') AND name = N'IX_WJbFiles_FileName')
+	CREATE NONCLUSTERED INDEX [IX_WJbFiles_FileName] ON [dbo].[WJbFiles] 
+	( 
 		[FileName] ASC
 	) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, 
-	ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+		ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[DF_WJbFiles_Id]') AND type = 'D')
 	ALTER TABLE [WJbFiles] ADD  CONSTRAINT [DF_WJbFiles_Id]  DEFAULT (newid()) FOR [Id]
@@ -84,24 +80,18 @@ EXEC dbo.sp_executesql @statement = N'
 CREATE OR ALTER PROCEDURE [WJbFiles_Ins]
     @Data nvarchar(max)
 AS
-DECLARE @Id uniqueidentifier = NULL
-DECLARE @SHA1 binary(20), @FileName nvarchar(100), @FileContent varbinary(max), @Safe bit, @Created datetime
+DECLARE @Id varchar(50) = NULL, @Created datetime, @Safe bit
 
-SELECT TOP 1 @SHA1 = HashBytes(''SHA1'', FileContent), @FileName = [FileName], @FileContent = FileContent, @Safe = Safe
+SELECT @Id = ISNULL(Id, NEWID()), @Created = ISNULL(Created, GETDATE()), @Safe = [Safe]
 FROM OPENJSON(@Data)
-WITH ([FileName] nvarchar(100), FileContent varbinary(max), Safe bit)
+WITH (Id uniqueidentifier, Created datetime, [Safe] bit)
 
-SELECT @Id = Id FROM WJbFiles WHERE SHA1 = @SHA1 AND FileName = @FileName
+IF ISNULL(@Safe, 0) = 1 SET @Created = CAST(GETDATE() AS smalldatetime);  
 
-IF @Id IS NULL BEGIN
-	SET @Id = NEWID();
-	IF ISNULL(@Safe, 0) = 1 SET @Created = CAST(GETDATE() AS smalldatetime);
-
-	INSERT WJbFiles (Id, Created, FileName, FileContent, SHA1)
-	SELECT @Id, ISNULL(@Created, GETDATE()), @FileName, @FileContent, @SHA1 
-END
-ELSE IF @Safe = 1
-	UPDATE WJbFiles SET Created = CAST(Created as smalldatetime) WHERE Id = @Id   
+INSERT WJbFiles (Id, Created, [FileName], FileContent)
+SELECT @Id, @Created, [FileName], FileContent 
+FROM OPENJSON(@Data)
+WITH ([FileName] nvarchar(100), FileContent varbinary(max))
 
 SELECT @Id
 ';

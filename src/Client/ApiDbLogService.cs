@@ -7,12 +7,12 @@ using UkrGuru.Extensions.Logging;
 namespace UkrGuru.SqlJson.Client;
 
 /// <summary>
-/// Api Log service for logging through ApiHole.
+/// Api Service for logging to the database via ApiHole
 /// </summary>
 public class ApiDbLogService : ApiDbService, IDbLogService
 {
     /// <summary>
-    /// 
+    /// Minimum allowed logging level.
     /// </summary>
     private readonly DbLogLevel? _minDbLogLevel;
 
@@ -25,17 +25,17 @@ public class ApiDbLogService : ApiDbService, IDbLogService
         => _minDbLogLevel = configuration.GetValue<DbLogLevel?>(MinDbLogLevelPath);
 
     /// <summary>
-    /// 
-    /// </summary>
-    public virtual string MinDbLogLevelPath => "Logging:LogLevel:UkrGuru.SqlJson";
-
-    /// <summary>
-    /// 
+    /// MinDbLogLevel allows to set the minimum allowed logging level.
     /// </summary>
     public DbLogLevel MinDbLogLevel => _minDbLogLevel ?? DbLogLevel.Information;
 
     /// <summary>
-    /// 
+    /// MinDbLogLevelPath allows you to change the default path for the MinDbLogLevel property.
+    /// </summary>
+    public virtual string MinDbLogLevelPath => "Logging:LogLevel:UkrGuru.SqlJson";
+
+    /// <summary>
+    /// Synchronous method that writes a log any of type to the database.
     /// </summary>
     /// <param name="logLevel"></param>
     /// <param name="title"></param>
@@ -47,7 +47,7 @@ public class ApiDbLogService : ApiDbService, IDbLogService
     }
 
     /// <summary>
-    /// 
+    /// Asynchronous method that writes a log any of type to the database.
     /// </summary>
     /// <param name="logLevel"></param>
     /// <param name="title"></param>
