@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using System.Data;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
@@ -180,7 +179,7 @@ public class DbHelperTests
             new object[] { Array.Empty<byte>() },
             new object[] { GlobalTests.TestBytes1k },
             new object[] { GlobalTests.TestBytes5k },
-            new object[] { GlobalTests.TestBytes5m }
+            new object[] { GlobalTests.TestBytes55k }
         };
 
         return allData.Take(numTests);

@@ -47,13 +47,13 @@ public class DbFileServiceTests
 
         var filename = $"{DateTime.Now.ToString("HHmmss")}.bin";
 
-        var guid = await db.ExecAsync<string?>("WJbFiles_Ins", new DbFile { FileName = filename, FileContent = GlobalTests.TestBytes5m });
+        var guid = await db.ExecAsync<string?>("WJbFiles_Ins", new DbFile { FileName = filename, FileContent = GlobalTests.TestBytes55k });
 
         var file = await db.ExecAsync<DbFile>("WJbFiles_Get", guid);
 
         Assert.Equal(filename, file?.FileName);
 
-        Assert.Equal(GlobalTests.TestBytes5m, file?.FileContent);
+        Assert.Equal(GlobalTests.TestBytes55k, file?.FileContent);
 
         await db.ExecAsync<DbFile>("WJbFiles_Del", guid);
     }

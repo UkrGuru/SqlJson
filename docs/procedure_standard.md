@@ -57,10 +57,5 @@ INSERT INTO Contacts (FullName, Email, Notes)
 SELECT * FROM OPENJSON(@Data) 
 WITH (FullName nvarchar(50), Email nvarchar(100), Notes nvarchar(max))
 
-DECLARE @Id int = SCOPE_IDENTITY()
-
-SELECT Id, FullName, Email, Notes
-FROM Contacts
-WHERE Id = @Id
-FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+SELECT JSON_MODIFY(@Data, '$.Id', SCOPE_IDENTITY())
 ```

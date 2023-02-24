@@ -3,6 +3,7 @@
 
 global using Xunit;
 using Microsoft.Extensions.Configuration;
+using Microsoft.VisualBasic;
 using System.Reflection;
 using UkrGuru.Extensions;
 using UkrGuru.Extensions.Data;
@@ -25,13 +26,13 @@ public class GlobalTests
     public static string TestString5k => Convert.ToBase64String(TestBytes5k);
     public static char[] TestChars5k => TestString5k.ToCharArray();
 
-    public static byte[] TestBytes5m = new byte[1024 * 55 ];
-    public static string TestString5m => Convert.ToBase64String(TestBytes5m);
+    public static byte[] TestBytes55k = new byte[1024 * 55];
+    public static string TestString5m => Convert.ToBase64String(TestBytes55k);
     public static char[] TestChars5m => TestString5m.ToCharArray();
 
     public static Random Random = new Random(2511);
 
-    //public static byte[] TestBytes5m_Hash256 { get; set; }
+    //public static byte[] TestBytes55k_Hash256 { get; set; }
     //public static byte[] TestString5m_Hash256 { get; set; }
     //public static byte[] TestChars5m_Hash256 { get; set; }
 
@@ -52,7 +53,8 @@ public class GlobalTests
         Assembly.GetExecutingAssembly().InitDb();
 
         var inMemorySettings = new Dictionary<string, string?>() {
-            {"ConnectionStrings:DefaultConnection", connectionString }
+            { "ConnectionStrings:DefaultConnection", connectionString },
+            { "Logging:LogLevel:UkrGuru.SqlJson", "Information" }
         };
 
         Configuration = new ConfigurationBuilder()
@@ -61,11 +63,11 @@ public class GlobalTests
 
         Random.NextBytes(TestBytes1k);
         Random.NextBytes(TestBytes5k);
-        Random.NextBytes(TestBytes5m);
+        Random.NextBytes(TestBytes55k);
 
         //using (var sha256 = SHA256.Create())
         //{
-        //    TestBytes5m_Hash256 = sha256.ComputeHash(TestBytes5m);
+        //    TestBytes55k_Hash256 = sha256.ComputeHash(TestBytes55k);
         //    TestChars5m_Hash256 = TestString5m_Hash256 = sha256.ComputeHash(Convert.FromBase64String(TestString5m));
         //}
 

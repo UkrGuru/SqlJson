@@ -34,6 +34,152 @@ public interface IDbLogService
     /// </summary>
     /// <param name="title"></param>
     /// <param name="more"></param>
+    void LogCritical(string title, object? more = null);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    void LogDebug(string title, object? more = null);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    void LogError(string title, object? more = null);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    void LogInformation(string title, object? more = null);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    void LogTrace(string title, object? more = null);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    void LogWarning(string title, object? more = null);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="logLevel"></param>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
+    Task LogAsync(DbLogLevel logLevel, string title, object? more = null, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
+    Task LogCriticalAsync(string title, object? more = null, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
+    Task LogDebugAsync(string title, object? more = null, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
+    Task LogErrorAsync(string title, object? more = null, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
+    Task LogInformationAsync(string title, object? more = null, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
+    Task LogTraceAsync(string title, object? more = null, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The async task.</returns>
+    Task LogWarningAsync(string title, object? more = null, CancellationToken cancellationToken = default);
+}
+
+/// <summary>
+/// 
+/// </summary>
+public class DbLogService : DbService, IDbLogService
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    private readonly DbLogLevel? _minDbLogLevel;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="configuration"></param>
+    public DbLogService(IConfiguration configuration) : base(configuration) 
+        => _minDbLogLevel = configuration.GetValue<DbLogLevel?>(MinDbLogLevelPath);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public virtual string MinDbLogLevelPath => "Logging:LogLevel:UkrGuru.SqlJson";
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public DbLogLevel MinDbLogLevel => _minDbLogLevel ?? DbLogLevel.Information;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="logLevel"></param>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
+    public void Log(DbLogLevel logLevel, string title, object? more = null)
+    {
+        try { if ((byte)logLevel >= (byte)MinDbLogLevel) Exec("WJbLogs_Ins", DbLogHelper.Normalize(logLevel, title, more)); }
+        finally { }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="title"></param>
+    /// <param name="more"></param>
     public void LogCritical(string title, object? more = null) => Log(DbLogLevel.Critical, title, more);
 
     /// <summary>
@@ -79,7 +225,11 @@ public interface IDbLogService
     /// <param name="more"></param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The async task.</returns>
-    Task LogAsync(DbLogLevel logLevel, string title, object? more = null, CancellationToken cancellationToken = default);
+    public async Task LogAsync(DbLogLevel logLevel, string title, object? more = null, CancellationToken cancellationToken = default)
+    {
+        try { if ((byte)logLevel >= (byte)MinDbLogLevel) await ExecAsync("WJbLogs_Ins", DbLogHelper.Normalize(logLevel, title, more), cancellationToken: cancellationToken); }
+        finally { await Task.CompletedTask; }
+    }
 
     /// <summary>
     /// 
@@ -141,58 +291,3 @@ public interface IDbLogService
     public async Task LogWarningAsync(string title, object? more = null, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Warning, title, more, cancellationToken);
 }
-
-/// <summary>
-/// 
-/// </summary>
-public class DbLogService : DbService, IDbLogService
-{
-    /// <summary>
-    /// 
-    /// </summary>
-    private readonly DbLogLevel? _minDbLogLevel;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="configuration"></param>
-    public DbLogService(IConfiguration configuration) : base(configuration) 
-        => _minDbLogLevel = configuration.GetValue<DbLogLevel?>(MinDbLogLevelPath);
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public virtual string MinDbLogLevelPath => "Logging:LogLevel:UkrGuru.SqlJson";
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public DbLogLevel MinDbLogLevel => _minDbLogLevel ?? DbLogLevel.Information;
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="logLevel"></param>
-    /// <param name="title"></param>
-    /// <param name="more"></param>
-    public void Log(DbLogLevel logLevel, string title, object? more = null)
-    {
-        try { if ((byte)logLevel >= (byte)MinDbLogLevel) Exec("WJbLogs_Ins", DbLogHelper.Normalize(logLevel, title, more)); }
-        finally { }
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="logLevel"></param>
-    /// <param name="title"></param>
-    /// <param name="more"></param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>The async task.</returns>
-    public async Task LogAsync(DbLogLevel logLevel, string title, object? more = null, CancellationToken cancellationToken = default)
-    {
-        try { if ((byte)logLevel >= (byte)MinDbLogLevel) await ExecAsync("WJbLogs_Ins", DbLogHelper.Normalize(logLevel, title, more), cancellationToken: cancellationToken); }
-        finally { await Task.CompletedTask; }
-    }
-}
-
