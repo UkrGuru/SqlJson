@@ -80,7 +80,7 @@ EXEC dbo.sp_executesql @statement = N'
 CREATE OR ALTER PROCEDURE [WJbFiles_Ins]
     @Data nvarchar(max)
 AS
-DECLARE @Id varchar(50) = NULL, @Created datetime, @Safe bit
+DECLARE @Id uniqueidentifier = NULL, @Created datetime, @Safe bit
 
 SELECT @Id = ISNULL(Id, NEWID()), @Created = ISNULL(Created, GETDATE()), @Safe = [Safe]
 FROM OPENJSON(@Data)
