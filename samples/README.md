@@ -4,6 +4,7 @@
 
 ![UkrGuru.SqlJson Demo](/assets/demo1.gif)
 
+![UkrGuru.SqlJson Demo](/assets/demo3.gif)
 
 ```cs
 using System.Security.Cryptography;
@@ -39,5 +40,3 @@ void WriteInfo(string path)
 ```
 
 ![UkrGuru.SqlJson Demo](/assets/demo2.png)
-
-![UkrGuru.SqlJson Demo](/assets/demo3.gif)
