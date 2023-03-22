@@ -2,10 +2,14 @@
 [![Nuget](https://img.shields.io/nuget/v/UkrGuru.SqlJson)](https://www.nuget.org/packages/UkrGuru.SqlJson/)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-yellow.svg)](https://www.paypal.com/donate/?hosted_button_id=BPUF3H86X96YN)
 
-UkrGuru.SqlJson is very easy and fast access to the Sql Server database and EF Core is not involved in this.
+UkrGuru.SqlJson is a package for modern data processing that can be used to execute queries of any complexity. It is designed to be easy and fast to use, and it automatically normalizes input parameters and deserializes the result.
 
-## Background
-I'm an old software developer with over 20 years of experience and have written a lot of unique code in my life. In my practice of working with data, I usually use SQL Server and stored procedures to execute queries of any complexity. Last year I tried to use the Microsoft EF Core framework, but I always lacked the power that I had when using the procedures earlier. Eventually my patience ran out and I created a minimally simple UkrGuru.SqlJson package for modern data processing, and now I want to share this knowledge with you...
+Some of the advantages of UkrGuru.SqlJson include:
+*	It is easy to use and fast to execute queries of any complexity.
+*	It is designed to be used with SQL Server and stored procedures.
+*	It automatically normalizes input parameters and deserializes the result.
+*	It is a minimally simple package for modern data processing.
+
 ## Installation
 
 ### 1. Add "DefaultConnection" and "UkrGuru.SqlJson" elements in AppSettings.json

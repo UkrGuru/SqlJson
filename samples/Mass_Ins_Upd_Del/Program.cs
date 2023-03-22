@@ -46,7 +46,7 @@ await UkrGuru.SqlJson.DbHelper.ExecAsync(sql_update,
 Console.WriteLine($"Updated {N / 1024}K - {DateTime.Now.Subtract(started)}");
 
 // MASS DELETE
-var sql_delete = @"DELETE Students
+var sql_delete = @"DELETE Students 
 WHERE ID IN (SELECT value FROM OPENJSON(@Data))";
 
 started = DateTime.Now;
