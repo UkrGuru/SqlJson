@@ -12,12 +12,14 @@ Some of the advantages of UkrGuru.SqlJson include:
 
 ## Installation
 
-### 1. Add "DefaultConnection" and "UkrGuru.SqlJson" elements in AppSettings.json
+To use UkrGuru SqlJson library in your ASP.NET Core project, you need to follow these steps:
+
+### 1. Install the UkrGuru.SqlJson package from NuGet.
+
+### 2. Open the AppSettings.json files and add the "UkrGuru.SqlJson" and "DefaultConnection" elements.
+
 ```json
 {
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=BlazorAppDemo;Trusted_Connection=True;MultipleActiveResultSets=true"
-  },
   "Logging": {
     "LogLevel": {
       "Default": "Information",
@@ -25,11 +27,15 @@ Some of the advantages of UkrGuru.SqlJson include:
       "UkrGuru.SqlJson": "Debug"
     }
   },
-  "AllowedHosts": "*"
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=BlazorAppDemo;Trusted_Connection=True;MultipleActiveResultSets=true"
+  }
 }
 ```
 
-### 2. Open ~/Program.cs file and register UkrGuru SqlJson services and extensions:
+### 2. Open the Program.cs file and register the UkrGuru SqlJson services and extensions:
+
 ```c#
 var builder = WebApplication.CreateBuilder(args);
 
