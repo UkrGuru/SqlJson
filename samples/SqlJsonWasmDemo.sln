@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlJsonWasmDemo.Client", "S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlJsonWasmDemo.Shared", "SqlJsonWasmDemo\Shared\SqlJsonWasmDemo.Shared.csproj", "{DF8246BB-4387-4B3D-9054-C9F8B1B77FE3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlJson", "..\src\SqlJson.csproj", "{16D6F23B-3588-49E3-A14F-A617CF7D287C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{DF8246BB-4387-4B3D-9054-C9F8B1B77FE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF8246BB-4387-4B3D-9054-C9F8B1B77FE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF8246BB-4387-4B3D-9054-C9F8B1B77FE3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{16D6F23B-3588-49E3-A14F-A617CF7D287C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{16D6F23B-3588-49E3-A14F-A617CF7D287C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{16D6F23B-3588-49E3-A14F-A617CF7D287C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{16D6F23B-3588-49E3-A14F-A617CF7D287C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -51,13 +51,13 @@
         </GridColumn>
         <GridColumn Field="@nameof(ProductDto.QuantityPerUnit)" Title="Quantity Per Unit" Width="200px" />
         <GridCommandColumn Width="190px">
-            <GridCommandButton Command="Edit" Icon="edit" ThemeColor="@ThemeConstants.Button.ThemeColor.Primary">Edit</GridCommandButton>
-            <GridCommandButton Command="Delete" Icon="delete">Delete</GridCommandButton>
+            <GridCommandButton Command="Edit" Icon="@FontIcon.Pencil" ThemeColor="@ThemeConstants.Button.ThemeColor.Primary">Edit</GridCommandButton>
+            <GridCommandButton Command="Delete" Icon="@FontIcon.Trash">Delete</GridCommandButton>
         </GridCommandColumn>
     </GridColumns>
-    <GridToolBar>
-        <GridCommandButton Command="Add" Icon="add">Add Product</GridCommandButton>
-    </GridToolBar>
+    <GridToolBarTemplate>
+        <GridCommandButton Command="Add" Icon="@FontIcon.Plus">Add Product</GridCommandButton>
+    </GridToolBarTemplate>
 </TelerikGrid>
 
 @code {
