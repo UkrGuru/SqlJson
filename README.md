@@ -2,13 +2,7 @@
 [![Nuget](https://img.shields.io/nuget/v/UkrGuru.SqlJson)](https://www.nuget.org/packages/UkrGuru.SqlJson/)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-yellow.svg)](https://www.paypal.com/donate/?hosted_button_id=BPUF3H86X96YN)
 
-UkrGuru.SqlJson is a package for modern data processing that can be used to execute queries of any complexity. It is designed to be easy and fast to use, and it automatically normalizes input parameters and deserializes the result.
-
-Some of the advantages of UkrGuru.SqlJson include:
-*	It is easy to use and fast to execute queries of any complexity.
-*	It is designed to be used with SQL Server and stored procedures.
-*	It automatically normalizes input parameters and deserializes the result.
-*	It is a minimally simple package for modern data processing.
+UkrGuru.SqlJson is a library that simplifies the interaction between .NET applications and SQL Server databases. It allows developers to use JSON as a common data format for both the application and the database layers, eliminating the need for complex mapping or serialization. UkrGuru.SqlJson also supports dynamic queries, stored procedures and asynchronous operations. With UkrGuru.SqlJson, you can access SQL Server data with minimal code and maximum performance.
 
 ## Installation
 
@@ -20,6 +14,9 @@ To use UkrGuru SqlJson library in your ASP.NET Core project, you need to follow 
 
 ```json
 {
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=BlazorAppDemo;Trusted_Connection=True;"
+  },
   "Logging": {
     "LogLevel": {
       "Default": "Information",
@@ -27,10 +24,7 @@ To use UkrGuru SqlJson library in your ASP.NET Core project, you need to follow 
       "UkrGuru.SqlJson": "Debug"
     }
   },
-  "AllowedHosts": "*",
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=BlazorAppDemo;Trusted_Connection=True;MultipleActiveResultSets=true"
-  }
+  "AllowedHosts": "*"
 }
 ```
 
