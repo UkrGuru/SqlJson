@@ -20,8 +20,7 @@ To use UkrGuru SqlJson library in your ASP.NET Core project, you need to follow 
   "Logging": {
     "LogLevel": {
       "Default": "Information",
-      "Microsoft.AspNetCore": "Warning",
-      "UkrGuru.SqlJson": "Debug"
+      "Microsoft.AspNetCore": "Warning"
     }
   },
   "AllowedHosts": "*"
@@ -33,8 +32,7 @@ To use UkrGuru SqlJson library in your ASP.NET Core project, you need to follow 
 ```c#
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSqlJson(builder.Configuration.GetConnectionString("DefaultConnection"))
-    .AddSqlJsonExt(builder.Configuration.GetValue<DbLogLevel>("Logging:LogLevel:UkrGuru.SqlJson"));
+builder.Services.AddSqlJson(builder.Configuration.GetConnectionString("DefaultConnection"));
 
 // More other services here ... 
 
