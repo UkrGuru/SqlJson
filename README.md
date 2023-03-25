@@ -2,7 +2,7 @@
 [![Nuget](https://img.shields.io/nuget/v/UkrGuru.SqlJson)](https://www.nuget.org/packages/UkrGuru.SqlJson/)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-yellow.svg)](https://www.paypal.com/donate/?hosted_button_id=BPUF3H86X96YN)
 
-UkrGuru.SqlJson is a library that simplifies the interaction between .NET applications and SQL Server databases. It allows developers to automatically normalize input parameters and deserialize the result. UkrGuru.SqlJson also supports dynamic queries, stored procedures and asynchronous operations. With UkrGuru.SqlJson, you can access SQL Server data with minimal code and maximum performance.
+UkrGuru.SqlJson is a library that simplifies the interaction between .NET applications and SQL Server databases. It allows developers to automatically normalize input parameters and deserialize the result. Also supports dynamic queries, stored procedures and asynchronous operations. With UkrGuru.SqlJson, you can access SQL Server data with minimal code and maximum performance.
 
 ## Installation
 
@@ -67,8 +67,8 @@ var app = builder.Build();
 UkrGuru.SqlJson automatically normalizes input parameters and deserializes the result.
 
 Requirements:
-1. INPUT: Must use a query or procedure with only one @Data parameter of any type, or no parameter.
-2. OUTPUT: Should prepare the result in one column SELECT sqltype or json types. See more examples bellow ...
+1. INPUT: You can use any query or procedure that has only one @Data parameter, or no parameter at all. UkrGuru.SqlJson will auto serialize the complex parameter to JSON format.
+2. OUTPUT: You should format the result as a single column SELECT statement. 
 
 
 ```sql
