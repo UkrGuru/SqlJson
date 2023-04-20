@@ -95,7 +95,7 @@ public class DbHelper
     /// <returns>The number of rows affected.</returns>
     public static async Task<int> ExecAsync(string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
-        using SqlConnection connection = CreateSqlConnection();
+        await using SqlConnection connection = CreateSqlConnection();
         await connection.OpenAsync(cancellationToken);
 
         return await connection.ExecAsync(tsql, data, timeout, cancellationToken);
@@ -113,7 +113,7 @@ public class DbHelper
     /// <returns>Result as an object</returns>
     public static async Task<T?> ExecAsync<T>(string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
-        using SqlConnection connection = CreateSqlConnection();
+        await using SqlConnection connection = CreateSqlConnection();
         await connection.OpenAsync(cancellationToken);
 
         return await connection.ExecAsync<T?>(tsql, data, timeout, cancellationToken);

@@ -92,7 +92,7 @@ public interface IDbFileService
     /// <returns>The async task.</returns>
     public async Task<string?> SetAsync(string? value, string? filename = "file.txt", bool safe = false, int? timeout = null, CancellationToken cancellationToken = default)
     {
-        if (value?.Length > 1024)
+        if (value?.Length > 0)
         {
             DbFile file = new() { FileName = filename, FileContent = Encoding.UTF8.GetBytes(value), Safe = safe };
 
