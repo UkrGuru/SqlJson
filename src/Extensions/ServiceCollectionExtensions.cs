@@ -28,7 +28,6 @@ public static class SqlJsonServiceCollectionExtensions
         DbHelper.ConnectionString = connectionString;
 
         services.AddScoped<IDbService, DbService>();
-        services.AddScoped<ICrudDbService, CrudDbService>();
 
         return services;
     }
@@ -59,7 +58,6 @@ public static class SqlJsonServiceCollectionExtensions
     public static IServiceCollection AddSqlJsonApi(this IServiceCollection services)
     {
         services.AddScoped<IDbService, ApiDbService>();
-        services.AddScoped<ICrudDbService, ApiCrudDbService>();
 
         return services;
     }

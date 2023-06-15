@@ -3,7 +3,7 @@ using UkrGuru.Extensions;
 using UkrGuru.SqlJson;
 
 DbHelper.ConnectionString = "Server=(localdb)\\mssqllocaldb;Database=SqlJsonMass;Trusted_Connection=True;";
-Assembly.GetExecutingAssembly().ExecResource($"{Assembly.GetExecutingAssembly().GetName().Name}.Resources.InitDb.sql");
+Assembly.GetExecutingAssembly().ExecResource("Mass_Ins_Upd_Del.Resources.InitDb.sql");
 
 int N = 100 * 1024; 
 List<Student>? students = new();

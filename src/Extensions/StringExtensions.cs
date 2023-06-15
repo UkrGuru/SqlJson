@@ -4,6 +4,7 @@
 using System.Text.Json;
 using System.Text;
 using System.Globalization;
+using System.Text.Json.Nodes;
 
 namespace UkrGuru.Extensions;
 
@@ -72,5 +73,27 @@ public static class StringExtensions
 
         else
             return (T?)Convert.ChangeType(value, type);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static JsonNode? ToJsonNode(this string? value)
+    {
+        if (value == null)
+        {
+            return null;
+        }
+        else if (bool.TryParse(value, out bool bResult))
+        {
+            return bResult;
+        }
+
+        try { return JsonNode.Parse(value); }
+        catch { }
+
+        return value;
     }
 }

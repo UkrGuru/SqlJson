@@ -15,7 +15,7 @@ namespace SqlJsonAppDemo.Shared;
 public class FormComponent : ComponentBase
 {
     [Inject]
-    protected ICrudDbService db { get; set; }
+    protected IDbService db { get; set; }
 
     [Inject]
     protected IDbLogService dbLog { get; set; }

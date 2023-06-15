@@ -11,11 +11,11 @@
         <PackageIcon>ukrguru-logo.jpg</PackageIcon>
         <RepositoryUrl>https://github.com/UkrGuru/SqlJson</RepositoryUrl>
         <Description>UkrGuru.SqlJson is a library that simplifies the interaction between .NET applications and SQL Server databases.</Description>
-        <Version>6.2.7</Version>
+        <Version>6.3.0</Version>
         <SignAssembly>True</SignAssembly>
         <AssemblyOriginatorKeyFile>..\..\UkrGuru.snk</AssemblyOriginatorKeyFile>
         <PackageTags>sqlclient ado-net sql json .net6 .net7</PackageTags>
-        <PackageReleaseNotes>misc changes</PackageReleaseNotes>
+        <PackageReleaseNotes>Crud moved to main DbHelper and DbService</PackageReleaseNotes>
         <DebugType>none</DebugType>
         <DelaySign>False</DelaySign>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
@@ -48,6 +48,9 @@
         <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
         <DebugType>portable</DebugType>
     </PropertyGroup>
+    <ItemGroup>
+      <Compile Remove="CrudDbHelper.cs" />
+    </ItemGroup>
 
     <ItemGroup>
         <EmbeddedResource Include="..\LICENSE.txt">

@@ -16,12 +16,12 @@ public class ApiHoleController : ControllerBase
 
     private readonly string _suffix = "_api";
 
-    [HttpGet("{proc}")]
-    public async Task<string?> Get(string proc, string? data = null)
+    [HttpPost("{proc}")]
+    public async Task<string?> Create(string proc, [FromBody] object? data = null)
     {
         try
         {
-            return await _db.ExecAsync<string?>($"{proc}{_suffix}", data);
+            return await _db.CreateAsync<string?>($"{proc}{_suffix}", data);
         }
         catch (Exception ex)
         {
@@ -29,16 +29,46 @@ public class ApiHoleController : ControllerBase
         }
     }
 
-    [HttpPost("{proc}")]
-    public async Task<string?> Post(string proc, [FromBody] object? data = null)
+    [HttpGet("{proc}")]
+    public async Task<string?> Read(string proc, string? data = null)
     {
         try
         {
-            return await _db.ExecAsync<string?>($"{proc}{_suffix}", data);
+            return await _db.ReadAsync<string?>($"{proc}{_suffix}", data);
         }
         catch (Exception ex)
         {
             return $"Error: {ex.Message}. Proc={proc}";
         }
     }
+
+
+    [HttpPut("{proc}")]
+    public async Task<string?> Update(string proc, [FromBody] object? data = null)
+    {
+        try
+        {
+            await _db.UpdateAsync($"{proc}{_suffix}", data);
+        }
+        catch (Exception ex)
+        {
+            return $"Error: {ex.Message}. Proc={proc}";
+        }
+        return null;
+    }
+
+    [HttpDelete("{proc}")]
+    public async Task<string?> Delete(string proc, string? data = null)
+    {
+        try
+        {
+            await _db.DeleteAsync($"{proc}{_suffix}", data);
+        }
+        catch (Exception ex)
+        {
+            return $"Error: {ex.Message}. Proc={proc}";
+        }
+        return null;
+    }
+
 }

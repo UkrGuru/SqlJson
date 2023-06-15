@@ -34,11 +34,23 @@ public class StringExtensionsTests
 
         var r0 = ((string?)null).ToObj<Region?>();
         var r1 = @"{ ""Id"" : 1 }".ToObj<Region>();
+
+        var t0 = ((string?)null).ToObj<UserType?>();
+        var t1 = @"1".ToObj<UserType?>();
     }
 
     private class Region
     {
         public int Id { get; set; }
         public string? Name { get; set; }
+    }
+
+    private enum UserType
+    {
+        Guest,
+        User,
+        Manager,
+        Admin,
+        SysAdmin
     }
 }

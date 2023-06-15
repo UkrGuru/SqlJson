@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlJson", "SqlJson.csproj", "{28D09E76-CD8C-4AFF-A7E3-3186A6E0E532}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlJson", "src\SqlJson.csproj", "{28D09E76-CD8C-4AFF-A7E3-3186A6E0E532}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlJsonTests", "..\test\SqlJsonTests.csproj", "{980DAD57-2BF0-44BD-BD1B-05EEF85164E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlJsonTests", "test\SqlJsonTests.csproj", "{980DAD57-2BF0-44BD-BD1B-05EEF85164E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -97,7 +97,7 @@ public class DbHelperTests
 
         Assert.Equal(true, DbHelper.Exec<bool?>("SELECT @Data", true));
 
-        Assert.Equal(Guid.Empty, DbHelper.Exec<Guid?>("SELECT @Data", Guid.Empty));
+        Assert.Equal(Guid.Empty, DbHelper.Exec<Guid?>("SELECT CAST(@Data AS uniqueidentifier)", Guid.Empty));
 
         Assert.Equal('X', DbHelper.Exec<char?>("SELECT @Data", 'X'));
 
