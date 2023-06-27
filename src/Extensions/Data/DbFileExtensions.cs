@@ -7,17 +7,18 @@ using UkrGuru.SqlJson;
 namespace UkrGuru.Extensions.Data;
 
 /// <summary>
-/// 
+/// Provides extension methods for the DbFile class.
 /// </summary>
 public static class DbFileExtensions
 {
     /// <summary>
-    /// Save file in the current database
+    /// Saves a file in the current database asynchronously.
     /// </summary>
-    /// <param name="file"></param>
-    /// <param name="timeout"></param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>The async task.</returns>
+    /// <typeparam name="T">The type of the result to return</typeparam>
+    /// <param name="file">The file to save</param>
+    /// <param name="timeout">The command timeout in seconds</param>
+    /// <param name="cancellationToken">The cancellation token to observe while waiting for the task to complete</param>
+    /// <returns>A task that represents the asynchronous operation, containing the result of the operation</returns>
     public static async Task<T?> SetAsync<T>(this DbFile file, int? timeout = null, CancellationToken cancellationToken = default)
     {
         if (file?.FileContent == null || file.FileContent.Length == 0) return await Task.FromResult<T?>(default);
@@ -30,9 +31,9 @@ public static class DbFileExtensions
     /// <summary>
     /// Compression of the file content
     /// </summary>
-    /// <param name="file"></param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>The async task.</returns>
+    /// <param name="file">The file to compress</param>
+    /// <param name="cancellationToken">The cancellation token to observe while waiting for the task to complete</param>
+    /// <returns>A Task representing the asynchronous operation.</returns>
     public static async Task CompressAsync(this DbFile? file, CancellationToken cancellationToken = default)
     {
         if (file?.FileContent == null || file.FileContent.Length == 0) return;
@@ -66,9 +67,9 @@ public static class DbFileExtensions
     /// <summary>
     /// Decompression of the file content
     /// </summary>
-    /// <param name="file"></param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>The async task.</returns>
+    /// <param name="file">The file to decompress</param>
+    /// <param name="cancellationToken">The cancellation token to observe while waiting for the task to complete</param>
+    /// <returns>A Task representing the asynchronous operation.</returns>
     public static async Task DecompressAsync(this DbFile? file, CancellationToken cancellationToken = default)
     {
         if (file?.FileName == null || !file.FileName.EndsWith(".gzip")) return;

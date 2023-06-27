@@ -9,22 +9,23 @@ using UkrGuru.Extensions;
 namespace UkrGuru.SqlJson;
 
 /// <summary>
-/// 
+/// Provides extension methods for working with databases.
 /// </summary>
 public static class DbExtensions
 {
     /// <summary>
-    /// 
+    /// Determines whether a given type is considered "long" for database purposes.
     /// </summary>
-    /// <param name="type"></param>
-    /// <returns></returns>
-    public static bool IsLong(this Type type) => type.Name switch
+    /// <param name="type">The type to check.</param>
+    /// <returns>True if the type is considered "long", false otherwise.</returns>
+    internal static bool IsLong(this Type type) => type.Name switch
     {
         // or "SByte" or "UInt16"  or "UInt32" or "UInt64" 
         "Boolean" or "Byte" or "Int16" or "Int32" or "Int64" or "Single" or "Double" or "Decimal" or
         "DateOnly" or "DateTime" or "DateTimeOffset" or "TimeOnly" or "TimeSpan" or "Guid" or "Char" => false,
         _ => true,
     };
+
 
     /// <summary>
     /// Creates a new instance of the SqlCommand class with initialization parameters.
@@ -34,7 +35,7 @@ public static class DbExtensions
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>New instance of the SqlCommand class with initialize parameters</returns>
-    private static SqlCommand CreateSqlCommand(this SqlConnection connection, string tsql, object? data = null, int? timeout = null)
+    public static SqlCommand CreateSqlCommand(this SqlConnection connection, string tsql, object? data = null, int? timeout = null)
     {
         SqlCommand command = new(tsql, connection);
         if (DbHelper.IsName(tsql)) command.CommandType = CommandType.StoredProcedure;
@@ -126,7 +127,7 @@ public static class DbExtensions
     /// <returns>The number of rows affected.</returns>
     public static async Task<int> ExecAsync(this SqlConnection connection, string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
-        using SqlCommand command = connection.CreateSqlCommand(tsql, data, timeout);
+        await using SqlCommand command = connection.CreateSqlCommand(tsql, data, timeout);
 
         return await command.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -148,10 +149,10 @@ public static class DbExtensions
 
         var type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
 
-        using var command = connection.CreateSqlCommand(tsql, data, timeout);
+        await using var command = connection.CreateSqlCommand(tsql, data, timeout);
         if (type.IsLong())
         {
-            using SqlDataReader reader = await command.ExecuteReaderAsync(CommandBehavior.CloseConnection, cancellationToken);
+            await using SqlDataReader reader = await command.ExecuteReaderAsync(CommandBehavior.CloseConnection, cancellationToken);
             if (reader.HasRows)
                 while (await reader.ReadAsync(cancellationToken))
                     if (!await reader.IsDBNullAsync(0, cancellationToken))
@@ -187,12 +188,12 @@ public static class DbExtensions
     }
 
     /// <summary>
-    /// 
+    /// Parses a scalar value of type T from an object.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="value"></param>
-    /// <param name="defaultValue"></param>
-    /// <returns></returns>
+    /// <typeparam name="T">The type of the scalar value to be parsed.</typeparam>
+    /// <param name="value">The object to be parsed.</param>
+    /// <param name="defaultValue">The default value to return if the object is null or DBNull.</param>
+    /// <returns>The parsed scalar value of type T, or the default value if the object is null or DBNull.</returns>
     private static T? ParseScalar<T>(object? value, T? defaultValue = default)
     {
         if (value == null || value == DBNull.Value) return defaultValue;

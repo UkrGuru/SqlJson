@@ -19,74 +19,57 @@ public class DbHelperTests
     //    Assert.Equal(Globals.ConnectionString, connection.ConnectionString);
     //}
 
-    [Theory]
-    [InlineData("Proc_1", true)]
-    [InlineData("[Proc 1]", true)]
-    [InlineData("[Proc 1 2]", true)]
-    [InlineData("dbo_1.Proc_1", true)]
-    [InlineData("dbo_1.[Proc 1]", true)]
-    [InlineData("dbo_1.[Proc 1 2]", true)]
-    [InlineData("[dbo_1].Proc_1", true)]
-    [InlineData("[dbo_1].[Proc 1]", true)]
-    [InlineData("[dbo_1].[Proc 1 2]", true)]
-    [InlineData("[dbo 1].[Proc 1]", true)]
-    [InlineData("[dbo 1].[Proc 1 2]", true)]
-    [InlineData("SELECT 1", false)]
-    public void IsNameTests(string cmdText, bool expected)
-        => Assert.Equal(expected, DbHelper.IsName(cmdText));
+    //[Theory]
+    //[InlineData(null, false)]
+    //[InlineData("Proc_1", true)]
+    //[InlineData("[Proc 1]", true)]
+    //[InlineData("[Proc 1 2]", true)]
+    //[InlineData("dbo_1.Proc_1", true)]
+    //[InlineData("dbo_1.[Proc 1]", true)]
+    //[InlineData("dbo_1.[Proc 1 2]", true)]
+    //[InlineData("[dbo_1].Proc_1", true)]
+    //[InlineData("[dbo_1].[Proc 1]", true)]
+    //[InlineData("[dbo_1].[Proc 1 2]", true)]
+    //[InlineData("[dbo 1].[Proc 1]", true)]
+    //[InlineData("[dbo 1].[Proc 1 2]", true)]
+    //[InlineData("SELECT 1", false)]
+    //public void IsNameTests(string? cmdText, bool expected)
+    //    => Assert.Equal(expected, DbHelper.IsName(cmdText));
+
+
 
     //[Theory]
-    //[InlineData(null, true)]
-    //[InlineData("", true)]
-    //[InlineData(typeof(bool), false)]
-    //[InlineData("Byte", false)]
-    //[InlineData("DateTime", false)]
-    //[InlineData("DateTimeOffset", false)]
-    //[InlineData("Decimal", false)]
-    //[InlineData("Double", false)]
-    //[InlineData("Guid", false)]
-    //[InlineData("Int16", false)]
-    //[InlineData("Int32", false)]
-    //[InlineData("Single", false)]
-    //[InlineData("TimeSpan", false)]
-    //[InlineData("Byte[]", true)]
-    //[InlineData("Char[]", true)]
-    //[InlineData("Xml", true)]
-    //public void IsLongTests(Type t, bool expected)
-    //    => Assert.Equal(expected, DbHelper.IsLong<t>());
+    //[MemberData(nameof(GetData4CanNormalize), parameters: 19)]
+    //public void CanNormalize(object data, object expected) => Assert.Equal(expected, DbHelper.Normalize(data));
 
-    [Theory]
-    [MemberData(nameof(GetData4CanNormalize), parameters: 19)]
-    public void CanNormalize(object data, object expected) => Assert.Equal(expected, DbHelper.Normalize(data));
+    //public static IEnumerable<object[]> GetData4CanNormalize(int numTests)
+    //{
+    //    var guid = Guid.NewGuid();
+    //    string data = JsonSerializer.Serialize(new { Name = "Proc1" })!;
+    //    var allData = new List<object[]>
+    //    {
+    //        new object[] { "str1", "str1" },
+    //        new object[] { true, true },
+    //        new object[] { false, false },
+    //        new object[] { (byte)1, (byte)1 },
+    //        new object[] { new byte[] { 1, 2 }, new byte[] { 1, 2 } },
+    //        new object[] { new char[] { '1', '2' }, new char[] { '1', '2' } },
+    //        new object[] { 123.45d, 123.45d },
+    //        new object[] { 123.45f, 123.45f },
+    //        new object[] { 123, 123 },
+    //        new object[] { 12345, 12345 },
+    //        new object[] { 1234567890, 1234567890 },
+    //        new object[] { new DateOnly(2000, 1, 1), new DateOnly(2000, 1, 1) },
+    //        new object[] { new DateTime(2000, 1, 1, 1, 1, 1), new DateTime(2000, 1, 1, 1, 1, 1) },
+    //        new object[] { new DateTimeOffset(new DateTime(2000, 1, 1, 1, 1, 1)), new DateTimeOffset(new DateTime(2000, 1, 1, 1, 1, 1)) },
+    //        new object[] { new TimeOnly(1, 1, 1), new TimeOnly(1, 1, 1) },
+    //        new object[] { guid, guid },
+    //        new object[] { new { Name = "Proc1" }, data },
+    //        new object[] { JsonSerializer.Deserialize<dynamic?>(data)!, data }
+    //    };
 
-    public static IEnumerable<object[]> GetData4CanNormalize(int numTests)
-    {
-        var guid = Guid.NewGuid();
-        string data = JsonSerializer.Serialize(new { Name = "Proc1" })!;
-        var allData = new List<object[]>
-        {
-            new object[] { "str1", "str1" },
-            new object[] { true, true },
-            new object[] { false, false },
-            new object[] { (byte)1, (byte)1 },
-            new object[] { new byte[] { 1, 2 }, new byte[] { 1, 2 } },
-            new object[] { new char[] { '1', '2' }, new char[] { '1', '2' } },
-            new object[] { 123.45d, 123.45d },
-            new object[] { 123.45f, 123.45f },
-            new object[] { 123, 123 },
-            new object[] { 12345, 12345 },
-            new object[] { 1234567890, 1234567890 },
-            new object[] { new DateOnly(2000, 1, 1), new DateOnly(2000, 1, 1) },
-            new object[] { new DateTime(2000, 1, 1, 1, 1, 1), new DateTime(2000, 1, 1, 1, 1, 1) },
-            new object[] { new DateTimeOffset(new DateTime(2000, 1, 1, 1, 1, 1)), new DateTimeOffset(new DateTime(2000, 1, 1, 1, 1, 1)) },
-            new object[] { new TimeOnly(1, 1, 1), new TimeOnly(1, 1, 1) },
-            new object[] { guid, guid },
-            new object[] { new { Name = "Proc1" }, data },
-            new object[] { JsonSerializer.Deserialize<dynamic?>(data)!, data }
-        };
-
-        return allData.Take(numTests);
-    }
+    //    return allData.Take(numTests);
+    //}
 
     [Fact]
     public void CanExec()

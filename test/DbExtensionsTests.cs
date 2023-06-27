@@ -9,6 +9,27 @@ namespace UkrGuru.SqlJson;
 public class DbExtensionsTests
 {
     //[Theory]
+    //[InlineData(null, true)]
+    //[InlineData("", true)]
+    //[InlineData(typeof(bool), false)]
+    //[InlineData("Byte", false)]
+    //[InlineData("DateTime", false)]
+    //[InlineData("DateTimeOffset", false)]
+    //[InlineData("Decimal", false)]
+    //[InlineData("Double", false)]
+    //[InlineData("Guid", false)]
+    //[InlineData("Int16", false)]
+    //[InlineData("Int32", false)]
+    //[InlineData("Single", false)]
+    //[InlineData("TimeSpan", false)]
+    //[InlineData("Byte[]", true)]
+    //[InlineData("Char[]", true)]
+    //[InlineData("Xml", true)]
+    //public void IsLongTests(Type t, bool expected)
+
+
+    //    => Assert.Equal(expected, DbHelper.IsLong<t>());
+    //[Theory]
     //[InlineData("SELECT 1;", null)]
     //[InlineData("SELECT 1;", 1)]
     //[InlineData("SELECT 1;", null, 15)]

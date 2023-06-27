@@ -3,6 +3,7 @@
 
 using Microsoft.Data.SqlClient;
 using System.Text;
+using System.Text.Json;
 using UkrGuru.Extensions;
 
 namespace UkrGuru.SqlJson.Client;
@@ -39,6 +40,25 @@ public class ApiDbService : IDbService
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
     public SqlConnection CreateSqlConnection() => throw new NotImplementedException();
+
+    /// <summary>
+    /// Converts a data object to the standard @Data parameter.
+    /// </summary>
+    /// <param name="data">The string or object value to convert.</param>
+    /// <returns>The standard value for the @Data parameter.</returns>
+    public static object? CreateContent(object? data)
+    {
+        if (data == null) return null;
+
+        return data switch
+        {
+            Stream => new StreamContent((Stream)data),
+
+            TextReader => new StringContent(((TextReader)data).ReadToEnd(), Encoding.UTF8),
+
+            _ => new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json")
+        };
+    }
 
     /// <summary>
     /// 
@@ -195,5 +215,4 @@ public class ApiDbService : IDbService
 
         await httpResponse.ReadAsync(cancellationToken);
     }
-
 }

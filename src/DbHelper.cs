@@ -33,25 +33,22 @@ public class DbHelper
     /// </summary>
     /// <param name="tsql"></param>
     /// <returns></returns>
-    public static bool IsName(string? tsql) => (tsql?.Length > 100) ? false : Regex.IsMatch(tsql!, @"^(\w+|\[.+?\])(\.(\w+|\[.+?\]))?$");
+    internal static bool IsName(string? tsql) => tsql is not null && tsql.Length <= 100 && Regex.IsMatch(tsql, @"^(\w+|\[.+?\])(\.(\w+|\[.+?\]))?$");
 
     /// <summary>
     /// Converts a data object to the standard @Data parameter.
     /// </summary>
     /// <param name="data">The string or object value to convert.</param>
     /// <returns>The standard value for the @Data parameter.</returns>
-    public static object Normalize(object data)
+    internal static object Normalize(object data) => data switch
     {
-        return data switch
-        {
-            // or sbyte or ushort or uint or ulong 
-            bool or byte or short or int or long or float or double or decimal or 
-            DateOnly or DateTime or DateTimeOffset or TimeOnly or TimeSpan or Guid or
-            char or string or byte[] or char[] or Stream or TextReader => data,
+        // or sbyte or ushort or uint or ulong 
+        bool or byte or short or int or long or float or double or decimal or
+        DateOnly or DateTime or DateTimeOffset or TimeOnly or TimeSpan or Guid or
+        char or string or byte[] or char[] or Stream or TextReader => data,
 
-            _ => JsonSerializer.Serialize(data),
-        };
-    }
+        _ => JsonSerializer.Serialize(data),
+    };
 
     /// <summary>
     /// Opens a database connection, then executes a Transact-SQL statement and returns the number of rows affected.
@@ -129,7 +126,7 @@ public class DbHelper
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The async task with T object.</returns>
     public async Task<T?> CreateAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-        => await DbHelper.ExecAsync<T?>(proc, data, timeout, cancellationToken);
+        => await ExecAsync<T?>(proc, data, timeout, cancellationToken);
 
     /// <summary>
     /// Read, retrieve, search, or view existing entries
@@ -141,7 +138,7 @@ public class DbHelper
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The async task with T object.</returns>
     public async Task<T?> ReadAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-        => await DbHelper.ExecAsync<T?>(proc, data, timeout, cancellationToken);
+        => await ExecAsync<T?>(proc, data, timeout, cancellationToken);
 
     /// <summary>
     /// Update, or edit existing entries
@@ -152,7 +149,7 @@ public class DbHelper
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The async task.</returns>
     public async Task UpdateAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-        => await DbHelper.ExecAsync(proc, data, timeout, cancellationToken);
+        => await ExecAsync(proc, data, timeout, cancellationToken);
 
     /// <summary>
     /// Delete, deactivate, or remove existing entries
@@ -163,6 +160,5 @@ public class DbHelper
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The async task.</returns>
     public async Task DeleteAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-        => await DbHelper.ExecAsync(proc, data, timeout, cancellationToken);
-
+        => await ExecAsync(proc, data, timeout, cancellationToken);
 }

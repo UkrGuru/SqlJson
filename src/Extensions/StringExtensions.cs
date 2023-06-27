@@ -9,7 +9,7 @@ using System.Text.Json.Nodes;
 namespace UkrGuru.Extensions;
 
 /// <summary>
-/// 
+/// Provides a set of static methods for string operations.
 /// </summary>
 public static class StringExtensions
 {
@@ -18,9 +18,9 @@ public static class StringExtensions
     /// Throws a System.ArgumentException if the argument is blank, 
     /// otherwise the returned argument.
     /// </summary>
-    /// <param name="argument"></param>
-    /// <param name="argumentName"></param>
-    /// <returns></returns>
+    /// <param name="argument">The string to check.</param>
+    /// <param name="argumentName">The name of the argument.</param>
+    /// <returns>The original argument.</returns>
     /// <exception cref="ArgumentException"></exception>
     public static string? ThrowIfBlank(this string? argument, string? argumentName = null)
     {
@@ -36,9 +36,9 @@ public static class StringExtensions
     /// Converts the StringBuilder value to an equivalent T object.
     /// </summary>
     /// <typeparam name="T">The type of results to return.</typeparam>
-    /// <param name="value"></param>
-    /// <param name="defaultValue"></param>
-    /// <returns></returns>
+    /// <param name="value">The StringBuilder value to convert.</param>
+    /// <param name="defaultValue">The default value to return if the conversion fails.</param>
+    /// <returns>The converted object of type T.</returns>
     public static T? ToObj<T>(this StringBuilder? value, T? defaultValue = default)
         => value?.Length > 0 ? value.ToString().ToObj(defaultValue) : defaultValue;
 
@@ -46,9 +46,9 @@ public static class StringExtensions
     /// Converts the string value to an equivalent T object.
     /// </summary>
     /// <typeparam name="T">The type of results to return.</typeparam>
-    /// <param name="value"></param>
-    /// <param name="defaultValue"></param>
-    /// <returns></returns>
+    /// <param name="value">The string value to convert.</param>
+    /// <param name="defaultValue">The default value to return if the conversion fails.</param>
+    /// <returns>The converted object of type T.</returns>
     public static T? ToObj<T>(this string? value, T? defaultValue = default)
     {
         if (string.IsNullOrEmpty(value))
@@ -76,10 +76,10 @@ public static class StringExtensions
     }
 
     /// <summary>
-    /// 
+    /// Converts a string to a JsonNode object.
     /// </summary>
-    /// <param name="value"></param>
-    /// <returns></returns>
+    /// <param name="value">The string to convert.</param>
+    /// <returns>A JsonNode object representing the input string.</returns>
     public static JsonNode? ToJsonNode(this string? value)
     {
         if (value == null)

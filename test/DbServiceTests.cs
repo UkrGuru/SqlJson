@@ -100,5 +100,4 @@ FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
 
         Assert.Null(item4);
     }
-
 }

@@ -1,4 +1,4 @@
-﻿ // Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
+﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using Microsoft.Data.SqlClient;
@@ -105,7 +105,6 @@ public interface IDbService
     /// <param name="cancellationToken">The cancellation instruction.</param>
     /// <returns>The async task.</returns>
     Task DeleteAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default);
-
 }
 
 /// <summary>
@@ -247,5 +246,4 @@ public class DbService : IDbService
     /// <returns>The async task.</returns>
     public async Task DeleteAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
         => await ExecAsync(proc, data, timeout, cancellationToken);
-
 }

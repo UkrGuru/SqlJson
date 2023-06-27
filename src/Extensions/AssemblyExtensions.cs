@@ -15,40 +15,38 @@ public static class AssemblyExtensions
     /// Extracts and executes sql script from an assembly by resource name.
     /// </summary>
     /// <param name="assembly">Assembly containing the required sql script resource</param>
-    /// <param name="resourceFullName"></param>
-    /// <returns></returns>
-    public static void ExecResource(this Assembly assembly, string resourceFullName)
+    /// <param name="resourceFullName">The full name of the resource containing the SQL script</param>
+    /// <param name="timeout">The command timeout in seconds</param>
+    public static void ExecResource(this Assembly assembly, string resourceFullName, int? timeout = null)
     {
         using var stream = assembly.GetManifestResourceStream(resourceFullName);
         ArgumentNullException.ThrowIfNull(stream);
 
         using StreamReader reader = new(stream);
-        DbHelper.Exec(reader.ReadToEnd());
+        DbHelper.Exec(tsql: reader.ReadToEnd(), timeout: timeout);
     }
 
     /// <summary>
     /// Extracts and executes sql script from an assembly by resource name.
     /// </summary>
-    /// <param name="assembly">Assembly containing the required sql script resource</param>
-    /// <param name="resourceFullName"></param>
-    /// <param name="timeout"></param>
-    /// <returns></returns>
+    /// <param name="assembly">Assembly containing the required SQL script resource</param>
+    /// <param name="resourceFullName">The full name of the resource containing the SQL script</param>
+    /// <param name="timeout">The command timeout in seconds</param>
     public static async Task ExecResourceAsync(this Assembly assembly, string resourceFullName, int? timeout = null)
     {
         using var stream = assembly.GetManifestResourceStream(resourceFullName);
         ArgumentNullException.ThrowIfNull(stream);
 
         using StreamReader reader = new(stream);
-        await DbHelper.ExecAsync(await reader.ReadToEndAsync(), timeout: timeout);
+        await DbHelper.ExecAsync(tsql: await reader.ReadToEndAsync(), timeout: timeout);
     }
 
     /// <summary>
     /// Initializes the current database for UkrGuru extensions
     /// </summary>
-    /// <param name="assembly"></param>
-    /// <param name="resourceFileName"></param>
-    /// <returns></returns>
-    /// 
+    /// <param name="assembly">Assembly containing the required SQL script resource</param>
+    /// <param name="resourceFileName">The name of the resource file containing the SQL script</param>
+    /// <returns>True if the database was successfully initialized</returns>
     public static bool InitDb(this Assembly? assembly, string resourceFileName = "InitDb.sql")
     {
         ArgumentNullException.ThrowIfNull(assembly);
@@ -69,7 +67,7 @@ public static class AssemblyExtensions
     }
 
     /// <summary>
-    /// 
+    /// SQL command to get the current version of the database.
     /// </summary>
     private static readonly string cmd_ver_get = @"
 SELECT TOP 1 [value]
@@ -78,7 +76,7 @@ WHERE class = 0 AND class_desc = N'DATABASE' AND [name] = @Data
 ";
 
     /// <summary>
-    /// 
+    /// SQL command to set the current version of the database.
     /// </summary>
     private static readonly string cmd_ver_set = @"
 DECLARE @Name nvarchar(100), @Value sql_variant
