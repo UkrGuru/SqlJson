@@ -3,7 +3,6 @@
 
 using Microsoft.Data.SqlClient;
 using System.Data;
-using System.Globalization;
 using System.Text;
 using UkrGuru.Extensions;
 
@@ -97,7 +96,7 @@ public static class DbExtensions
         }
         else
         {
-            return ParseScalar<T?>(command.ExecuteScalar());
+            return command.ExecuteScalar().ToObj<T?>();
         }
 
         return result.ToObj<T?>();
@@ -154,7 +153,7 @@ public static class DbExtensions
         }
         else
         {
-            return ParseScalar<T?>(await command.ExecuteScalarAsync(cancellationToken));
+            return (await command.ExecuteScalarAsync(cancellationToken)).ToObj<T?>();
         }
 
         return result.ToObj<T?>();
@@ -189,28 +188,5 @@ public static class DbExtensions
         {
             return default;
         }
-    }
-
-    /// <summary>
-    /// Parses a scalar value of type T from an object.
-    /// </summary>
-    /// <typeparam name="T">The type of the scalar value to be parsed.</typeparam>
-    /// <param name="value">The object to be parsed.</param>
-    /// <param name="defaultValue">The default value to return if the object is null or DBNull.</param>
-    /// <returns>The parsed scalar value of type T, or the default value if the object is null or DBNull.</returns>
-    internal static T? ParseScalar<T>(object? value, T? defaultValue = default)
-    {
-        if (value == null || value == DBNull.Value) return defaultValue;
-
-        var type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
-
-        if (type == typeof(DateOnly))
-            return (T)(object)DateOnly.FromDateTime((DateTime)value);
-        else if (type == typeof(TimeOnly))
-            return (T)(object)TimeOnly.FromTimeSpan((TimeSpan)value);
-        else if (type.IsEnum)
-            return (T)Enum.Parse(type, Convert.ToString(value)!);
-
-        return (T?)Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
     }
 }
