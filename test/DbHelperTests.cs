@@ -1,9 +1,8 @@
 ﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using System.Text.Json;
 using System.Text.Json.Nodes;
-using static SqlJsonTests.Extensions.StringExtensionsTests;
+using static SqlJsonTests.Extensions.SqlObjectExtensionsTests;
 
 namespace UkrGuru.SqlJson;
 

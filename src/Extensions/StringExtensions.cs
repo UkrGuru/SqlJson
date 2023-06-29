@@ -34,20 +34,21 @@ public static class StringExtensions
     /// </summary>
     /// <param name="value">The string to convert.</param>
     /// <returns>A JsonNode object representing the input string.</returns>
-    public static JsonNode? ToJsonNode(this string? value)
+    public static JsonNode? ToJsonNode(this string? value) => value switch
     {
-        if (value == null)
-        {
-            return null;
-        }
-        else if (bool.TryParse(value, out bool bResult))
-        {
-            return bResult;
-        }
+        null => null,
+        string s when bool.TryParse(s, out bool bResult) => (JsonNode)bResult,
+        _ => ToJsonNodeOther(value),
+    };
 
-        try { return JsonNode.Parse(value); }
-        catch { }
-
+    /// <summary>
+    /// Converts a string to a JsonNode object.
+    /// </summary>
+    /// <param name="value">The string to convert.</param>
+    /// <returns>A JsonNode object representing the input string.</returns>
+    public static JsonNode? ToJsonNodeOther(this string value)
+    {
+        try { return JsonNode.Parse(value); } catch { }
         return value;
     }
 }

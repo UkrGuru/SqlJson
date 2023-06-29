@@ -166,27 +166,12 @@ public static class DbExtensions
     /// <param name="reader">The SqlDataReader to get the value from.</param>
     /// <param name="type">The Type of the value to return.</param>
     /// <returns>A value of the specified type from the SqlDataReader.</returns>
-    public static T? GetValue<T>(this SqlDataReader reader, Type type)
+    public static T? GetValue<T>(this SqlDataReader reader, Type type) => type switch
     {
-        if (type == typeof(byte[]))
-        {
-            return (T?)reader.GetValue(0);
-        }
-        else if (type == typeof(char[]))
-        {
-            return (T?)(object)reader.GetSqlChars(0).Value;
-        }
-        else if (type == typeof(Stream))
-        {
-            return (T?)(object)reader.GetStream(0);
-        }
-        else if (type == typeof(TextReader))
-        {
-            return (T?)(object)reader.GetTextReader(0);
-        }
-        else
-        {
-            return default;
-        }
-    }
+        Type t when t == typeof(byte[]) => (T?)reader.GetValue(0),
+        Type t when t == typeof(char[]) => (T?)(object)reader.GetSqlChars(0).Value,
+        Type t when t == typeof(Stream) => (T?)(object)reader.GetStream(0),
+        Type t when t == typeof(TextReader) => (T?)(object)reader.GetTextReader(0),
+        _ => default,
+    };
 }

@@ -21,9 +21,11 @@ public static class SqlObjectExtensions
     /// <returns>The converted object of type T.</returns>
     public static T? ToObj<T>(this object? value, T? defaultValue = default)
     {
-        if (value == null || value == DBNull.Value) return defaultValue;
+        if (value == null || value == DBNull.Value) 
+            return defaultValue;
 
-        if (value is string svalue && string.IsNullOrEmpty(svalue)) return defaultValue;
+        if (value is string svalue && string.IsNullOrEmpty(svalue)) 
+            return defaultValue;
 
         if (value is StringBuilder sb)
             return sb?.Length > 0 ? sb.ToString().ToObj(defaultValue) : defaultValue;
@@ -34,7 +36,7 @@ public static class SqlObjectExtensions
             return (T?)value;
 
         else if (type.IsClass)
-            return (value is Stream stream) ? JsonSerializer.Deserialize<T?>(stream) : JsonSerializer.Deserialize<T?>(Convert.ToString(value)!);
+            return value.JsonDeserialize<T?>();
 
         else if (type == typeof(Guid))
             return (T?)(object)Guid.Parse(Convert.ToString(value)!);
@@ -55,4 +57,17 @@ public static class SqlObjectExtensions
             return (T?)Convert.ChangeType(value, type);
     }
 
+    /// <summary>
+    /// Reads the UTF-8 encoded text or parses the text representing a single JSON value into a <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of results to return.</typeparam>
+    /// <param name="value">The object value to convert.</param>
+    /// <returns>The converted object of type T.</returns>
+    private static T? JsonDeserialize<T>(this object value)
+    {
+        if (value is Stream stream)
+            return JsonSerializer.Deserialize<T>(stream);
+
+        return JsonSerializer.Deserialize<T>(Convert.ToString(value)!);
+    }
 }
