@@ -12,6 +12,7 @@ namespace UkrGuru.SqlJson;
 public class GlobalTests
 {
     public const string DbName = "SqlJsonTest5";
+    public const string ConnectionString = $"Server=(localdb)\\mssqllocaldb;Database={DbName};Trusted_Connection=True";
 
     public static bool DbOk { get; set; }
 

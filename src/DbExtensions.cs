@@ -3,6 +3,7 @@
 
 using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Globalization;
 using System.Text;
 using UkrGuru.Extensions;
 
@@ -18,7 +19,7 @@ public static class DbExtensions
     /// </summary>
     /// <param name="type">The type to check.</param>
     /// <returns>True if the type is considered "long", false otherwise.</returns>
-    internal static bool IsLong(this Type type) => type.Name switch
+    internal static bool IsLong(this Type type) => type.IsEnum ? false : type.Name switch
     {
         // or "SByte" or "UInt16"  or "UInt32" or "UInt64" 
         "Boolean" or "Byte" or "Int16" or "Int32" or "Int64" or "Single" or "Double" or "Decimal" or
@@ -80,32 +81,19 @@ public static class DbExtensions
         var type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
 
         using var command = connection.CreateSqlCommand(tsql, data, timeout);
+
         if (type.IsLong())
         {
             using SqlDataReader reader = command.ExecuteReader(CommandBehavior.CloseConnection);
             if (reader.HasRows)
                 while (reader.Read())
                     if (!reader.IsDBNull(0))
-                        if (type == typeof(byte[]))
-                        {
-                            return (T?)reader.GetValue(0);
-                        }
-                        else if (type == typeof(char[]))
-                        {
-                            return (T?)(object)reader.GetSqlChars(0).Value;
-                        }
-                        else if (type == typeof(Stream))
-                        {
-                            return (T?)(object)reader.GetStream(0);
-                        }
-                        else if (type == typeof(TextReader))
-                        {
-                            return (T?)(object)reader.GetTextReader(0);
-                        }
-                        else
-                        {
-                            result.Append(reader.GetValue(0));
-                        }
+                    {
+                        var value = reader.GetValue<T?>(type);
+                        if (value != null) return value;
+
+                        result.Append(reader.GetValue(0));
+                    }
         }
         else
         {
@@ -150,6 +138,7 @@ public static class DbExtensions
         var type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
 
         await using var command = connection.CreateSqlCommand(tsql, data, timeout);
+
         if (type.IsLong())
         {
             await using SqlDataReader reader = await command.ExecuteReaderAsync(CommandBehavior.CloseConnection, cancellationToken);
@@ -157,26 +146,10 @@ public static class DbExtensions
                 while (await reader.ReadAsync(cancellationToken))
                     if (!await reader.IsDBNullAsync(0, cancellationToken))
                     {
-                        if (type == typeof(byte[]))
-                        {
-                            return (T?)reader.GetValue(0);
-                        }
-                        else if (type == typeof(char[]))
-                        {
-                            return (T?)(object)reader.GetSqlChars(0).Value;
-                        }
-                        else if (type == typeof(Stream))
-                        {
-                            return (T?)(object)reader.GetStream(0);
-                        }
-                        else if (type == typeof(TextReader))
-                        {
-                            return (T?)(object)reader.GetTextReader(0);
-                        }
-                        else
-                        {
-                            result.Append(reader.GetValue(0));
-                        }
+                        var value = reader.GetValue<T?>(type);
+                        if (value != null) return value;
+
+                        result.Append(reader.GetValue(0));
                     }
         }
         else
@@ -188,13 +161,44 @@ public static class DbExtensions
     }
 
     /// <summary>
+    /// Gets a value of the specified type from the SqlDataReader.
+    /// </summary>
+    /// <typeparam name="T">The type of the value to return.</typeparam>
+    /// <param name="reader">The SqlDataReader to get the value from.</param>
+    /// <param name="type">The Type of the value to return.</param>
+    /// <returns>A value of the specified type from the SqlDataReader.</returns>
+    public static T? GetValue<T>(this SqlDataReader reader, Type type)
+    {
+        if (type == typeof(byte[]))
+        {
+            return (T?)reader.GetValue(0);
+        }
+        else if (type == typeof(char[]))
+        {
+            return (T?)(object)reader.GetSqlChars(0).Value;
+        }
+        else if (type == typeof(Stream))
+        {
+            return (T?)(object)reader.GetStream(0);
+        }
+        else if (type == typeof(TextReader))
+        {
+            return (T?)(object)reader.GetTextReader(0);
+        }
+        else
+        {
+            return default;
+        }
+    }
+
+    /// <summary>
     /// Parses a scalar value of type T from an object.
     /// </summary>
     /// <typeparam name="T">The type of the scalar value to be parsed.</typeparam>
     /// <param name="value">The object to be parsed.</param>
     /// <param name="defaultValue">The default value to return if the object is null or DBNull.</param>
     /// <returns>The parsed scalar value of type T, or the default value if the object is null or DBNull.</returns>
-    private static T? ParseScalar<T>(object? value, T? defaultValue = default)
+    internal static T? ParseScalar<T>(object? value, T? defaultValue = default)
     {
         if (value == null || value == DBNull.Value) return defaultValue;
 
@@ -204,9 +208,9 @@ public static class DbExtensions
             return (T)(object)DateOnly.FromDateTime((DateTime)value);
         else if (type == typeof(TimeOnly))
             return (T)(object)TimeOnly.FromTimeSpan((TimeSpan)value);
-        //else if (type == typeof(char))
-        //    return (T)(object)char.Parse((string)value);
+        else if (type.IsEnum)
+            return (T)Enum.Parse(type, Convert.ToString(value)!);
 
-        return (T?)Convert.ChangeType(value, type);
+        return (T?)Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
     }
 }

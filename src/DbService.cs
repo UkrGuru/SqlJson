@@ -118,9 +118,9 @@ public class DbService : IDbService
     private readonly string? _connectionString;
 
     /// <summary>
-    /// The Constructor for the DbService
+    /// Initializes a new instance of the DbService class.
     /// </summary>
-    /// <param name="configuration"></param>
+    /// <param name="configuration">The configuration object used to retrieve the connection string.</param>
     public DbService(IConfiguration configuration)
         => _connectionString = configuration.GetConnectionString(ConnectionStringName);
 

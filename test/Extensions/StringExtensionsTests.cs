@@ -39,13 +39,13 @@ public class StringExtensionsTests
         var t1 = @"1".ToObj<UserType?>();
     }
 
-    private class Region
+    public class Region
     {
         public int Id { get; set; }
         public string? Name { get; set; }
     }
 
-    private enum UserType
+    public enum UserType
     {
         Guest,
         User,

@@ -3,12 +3,17 @@
 
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using static SqlJsonTests.Extensions.StringExtensionsTests;
 
 namespace UkrGuru.SqlJson;
 
 public class DbHelperTests
 {
-    public DbHelperTests() { int i = 0; while (!GlobalTests.DbOk && i++ < 100) { Thread.Sleep(100); } }
+    public DbHelperTests() { 
+        int i = 0; while (!GlobalTests.DbOk && i++ < 100) { Thread.Sleep(100); }
+        DbHelper.ConnectionString = GlobalTests.ConnectionString;
+    }
+
     //[Fact]
     //public static void CanCreateSqlConnection()
     //{
@@ -78,13 +83,14 @@ public class DbHelperTests
 
         Assert.Null(DbHelper.Exec<object?>("SELECT NULL"));
 
-        Assert.Equal(true, DbHelper.Exec<bool?>("SELECT @Data", true));
+        Assert.Equal(true, DbHelper.Exec<bool?>("SELECT CAST(@Data AS bit)", true));
 
         Assert.Equal(Guid.Empty, DbHelper.Exec<Guid?>("SELECT CAST(@Data AS uniqueidentifier)", Guid.Empty));
 
         Assert.Equal('X', DbHelper.Exec<char?>("SELECT @Data", 'X'));
 
         Assert.Equal((byte)1, DbHelper.Exec<byte?>("SELECT @Data", (byte)1));
+        //Assert.Equal((sbyte)-1, DbHelper.Exec<sbyte?>("SELECT @Data", (sbyte)-1));
         Assert.Equal(1, DbHelper.Exec<int?>("SELECT @Data", 1));
         Assert.Equal((long)1, DbHelper.Exec<long?>("SELECT @Data", (long)1));
         Assert.Equal(1.0f, DbHelper.Exec<float?>("SELECT @Data", 1.0f));
@@ -111,6 +117,8 @@ public class DbHelperTests
         Assert.Equal("John", (string?)recs[0]["Name"]);
         Assert.Equal(2, (int?)recs[1]["Id"]);
         Assert.Equal("Mike", (string?)recs[1]["Name"]);
+
+        Assert.Equal(UserType.User, DbHelper.Exec<UserType?>("SELECT @Data", UserType.User));
     }
 
     [Fact]

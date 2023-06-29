@@ -29,10 +29,10 @@ public class DbHelper
     private static SqlConnection CreateSqlConnection() => new(_connectionString);
 
     /// <summary>
-    /// 
+    /// Determines whether the given string is a valid name.
     /// </summary>
-    /// <param name="tsql"></param>
-    /// <returns></returns>
+    /// <param name="tsql">The string to check.</param>
+    /// <returns>True if the string is a valid name; otherwise, false.</returns>
     internal static bool IsName(string? tsql) => tsql is not null && tsql.Length <= 100 && Regex.IsMatch(tsql, @"^(\w+|\[.+?\])(\.(\w+|\[.+?\]))?$");
 
     /// <summary>
