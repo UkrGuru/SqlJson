@@ -11,11 +11,11 @@ public static class HttpClientExtensions
     ///// <summary>
     ///// 
     ///// </summary>
-    ///// <param name="http"></param>
+    ///// <param name="http">HTTP client instance</param>
     ///// <param name="proc"></param>
     ///// <param name="data"></param>
     ///// <param name="timeout"></param>
-    ///// <param name="cancellationToken">The cancellation token.</param>
+    ///// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     ///// <returns>The async task.</returns>
     //public static async Task<int> ExecAsync(this HttpClient http, string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     //{
@@ -44,7 +44,7 @@ public static class HttpClientExtensions
     /// Reads the content of an HTTP response as a string and throws an exception if the content starts with "Error:".
     /// </summary>
     /// <param name="httpResponse">The HTTP response to read.</param>
-    /// <param name="cancellationToken">A cancellation token that can be used to cancel the operation.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>A task that represents the asynchronous read operation.</returns>
     public static async Task ReadAsync(this HttpResponseMessage httpResponse, CancellationToken cancellationToken = default)
     {
@@ -60,7 +60,7 @@ public static class HttpClientExtensions
     /// </summary>
     /// <typeparam name="T">The type of object to deserialize to.</typeparam>
     /// <param name="httpResponse">The HTTP response to read.</param>
-    /// <param name="cancellationToken">A cancellation token that can be used to cancel the operation.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>A task that represents the asynchronous read operation and contains the deserialized object.</returns>
     public static async Task<T?> ReadAsync<T>(this HttpResponseMessage httpResponse, CancellationToken cancellationToken = default)
     {

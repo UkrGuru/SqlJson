@@ -17,13 +17,13 @@ public static class DbFileExtensions
     /// <typeparam name="T">The type of the result to return</typeparam>
     /// <param name="file">The file to save</param>
     /// <param name="timeout">The command timeout in seconds</param>
-    /// <param name="cancellationToken">The cancellation token to observe while waiting for the task to complete</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>A task that represents the asynchronous operation, containing the result of the operation</returns>
     public static async Task<T?> SetAsync<T>(this DbFile file, int? timeout = null, CancellationToken cancellationToken = default)
     {
         if (file?.FileContent == null || file.FileContent.Length == 0) return await Task.FromResult<T?>(default);
 
-        await file.CompressAsync(cancellationToken);
+        // await file.CompressAsync(cancellationToken);
 
         return await DbHelper.ExecAsync<T?>("WJbFiles_Ins", file, timeout, cancellationToken);
     }
@@ -32,8 +32,8 @@ public static class DbFileExtensions
     /// Compression of the file content
     /// </summary>
     /// <param name="file">The file to compress</param>
-    /// <param name="cancellationToken">The cancellation token to observe while waiting for the task to complete</param>
-    /// <returns>A Task representing the asynchronous operation.</returns>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
+    /// <returns>The async task.</returns>
     public static async Task CompressAsync(this DbFile? file, CancellationToken cancellationToken = default)
     {
         if (file?.FileContent == null || file.FileContent.Length == 0) return;
@@ -68,8 +68,8 @@ public static class DbFileExtensions
     /// Decompression of the file content
     /// </summary>
     /// <param name="file">The file to decompress</param>
-    /// <param name="cancellationToken">The cancellation token to observe while waiting for the task to complete</param>
-    /// <returns>A Task representing the asynchronous operation.</returns>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
+    /// <returns>The async task.</returns>
     public static async Task DecompressAsync(this DbFile? file, CancellationToken cancellationToken = default)
     {
         if (file?.FileName == null || !file.FileName.EndsWith(".gzip")) return;

@@ -36,7 +36,7 @@ public static class SqlJsonServiceCollectionExtensions
     /// Registers UkrGuru Extensions for server side application.
     /// </summary>
     /// <param name="services">The IServiceCollection argument the ConfigureServices method receives.</param>
-    /// <param name="logLevel"></param>
+    /// <param name="logLevel">The level of the log to write</param>
     /// <param name="initDb"></param>
     public static IServiceCollection AddSqlJsonExt(this IServiceCollection services, DbLogLevel logLevel = DbLogLevel.Information, bool initDb = true)
     {

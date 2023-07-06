@@ -1,13 +1,23 @@
 ﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using UkrGuru.SqlJson;
+using UkrGuru.Extensions.Data;
 
-namespace UkrGuru.Extensions.Data;
+namespace UkrGuru.SqlJson.Client;
 
-public class DbFileServiceTests
+public class ApiDbFileServiceTests
 {
-    public DbFileServiceTests() { int i = 0; while (!GlobalTests.DbOk && i++ < 100) { Thread.Sleep(100); } }
+    private readonly HttpClient _http;
+    private readonly IDbFileService _dbFile;
+
+    public ApiDbFileServiceTests()
+    {
+        int i = 0; while (!GlobalTests.DbOk && i++ < 100) { Thread.Sleep(100); }
+
+        _http = new HttpClient() { BaseAddress = new Uri("https://localhost:7285/") };
+
+        _dbFile = new ApiDbFileService(_http);
+    }
 
     public static IEnumerable<object[]> GetTestBytes(int numTests)
     {
@@ -25,20 +35,18 @@ public class DbFileServiceTests
     [MemberData(nameof(GetTestBytes), parameters: 3)]
     public async Task BinFileTests(byte[] bytes)
     {
-        IDbFileService db = new DbFileService(GlobalTests.Configuration);
-
-        var fileName = $"{DateTime.Now.ToString("HHmmss")}.bin";
+        var fileName = $"{DateTime.Now.ToString("HHmmssnn")}.bin";
         var file1 = new DbFile { FileName = fileName, FileContent = bytes };
 
-        var guid = await db.SetAsync<Guid?>(file1);
+        var guid1 = await _dbFile.SetAsync(file1);
 
-        var file = await db.GetAsync(guid);
+        var file = await _dbFile.GetAsync(guid1);
 
         Assert.Equal(fileName, file?.FileName);
 
         Assert.Equal(bytes, file?.FileContent);
 
-        await db.ExecAsync("WJbFiles_Del", guid);
+        await _dbFile.DelAsync(guid1);
     }
 
     public static IEnumerable<object[]> GetTestString(int numTests)
@@ -57,19 +65,17 @@ public class DbFileServiceTests
     [MemberData(nameof(GetTestString), parameters: 3)]
     public async Task TxtFileTests(string content)
     {
-        IDbFileService db = new DbFileService(GlobalTests.Configuration);
+        var guid1 = await _dbFile.SetAsync(content);
 
-        var guid1 = await db.SetAsync(content);
-
-        var content1 = await db.GetAsync(guid1);
+        var content1 = await _dbFile.GetAsync(guid1);
 
         Assert.Equal(content, content1);
 
         if (!string.IsNullOrEmpty(guid1) && Guid.TryParse(guid1, out Guid guid))
         {
-            await db.DelAsync(guid);
+            await _dbFile.DelAsync(guid);
 
-            content1 = await db.GetAsync(guid1);
+            content1 = await _dbFile.GetAsync(guid1);
 
             Assert.Null(content1);
         }

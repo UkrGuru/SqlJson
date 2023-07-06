@@ -18,9 +18,9 @@ public class DbLogHelper
     /// <summary>
     /// Normalization of parameters before logging.
     /// </summary>
-    /// <param name="logLevel"></param>
-    /// <param name="title"></param>
-    /// <param name="more"></param>
+    /// <param name="logLevel">The level of the log to write</param>
+    /// <param name="title">The title of the log</param>
+    /// <param name="more">Additional information to include in the log</param>
     /// <returns></returns>
     public static object Normalize(DbLogLevel logLevel, string title, object? more = null)
         => new { LogLevel = logLevel, Title = title, LogMore = more };
@@ -28,9 +28,9 @@ public class DbLogHelper
     /// <summary>
     /// Synchronous method that writes a log any of type to the database.
     /// </summary>
-    /// <param name="logLevel"></param>
-    /// <param name="title"></param>
-    /// <param name="more"></param>
+    /// <param name="logLevel">The level of the log to write</param>
+    /// <param name="title">The title of the log</param>
+    /// <param name="more">Additional information to include in the log</param>
     public static void Log(DbLogLevel logLevel, string title, object? more = null)
     {
         try { if ((byte)logLevel >= (byte)MinDbLogLevel) DbHelper.Exec("WJbLogs_Ins", Normalize(logLevel, title, more)); }
@@ -40,52 +40,52 @@ public class DbLogHelper
     /// <summary>
     /// Synchronous method that writes a critical log to the database.
     /// </summary>
-    /// <param name="title"></param>
-    /// <param name="more"></param>
+    /// <param name="title">The title of the log</param>
+    /// <param name="more">Additional information to include in the log</param>
     public static void LogCritical(string title, object? more = null) => Log(DbLogLevel.Critical, title, more);
 
     /// <summary>
     /// Synchronous method that writes a debug log to the database.
     /// </summary>
-    /// <param name="title"></param>
-    /// <param name="more"></param>
+    /// <param name="title">The title of the log</param>
+    /// <param name="more">Additional information to include in the log</param>
     public static void LogDebug(string title, object? more = null) => Log(DbLogLevel.Debug, title, more);
 
     /// <summary>
     /// Synchronous method that writes an error log to the database.
     /// </summary>
-    /// <param name="title"></param>
-    /// <param name="more"></param>
+    /// <param name="title">The title of the log</param>
+    /// <param name="more">Additional information to include in the log</param>
     public static void LogError(string title, object? more = null) => Log(DbLogLevel.Error, title, more);
 
     /// <summary>
     /// Synchronous method that writes an information log to the database.
     /// </summary>
-    /// <param name="title"></param>
-    /// <param name="more"></param>
+    /// <param name="title">The title of the log</param>
+    /// <param name="more">Additional information to include in the log</param>
     public static void LogInformation(string title, object? more = null) => Log(DbLogLevel.Information, title, more);
 
     /// <summary>
     /// Synchronous method that writes a trace log to the database.
     /// </summary>
-    /// <param name="title"></param>
-    /// <param name="more"></param>
+    /// <param name="title">The title of the log</param>
+    /// <param name="more">Additional information to include in the log</param>
     public static void LogTrace(string title, object? more = null) => Log(DbLogLevel.Trace, title, more);
 
     /// <summary>
     /// Synchronous method that writes a warning log to the database.
     /// </summary>
-    /// <param name="title"></param>
-    /// <param name="more"></param>
+    /// <param name="title">The title of the log</param>
+    /// <param name="more">Additional information to include in the log</param>
     public static void LogWarning(string title, object? more = null) => Log(DbLogLevel.Warning, title, more);
 
     /// <summary>
     /// Asynchronous method that writes a log any of type to the database.
     /// </summary>
-    /// <param name="logLevel"></param>
-    /// <param name="title"></param>
-    /// <param name="more"></param>
-    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <param name="logLevel">The level of the log to write</param>
+    /// <param name="title">The title of the log</param>
+    /// <param name="more">Additional information to include in the log</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
     public static async Task LogAsync(DbLogLevel logLevel, string title, object? more = null, CancellationToken cancellationToken = default)
     {
@@ -96,9 +96,9 @@ public class DbLogHelper
     /// <summary>
     /// Asynchronous method that writes a critical log to the database.
     /// </summary>
-    /// <param name="title"></param>
-    /// <param name="more"></param>
-    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <param name="title">The title of the log</param>
+    /// <param name="more">Additional information to include in the log</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
     public static async Task LogCriticalAsync(string title, object? more = null, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Critical, title, more, cancellationToken);
@@ -106,9 +106,9 @@ public class DbLogHelper
     /// <summary>
     /// Asynchronous method that writes a debug log to the database.
     /// </summary>
-    /// <param name="title"></param>
-    /// <param name="more"></param>
-    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <param name="title">The title of the log</param>
+    /// <param name="more">Additional information to include in the log</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
     public static async Task LogDebugAsync(string title, object? more = null, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Debug, title, more, cancellationToken);
@@ -116,9 +116,9 @@ public class DbLogHelper
     /// <summary>
     /// Asynchronous method that writes an error log to the database.
     /// </summary>
-    /// <param name="title"></param>
-    /// <param name="more"></param>
-    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <param name="title">The title of the log</param>
+    /// <param name="more">Additional information to include in the log</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
     public static async Task LogErrorAsync(string title, object? more = null, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Error, title, more, cancellationToken);
@@ -126,9 +126,9 @@ public class DbLogHelper
     /// <summary>
     /// Asynchronous method that writes an information log to the database.
     /// </summary>
-    /// <param name="title"></param>
-    /// <param name="more"></param>
-    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <param name="title">The title of the log</param>
+    /// <param name="more">Additional information to include in the log</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
     public static async Task LogInformationAsync(string title, object? more = null, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Information, title, more, cancellationToken);
@@ -136,9 +136,9 @@ public class DbLogHelper
     /// <summary>
     /// Asynchronous method that writes a trace log to the database.
     /// </summary>
-    /// <param name="title"></param>
-    /// <param name="more"></param>
-    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <param name="title">The title of the log</param>
+    /// <param name="more">Additional information to include in the log</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
     public static async Task LogTraceAsync(string title, object? more = null, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Trace, title, more, cancellationToken);
@@ -146,9 +146,9 @@ public class DbLogHelper
     /// <summary>
     /// Asynchronous method that writes a warning log to the database.
     /// </summary>
-    /// <param name="title"></param>
-    /// <param name="more"></param>
-    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <param name="title">The title of the log</param>
+    /// <param name="more">Additional information to include in the log</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
     public static async Task LogWarningAsync(string title, object? more = null, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Warning, title, more, cancellationToken);

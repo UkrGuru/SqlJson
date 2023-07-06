@@ -16,9 +16,7 @@ public class GlobalTests
 
     public static bool DbOk { get; set; }
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public static IConfiguration Configuration { get; set; }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
     public static byte[] TestBytes1k = new byte[1024];
     public static string TestString1k => Convert.ToBase64String(TestBytes1k);

@@ -18,7 +18,7 @@ public static class DbExtensions
     /// </summary>
     /// <param name="type">The type to check.</param>
     /// <returns>True if the type is considered "long", false otherwise.</returns>
-    internal static bool IsLong(this Type type) => type.IsEnum ? false : type.Name switch
+    internal static bool IsLong(this Type? type) => type == null || type.IsEnum ? false : type.Name switch
     {
         // or "SByte" or "UInt16"  or "UInt32" or "UInt64" 
         "Boolean" or "Byte" or "Int16" or "Int32" or "Int64" or "Single" or "Double" or "Decimal" or
@@ -35,7 +35,7 @@ public static class DbExtensions
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>New instance of the SqlCommand class with initialize parameters</returns>
-    public static SqlCommand CreateSqlCommand(this SqlConnection connection, string tsql, object? data = null, int? timeout = null)
+    internal static SqlCommand CreateSqlCommand(this SqlConnection connection, string tsql, object? data = null, int? timeout = null)
     {
         SqlCommand command = new(tsql, connection);
         if (DbHelper.IsName(tsql)) command.CommandType = CommandType.StoredProcedure;
@@ -110,7 +110,7 @@ public static class DbExtensions
     /// <param name="tsql">The text of the query or stored procedure name.</param>
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The number of rows affected.</returns>
     public static async Task<int> ExecAsync(this SqlConnection connection, string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
@@ -128,7 +128,7 @@ public static class DbExtensions
     /// <param name="tsql">The text of the query or stored procedure name.</param>
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>Result as an object</returns>
     public static async Task<T?> ExecAsync<T>(this SqlConnection connection, string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
@@ -166,12 +166,12 @@ public static class DbExtensions
     /// <param name="reader">The SqlDataReader to get the value from.</param>
     /// <param name="type">The Type of the value to return.</param>
     /// <returns>A value of the specified type from the SqlDataReader.</returns>
-    public static T? GetValue<T>(this SqlDataReader reader, Type type) => type switch
+    private static T? GetValue<T>(this SqlDataReader reader, Type type) => type switch
     {
-        Type t when t == typeof(byte[]) => (T?)reader.GetValue(0),
-        Type t when t == typeof(char[]) => (T?)(object)reader.GetSqlChars(0).Value,
-        Type t when t == typeof(Stream) => (T?)(object)reader.GetStream(0),
-        Type t when t == typeof(TextReader) => (T?)(object)reader.GetTextReader(0),
+        _ when type == typeof(byte[]) => (T?)reader.GetValue(0),
+        _ when type == typeof(char[]) => (T?)(object)reader.GetSqlChars(0).Value,
+        _ when type == typeof(Stream) => (T?)(object)reader.GetStream(0),
+        _ when type == typeof(TextReader) => (T?)(object)reader.GetTextReader(0),
         _ => default,
     };
 }

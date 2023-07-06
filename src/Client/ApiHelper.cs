@@ -8,13 +8,13 @@ namespace UkrGuru.SqlJson.Client;
 /// <summary>
 /// Provides helper methods for working with an API.
 /// </summary>
-internal class ApiHelper
+public class ApiHelper
 {
     /// <summary>
     /// Builds a request URI for an API call.
     /// </summary>
     /// <param name="apiHoleUri">The base URI of the API.</param>
-    /// <param name="proc">The name of the stored procedure to call.</param>
+    /// <param name="proc">The base part of the stored procedure name to call.</param>
     /// <param name="data">The data to pass to the stored procedure.</param>
     /// <returns>The request URI for the API call.</returns>
     public static string BuildRequestUri(string? apiHoleUri, string proc, object? data = null)

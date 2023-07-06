@@ -77,7 +77,7 @@ public interface IDbLogService
     /// <param name="logLevel">The level of the log to write</param>
     /// <param name="title">The title of the log</param>
     /// <param name="more">Additional information to include in the log</param>
-    /// <param name="cancellationToken">The cancellation token to observe while waiting for the task to complete</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>A task that represents the asynchronous operation</returns>
     Task LogAsync(DbLogLevel logLevel, string title, object? more = null, CancellationToken cancellationToken = default);
 
@@ -86,7 +86,7 @@ public interface IDbLogService
     /// </summary>
     /// <param name="title">The title of the log</param>
     /// <param name="more">Additional information to include in the log</param>
-    /// <param name="cancellationToken">The cancellation token to observe while waiting for the task to complete</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>A task that represents the asynchronous operation</returns>
     public async Task LogCriticalAsync(string title, object? more = null, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Critical, title, more, cancellationToken);
@@ -96,7 +96,7 @@ public interface IDbLogService
     /// </summary>
     /// <param name="title">The title of the log</param>
     /// <param name="more">Additional information to include in the log</param>
-    /// <param name="cancellationToken">The cancellation token to observe while waiting for the task to complete</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>A task that represents the asynchronous operation</returns>
     public async Task LogDebugAsync(string title, object? more = null, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Debug, title, more, cancellationToken);
@@ -106,7 +106,7 @@ public interface IDbLogService
     /// </summary>
     /// <param name="title">The title of the log</param>
     /// <param name="more">Additional information to include in the log</param>
-    /// <param name="cancellationToken">The cancellation token to observe while waiting for the task to complete</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>A task that represents the asynchronous operation</returns>
     public async Task LogErrorAsync(string title, object? more = null, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Error, title, more, cancellationToken);
@@ -116,7 +116,7 @@ public interface IDbLogService
     /// </summary>
     /// <param name="title">The title of the log</param>
     /// <param name="more">Additional information to include in the log</param>
-    /// <param name="cancellationToken">The cancellation token to observe while waiting for the task to complete</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>A task that represents the asynchronous operation</returns>
     public async Task LogInformationAsync(string title, object? more = null, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Information, title, more, cancellationToken);
@@ -126,7 +126,7 @@ public interface IDbLogService
     /// </summary>
     /// <param name="title">The title of the log</param>
     /// <param name="more">Additional information to include in the log</param>
-    /// <param name="cancellationToken">The cancellation token to observe while waiting for the task to complete</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>A task that represents the asynchronous operation</returns>
     public async Task LogTraceAsync(string title, object? more = null, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Trace, title, more, cancellationToken);
@@ -136,7 +136,7 @@ public interface IDbLogService
     /// </summary>
     /// <param name="title">The title of the log</param>
     /// <param name="more">Additional information to include in the log</param>
-    /// <param name="cancellationToken">The cancellation token to observe while waiting for the task to complete</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>A task that represents the asynchronous operation</returns>
     public async Task LogWarningAsync(string title, object? more = null, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Warning, title, more, cancellationToken);
@@ -187,7 +187,7 @@ public class DbLogService : DbService, IDbLogService
     /// <param name="logLevel">The level of the log to write</param>
     /// <param name="title">The title of the log</param>
     /// <param name="more">Additional information to include in the log</param>
-    /// <param name="cancellationToken">The cancellation token to observe while waiting for the task to complete</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>A task that represents the asynchronous operation</returns>
     public async Task LogAsync(DbLogLevel logLevel, string title, object? more = null, CancellationToken cancellationToken = default)
     {

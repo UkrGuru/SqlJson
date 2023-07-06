@@ -7,7 +7,7 @@ using UkrGuru.Extensions.Logging;
 namespace UkrGuru.SqlJson.Client;
 
 /// <summary>
-/// Api Service for logging to the database via ApiHole
+/// Database service for logging to the database via ApiHole
 /// </summary>
 public class ApiDbLogService : ApiDbService, IDbLogService
 {
@@ -19,7 +19,7 @@ public class ApiDbLogService : ApiDbService, IDbLogService
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="http"></param>
+    /// <param name="http">HTTP client instance</param>
     /// <param name="configuration"></param>
     public ApiDbLogService(HttpClient http, IConfiguration configuration) : base(http)
         => _minDbLogLevel = configuration.GetValue<DbLogLevel?>(MinDbLogLevelPath);
@@ -37,22 +37,18 @@ public class ApiDbLogService : ApiDbService, IDbLogService
     /// <summary>
     /// Synchronous method that writes a log any of type to the database.
     /// </summary>
-    /// <param name="logLevel"></param>
-    /// <param name="title"></param>
-    /// <param name="more"></param>
-    public void Log(DbLogLevel logLevel, string title, object? more = null)
-    {
-        try { if ((byte)logLevel >= (byte)MinDbLogLevel) Exec("WJbLogs_Ins", DbLogHelper.Normalize(logLevel, title, more)); }
-        finally { }
-    }
+    /// <param name="logLevel">The level of the log to write</param>
+    /// <param name="title">The title of the log</param>
+    /// <param name="more">Additional information to include in the log</param>
+    public void Log(DbLogLevel logLevel, string title, object? more = null) => throw new NotImplementedException();
 
     /// <summary>
     /// Asynchronous method that writes a log any of type to the database.
     /// </summary>
-    /// <param name="logLevel"></param>
-    /// <param name="title"></param>
-    /// <param name="more"></param>
-    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <param name="logLevel">The level of the log to write</param>
+    /// <param name="title">The title of the log</param>
+    /// <param name="more">Additional information to include in the log</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
     public async Task LogAsync(DbLogLevel logLevel, string title, object? more = null, CancellationToken cancellationToken = default)
     {

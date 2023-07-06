@@ -40,8 +40,6 @@ public class DbHelperTests
     //public void IsNameTests(string? cmdText, bool expected)
     //    => Assert.Equal(expected, DbHelper.IsName(cmdText));
 
-
-
     //[Theory]
     //[MemberData(nameof(GetData4CanNormalize), parameters: 19)]
     //public void CanNormalize(object data, object expected) => Assert.Equal(expected, DbHelper.Normalize(data));
@@ -125,7 +123,7 @@ public class DbHelperTests
     {
         Assert.Equal(-1, await DbHelper.ExecAsync("DECLARE @Num1 int = 1"));
 
-        Assert.Null(await DbHelper.ExecAsync<object?>("SELECT NULL"));
+        Assert.Null(await DbHelper.ExecAsync<int?>("SELECT NULL"));
 
         Assert.Equal(true, await DbHelper.ExecAsync<bool?>("SELECT @Data", true));
 

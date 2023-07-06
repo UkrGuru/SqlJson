@@ -40,7 +40,7 @@ public class DbHelper
     /// </summary>
     /// <param name="data">The string or object value to convert.</param>
     /// <returns>The standard value for the @Data parameter.</returns>
-    internal static object Normalize(object data) => data switch
+    public static object Normalize(object data) => data switch
     {
         // or sbyte or ushort or uint or ulong 
         bool or byte or short or int or long or float or double or decimal or
@@ -88,7 +88,7 @@ public class DbHelper
     /// <param name="tsql">The text of the query or stored procedure name.</param>
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The number of rows affected.</returns>
     public static async Task<int> ExecAsync(string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
@@ -106,7 +106,7 @@ public class DbHelper
     /// <param name="tsql">The text of the query or stored procedure name.</param>
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>Result as an object</returns>
     public static async Task<T?> ExecAsync<T>(string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
@@ -123,7 +123,7 @@ public class DbHelper
     /// <param name="proc">The name of the stored procedure that will be used to create the T object. </param>
     /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task with T object.</returns>
     public async Task<T?> CreateAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
         => await ExecAsync<T?>(proc, data, timeout, cancellationToken);
@@ -135,7 +135,7 @@ public class DbHelper
     /// <param name="proc">The name of the stored procedure that will be used to read the T object.</param>
     /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task with T object.</returns>
     public async Task<T?> ReadAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
         => await ExecAsync<T?>(proc, data, timeout, cancellationToken);
@@ -146,7 +146,7 @@ public class DbHelper
     /// <param name="proc">The name of the stored procedure that will be used to update the T object. </param>
     /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
     public async Task UpdateAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
         => await ExecAsync(proc, data, timeout, cancellationToken);
@@ -157,7 +157,7 @@ public class DbHelper
     /// <param name="proc">The name of the stored procedure that will be used to delete the T object. </param>
     /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
     public async Task DeleteAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
         => await ExecAsync(proc, data, timeout, cancellationToken);

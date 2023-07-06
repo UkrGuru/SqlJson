@@ -16,7 +16,7 @@ public class DbFileHelper
     /// </summary>
     /// <param name="value">The value to parse as a Guid to identify the file.</param>
     /// <param name="timeout">An optional timeout for the operation.</param>
-    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>A Task representing the asynchronous operation, containing the file content as a UTF-8 encoded string, or null if the file could not be found.</returns>
     public static async Task<string?> GetAsync(string? value, int? timeout = null, CancellationToken cancellationToken = default)
     {
@@ -25,7 +25,7 @@ public class DbFileHelper
             var file = await GetAsync(guid, timeout, cancellationToken);
 
             if (file?.FileContent != null)
-                return Encoding.UTF8.GetString(file.FileContent);
+                return  Encoding.UTF8.GetString(file.FileContent);
 
             return null;
         }
@@ -38,13 +38,13 @@ public class DbFileHelper
     /// </summary>
     /// <param name="guid">The Guid identifying the file to load.</param>
     /// <param name="timeout">An optional timeout for the operation.</param>
-    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>A Task representing the asynchronous operation, containing the loaded DbFile, or null if the file could not be found.</returns>
     public static async Task<DbFile?> GetAsync(Guid? guid, int? timeout = null, CancellationToken cancellationToken = default)
     {
         var file = await DbHelper.ExecAsync<DbFile>("WJbFiles_Get", guid, timeout, cancellationToken);
 
-        await file.DecompressAsync(cancellationToken);
+        //await file.DecompressAsync(cancellationToken);
 
         return file;
     }
@@ -56,12 +56,12 @@ public class DbFileHelper
     /// <param name="filename">The name of the file to save.</param>
     /// <param name="safe">A flag indicating whether the file should be saved safely.</param>
     /// <param name="timeout">An optional timeout for the operation.</param>
-    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>A Task representing the asynchronous operation, containing the saved file's identifier as a string, or null if the file could not be saved.</returns>
     public static async Task<string?> SetAsync(string? value, string? filename = "file.txt", bool safe = default, int? timeout = null, CancellationToken cancellationToken = default)
     {
         if (value?.Length > 0)
-        {
+        {   
             DbFile file = new() { FileName = filename, FileContent = Encoding.UTF8.GetBytes(value), Safe = safe };
 
             return await file.SetAsync<string?>(timeout, cancellationToken);
@@ -74,8 +74,8 @@ public class DbFileHelper
     /// Delete file in the current database
     /// </summary>
     /// <param name="value">The content of the file to save, as a UTF-8 encoded string.</param>
-    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete.</param>
-    /// <returns>A Task representing the asynchronous operation.</returns>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
+    /// <returns>The async task.</returns>
     public static async Task DelAsync(object? value, CancellationToken cancellationToken = default)
         => await DbHelper.ExecAsync("WJbFiles_Del", value, cancellationToken: cancellationToken);
 }

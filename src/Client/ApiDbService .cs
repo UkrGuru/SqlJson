@@ -3,7 +3,6 @@
 
 using Microsoft.Data.SqlClient;
 using System.Text;
-using System.Text.Json;
 using UkrGuru.Extensions;
 
 namespace UkrGuru.SqlJson.Client;
@@ -26,7 +25,7 @@ public class ApiDbService : IDbService
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="http"></param>
+    /// <param name="http">HTTP client instance</param>
     public ApiDbService(HttpClient http) => _http = http;
 
     /// <summary>
@@ -40,25 +39,6 @@ public class ApiDbService : IDbService
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
     public SqlConnection CreateSqlConnection() => throw new NotImplementedException();
-
-    /// <summary>
-    /// Converts a data object to the standard @Data parameter.
-    /// </summary>
-    /// <param name="data">The string or object value to convert.</param>
-    /// <returns>The standard value for the @Data parameter.</returns>
-    public static object? CreateContent(object? data)
-    {
-        if (data == null) return null;
-
-        return data switch
-        {
-            Stream => new StreamContent((Stream)data),
-
-            TextReader => new StringContent(((TextReader)data).ReadToEnd(), Encoding.UTF8),
-
-            _ => new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json")
-        };
-    }
 
     /// <summary>
     /// 
@@ -87,30 +67,10 @@ public class ApiDbService : IDbService
     /// <param name="proc"></param>
     /// <param name="data"></param>
     /// <param name="timeout"></param>
-    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
-    public async Task<int> ExecAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-    {
-        ApiHelper.ValidateProcName(proc);
-
-        HttpResponseMessage? httpResponse;
-
-        var sdata = data == null ? null : DbHelper.Normalize(data).ToString();
-        if (sdata?.Length > 1000)
-        {
-            StringContent content = new(sdata, Encoding.UTF8, "application/json");
-
-            httpResponse = await _http.PostAsync(ApiHelper.BuildRequestUri(ApiHoleUri, proc, null), content, cancellationToken);
-        }
-        else
-        {
-            httpResponse = await _http.GetAsync(ApiHelper.BuildRequestUri(ApiHoleUri, proc, data), cancellationToken);
-        }
-
-        await httpResponse.ReadAsync(cancellationToken);
-
-        return 0;
-    }
+    public async Task<int> ExecAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default) 
+        => (await CreateAsync<int?>(proc, data, timeout, cancellationToken)) ?? 0;
 
     /// <summary>
     /// 
@@ -119,28 +79,10 @@ public class ApiDbService : IDbService
     /// <param name="proc"></param>
     /// <param name="data"></param>
     /// <param name="timeout"></param>
-    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
-    public async Task<T?> ExecAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-    {
-        ApiHelper.ValidateProcName(proc);
-
-        HttpResponseMessage? httpResponse;
-
-        var sdata = data == null ? null : DbHelper.Normalize(data).ToString();
-        if (sdata?.Length > 1000)
-        {
-            StringContent content = new(sdata, Encoding.UTF8, "application/json");
-
-            httpResponse = await _http.PostAsync(ApiHelper.BuildRequestUri(ApiHoleUri, proc, null), content, cancellationToken);
-        }
-        else
-        {
-            httpResponse = await _http.GetAsync(ApiHelper.BuildRequestUri(ApiHoleUri, proc, data), cancellationToken);
-        }
-
-        return await httpResponse.ReadAsync<T?>(cancellationToken);
-    }
+    public async Task<T?> ExecAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default) 
+        => await ReadAsync<T?>(proc, data, timeout, cancellationToken);
 
     /// <summary>
     /// Create, or add new entries
@@ -149,7 +91,7 @@ public class ApiDbService : IDbService
     /// <param name="proc">The name of the stored procedure that will be used to create the T object. </param>
     /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task with T object.</returns>
     public async Task<T?> CreateAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
@@ -169,7 +111,7 @@ public class ApiDbService : IDbService
     /// <param name="proc">The name of the stored procedure that will be used to read the T object.</param>
     /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task with T object.</returns>
     public async Task<T?> ReadAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
@@ -186,7 +128,7 @@ public class ApiDbService : IDbService
     /// <param name="proc">The name of the stored procedure that will be used to update the T object. </param>
     /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
     public async Task UpdateAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
@@ -205,7 +147,7 @@ public class ApiDbService : IDbService
     /// <param name="proc">The name of the stored procedure that will be used to delete the T object. </param>
     /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
     public async Task DeleteAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
@@ -215,4 +157,25 @@ public class ApiDbService : IDbService
 
         await httpResponse.ReadAsync(cancellationToken);
     }
+
+
+    ///// <summary>
+    ///// Converts a data object to the standard @Data parameter.
+    ///// </summary>
+    ///// <param name="data">The string or object value to convert.</param>
+    ///// <returns>The standard value for the @Data parameter.</returns>
+    //public static object? CreateContent(object? data)
+    //{
+    //    if (data == null) return null;
+
+    //    return data switch
+    //    {
+    //        Stream => new StreamContent((Stream)data),
+
+    //        TextReader => new StringContent(((TextReader)data).ReadToEnd(), Encoding.UTF8),
+
+    //        _ => new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json")
+    //    };
+    //}
+
 }

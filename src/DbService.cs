@@ -48,7 +48,7 @@ public interface IDbService
     /// <param name="tsql">The text of the query or stored procedure name.</param>
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The number of rows affected.</returns>
     Task<int> ExecAsync(string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default);
 
@@ -60,8 +60,8 @@ public interface IDbService
     /// <param name="tsql">The text of the query or stored procedure name.</param>
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
-    /// <returns>Result as an object</returns>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
+    /// <returns>The async task with T object.</returns>
     Task<T?> ExecAsync<T>(string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -71,7 +71,7 @@ public interface IDbService
     /// <param name="proc">The name of the stored procedure that will be used to create the T object. </param>
     /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task with T object.</returns>
     Task<T?> CreateAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default);
 
@@ -82,7 +82,7 @@ public interface IDbService
     /// <param name="proc">The name of the stored procedure that will be used to read the T object.</param>
     /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task with T object.</returns>
     Task<T?> ReadAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default);
 
@@ -92,7 +92,7 @@ public interface IDbService
     /// <param name="proc">The name of the stored procedure that will be used to update the T object. </param>
     /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
     Task UpdateAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default);
 
@@ -102,7 +102,7 @@ public interface IDbService
     /// <param name="proc">The name of the stored procedure that will be used to delete the T object. </param>
     /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
     Task DeleteAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default);
 }
@@ -173,7 +173,7 @@ public class DbService : IDbService
     /// <param name="tsql">The text of the query or stored procedure name.</param>
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The number of rows affected.</returns>
     public async Task<int> ExecAsync(string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
@@ -191,7 +191,7 @@ public class DbService : IDbService
     /// <param name="tsql">The text of the query or stored procedure name.</param>
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>Result as an object</returns>
     public async Task<T?> ExecAsync<T>(string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
@@ -208,7 +208,7 @@ public class DbService : IDbService
     /// <param name="proc">The name of the stored procedure that will be used to create the T object. </param>
     /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task with T object.</returns>
     public async Task<T?> CreateAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
         => await ExecAsync<T?>(proc, data, timeout, cancellationToken);
@@ -220,7 +220,7 @@ public class DbService : IDbService
     /// <param name="proc">The name of the stored procedure that will be used to read the T object.</param>
     /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task with T object.</returns>
     public async Task<T?> ReadAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
         => await ExecAsync<T?>(proc, data, timeout, cancellationToken);
@@ -231,8 +231,8 @@ public class DbService : IDbService
     /// <param name="proc">The name of the stored procedure that will be used to update the T object. </param>
     /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
-    /// <returns>The async task.</returns>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
+    /// <returns>The async task with number of rows affected.</returns>
     public async Task UpdateAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
         => await ExecAsync(proc, data, timeout, cancellationToken);
 
@@ -242,8 +242,8 @@ public class DbService : IDbService
     /// <param name="proc">The name of the stored procedure that will be used to delete the T object. </param>
     /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">The cancellation instruction.</param>
-    /// <returns>The async task.</returns>
+    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
+    /// <returns>The async task with number of rows affected.</returns>
     public async Task DeleteAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
         => await ExecAsync(proc, data, timeout, cancellationToken);
 }

@@ -42,12 +42,12 @@ public class DbServiceTests
     {
         var db = new DbService(GlobalTests.Configuration);
 
-        var item1 = new { Name = "Name1" };
+        var item1 = new { Name = "DbName1" };
 
         var id = await db.CreateAsync<int?>("""
 INSERT INTO TestItems 
 SELECT * FROM OPENJSON(@Data) 
-WITH (Name	nvarchar(50))
+WITH (Name nvarchar(50))
 
 SELECT SCOPE_IDENTITY()
 """, item1);
@@ -65,7 +65,7 @@ FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
         Assert.Equal(id, item2.Id);
         Assert.Equal(item1.Name, item2.Name);
 
-        item2.Name = "Name2";
+        item2.Name = "DbName2";
 
         await db.UpdateAsync("""
 UPDATE TestItems
@@ -92,7 +92,7 @@ WHERE Id = @Data
 """, id);
 
         var item4 = await db.ReadAsync<TestItem?>("""
-SELECT Name
+SELECT *
 FROM TestItems
 WHERE Id = @Data
 FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
