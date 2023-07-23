@@ -1,13 +1,15 @@
 ﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-namespace UkrGuru.Extensions.Logging;
+namespace UkrGuru.SqlJson.Extensions;
 
 /// <summary>
 /// UkrGuru's logs are stored in the Sql Server database.
 /// </summary>
 public class DbLog
 {
+    internal const string WJbLogs_Ins = "WJbLogs_Ins";
+
     /// <summary>
     /// Date/Time of the log
     /// </summary>

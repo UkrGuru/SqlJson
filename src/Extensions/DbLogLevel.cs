@@ -1,4 +1,4 @@
-﻿namespace UkrGuru.Extensions.Logging;
+﻿namespace UkrGuru.SqlJson.Extensions;
 
 /// <summary>
 /// Represents the log level for UrkGuru Logs.

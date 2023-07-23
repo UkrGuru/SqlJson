@@ -1,6 +1,5 @@
 using System.Reflection;
-using UkrGuru.Extensions;
-using UkrGuru.Extensions.Logging;
+using UkrGuru.SqlJson.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 

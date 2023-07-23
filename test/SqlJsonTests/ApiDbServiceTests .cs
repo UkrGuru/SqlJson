@@ -1,7 +1,9 @@
 ﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-namespace UkrGuru.SqlJson.Client;
+using static UkrGuru.SqlJson.GlobalTests;
+
+namespace UkrGuru.SqlJson;
 
 public class ApiDbServiceTests
 {
@@ -11,7 +13,7 @@ public class ApiDbServiceTests
     public ApiDbServiceTests()
     {
         int i = 0; while (!GlobalTests.DbOk && i++ < 100) { Thread.Sleep(100); }
-        
+
         _http = new HttpClient() { BaseAddress = new Uri("https://localhost:7285/") };
 
         _db = new ApiDbService(_http);
@@ -31,12 +33,6 @@ public class ApiDbServiceTests
         await _db.DeleteAsync("ProcObj", new { Name = "John" });
     }
 
-    public class TestItem
-    {
-        public int? Id { get; set; }
-        public string? Name { get; set; }
-    }
-
     [Fact]
     public async Task CanCrudAsync()
     {
@@ -46,7 +42,7 @@ public class ApiDbServiceTests
 
         Assert.NotNull(id);
 
-        var item2 = await _db.ReadAsync<TestItem?>("TestItems_Get", id);
+        var item2 = await _db.ReadAsync<Region?>("TestItems_Get", id);
 
         Assert.NotNull(item2);
         Assert.Equal(id, item2.Id);
@@ -56,7 +52,7 @@ public class ApiDbServiceTests
 
         await _db.UpdateAsync("TestItems_Upd", item2);
 
-        var item3 = await _db.ReadAsync<TestItem?>("TestItems_Get", id);
+        var item3 = await _db.ReadAsync<Region?>("TestItems_Get", id);
 
         Assert.NotNull(item3);
         Assert.Equal(item2.Id, item3.Id);
@@ -64,7 +60,7 @@ public class ApiDbServiceTests
 
         await _db.DeleteAsync("TestItems_Del", id);
 
-        var item4 = await _db.ReadAsync<TestItem?>("TestItems_Get", id);
+        var item4 = await _db.ReadAsync<Region?>("TestItems_Get", id);
 
         Assert.Null(item4);
     }

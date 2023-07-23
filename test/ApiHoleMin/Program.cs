@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using UkrGuru.Extensions.Data;
-using UkrGuru.Extensions.Logging;
 using UkrGuru.SqlJson;
+using UkrGuru.SqlJson.Extensions;
 
 const string ApiHolePattern = "ApiHole";
 const string ApiProcSufix = "_Api";

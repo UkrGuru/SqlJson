@@ -2,11 +2,8 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using System.Reflection;
-using UkrGuru.Extensions;
-using UkrGuru.Extensions.Data;
-using UkrGuru.Extensions.Logging;
 using UkrGuru.SqlJson;
-using UkrGuru.SqlJson.Client;
+using UkrGuru.SqlJson.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -28,6 +25,7 @@ public static class SqlJsonServiceCollectionExtensions
         DbHelper.ConnectionString = connectionString;
 
         services.AddScoped<IDbService, DbService>();
+        //services.AddScoped<IDbCrudService, DbCrudService>();
 
         return services;
     }
@@ -58,6 +56,7 @@ public static class SqlJsonServiceCollectionExtensions
     public static IServiceCollection AddSqlJsonApi(this IServiceCollection services)
     {
         services.AddScoped<IDbService, ApiDbService>();
+        //services.AddScoped<IDbCrudService, ApiDbCrudService>();
 
         return services;
     }

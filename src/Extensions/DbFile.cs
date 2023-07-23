@@ -1,9 +1,7 @@
 ﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using System.ComponentModel.DataAnnotations;
-
-namespace UkrGuru.Extensions.Data;
+namespace UkrGuru.SqlJson.Extensions;
 
 /// <summary>
 /// Represents a file stored in a SQL Server database.
@@ -13,7 +11,6 @@ public class DbFile
     /// <summary>
     /// Gets or sets the unique identifier of the file.
     /// </summary>
-    [Key]
     public Guid? Id { get; set; }
 
     /// <summary>

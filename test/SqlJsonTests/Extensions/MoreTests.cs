@@ -3,9 +3,9 @@
 
 using System.Text.Json;
 
-namespace UkrGuru.Extensions;
+namespace UkrGuru.SqlJson.Extensions;
 
-public class MoreExtensionsTests
+public class MoreTests
 {
     [Fact]
     public void CanAddNew()
@@ -14,15 +14,23 @@ public class MoreExtensionsTests
         more.AddNew(null);
         more.AddNew("");
         more.AddNew("{}");
-        more.AddNew(JsonSerializer.Serialize(new {type = "Rule", data = "", data1 = null as string, boolTrue = true, boolFalse = false, boolNull = (bool?)null }));
+        more.AddNew(JsonSerializer.Serialize(new
+        {
+            dataNormal = "Rule",
+            dataEmpty = "",
+            dataNull = null as string,
+            boolTrue = true,
+            boolFalse = false,
+            boolNull = (bool?)null
+        }));
 
         var files = new[] { "file1.txt", "file2.txt" };
         more.AddNew(JsonSerializer.Serialize(new { type = "Action", timeout = 60, amount = 123.45, files }));
 
-        Assert.Equal("Rule", more.GetValue("type"));
-        Assert.Empty(more.GetValue("data")!);
-        Assert.Null(more.GetValue("data1"));
-        Assert.Null(more.GetValue("data2"));
+        Assert.Equal("Rule", more.GetValue("dataNormal"));
+        Assert.Empty(more.GetValue("dataEmpty")!);
+        Assert.Null(more.GetValue("dataNull"));
+        Assert.Null(more.GetValue("dataNotExists"));
 
         Assert.True(more.GetValue<bool>("boolTrue"));
         Assert.False(more.GetValue<bool>("boolFalse"));

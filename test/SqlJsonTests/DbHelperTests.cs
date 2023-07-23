@@ -1,77 +1,93 @@
 ﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
+using System.Text.Json;
 using System.Text.Json.Nodes;
-using static SqlJsonTests.Extensions.SqlObjectExtensionsTests;
+using static UkrGuru.SqlJson.GlobalTests;
 
 namespace UkrGuru.SqlJson;
 
 public class DbHelperTests
 {
-    public DbHelperTests() { 
+    public DbHelperTests()
+    {
         int i = 0; while (!GlobalTests.DbOk && i++ < 100) { Thread.Sleep(100); }
         DbHelper.ConnectionString = GlobalTests.ConnectionString;
     }
 
-    //[Fact]
-    //public static void CanCreateSqlConnection()
-    //{
-    //    var connection = DbHelper.CreateSqlConnection();
+    [Theory]
+    [InlineData(null, false)]
+    [InlineData("", false)]
+    [InlineData(".", false)]
+    [InlineData("SELECT 1", false)]
 
-    //    Assert.NotNull(connection);
-    //    Assert.Equal(Globals.DbName, connection.Database);
-    //    Assert.Equal(Globals.ConnectionString, connection.ConnectionString);
-    //}
+    [InlineData(" ", false)]
+    [InlineData("_", true)]
+    [InlineData("a", true)]
+    [InlineData("A", true)]
+    [InlineData("1", false)]
+    [InlineData("_1", true)]
+    [InlineData("a1", true)]
+    [InlineData("A1", true)]
+    [InlineData("[ ]", true)]
+    [InlineData("[1]", true)]
 
-    //[Theory]
-    //[InlineData(null, false)]
-    //[InlineData("Proc_1", true)]
-    //[InlineData("[Proc 1]", true)]
-    //[InlineData("[Proc 1 2]", true)]
-    //[InlineData("dbo_1.Proc_1", true)]
-    //[InlineData("dbo_1.[Proc 1]", true)]
-    //[InlineData("dbo_1.[Proc 1 2]", true)]
-    //[InlineData("[dbo_1].Proc_1", true)]
-    //[InlineData("[dbo_1].[Proc 1]", true)]
-    //[InlineData("[dbo_1].[Proc 1 2]", true)]
-    //[InlineData("[dbo 1].[Proc 1]", true)]
-    //[InlineData("[dbo 1].[Proc 1 2]", true)]
-    //[InlineData("SELECT 1", false)]
-    //public void IsNameTests(string? cmdText, bool expected)
-    //    => Assert.Equal(expected, DbHelper.IsName(cmdText));
+    [InlineData(" .A", false)]
+    [InlineData("_.A", true)]
+    [InlineData("a.A", true)]
+    [InlineData("A.A", true)]
+    [InlineData("1.A", false)]
+    [InlineData("_1.A", true)]
+    [InlineData("a1.A", true)]
+    [InlineData("A1.A", true)]
+    [InlineData("[ ].A", true)]
+    [InlineData("[1].A", true)]
 
-    //[Theory]
-    //[MemberData(nameof(GetData4CanNormalize), parameters: 19)]
-    //public void CanNormalize(object data, object expected) => Assert.Equal(expected, DbHelper.Normalize(data));
+    [InlineData("dbo. ", false)]
+    [InlineData("dbo._", true)]
+    [InlineData("dbo.a", true)]
+    [InlineData("dbo.A", true)]
+    [InlineData("dbo.1", false)]
+    [InlineData("dbo._1", true)]
+    [InlineData("dbo.a1", true)]
+    [InlineData("dbo.A1", true)]
+    [InlineData("dbo.[ ]", true)]
+    [InlineData("dbo.[1]", true)]
+    public void IsNameTests(string? cmdText, bool expected)
+        => Assert.Equal(expected, DbHelper.IsName(cmdText));
 
-    //public static IEnumerable<object[]> GetData4CanNormalize(int numTests)
-    //{
-    //    var guid = Guid.NewGuid();
-    //    string data = JsonSerializer.Serialize(new { Name = "Proc1" })!;
-    //    var allData = new List<object[]>
-    //    {
-    //        new object[] { "str1", "str1" },
-    //        new object[] { true, true },
-    //        new object[] { false, false },
-    //        new object[] { (byte)1, (byte)1 },
-    //        new object[] { new byte[] { 1, 2 }, new byte[] { 1, 2 } },
-    //        new object[] { new char[] { '1', '2' }, new char[] { '1', '2' } },
-    //        new object[] { 123.45d, 123.45d },
-    //        new object[] { 123.45f, 123.45f },
-    //        new object[] { 123, 123 },
-    //        new object[] { 12345, 12345 },
-    //        new object[] { 1234567890, 1234567890 },
-    //        new object[] { new DateOnly(2000, 1, 1), new DateOnly(2000, 1, 1) },
-    //        new object[] { new DateTime(2000, 1, 1, 1, 1, 1), new DateTime(2000, 1, 1, 1, 1, 1) },
-    //        new object[] { new DateTimeOffset(new DateTime(2000, 1, 1, 1, 1, 1)), new DateTimeOffset(new DateTime(2000, 1, 1, 1, 1, 1)) },
-    //        new object[] { new TimeOnly(1, 1, 1), new TimeOnly(1, 1, 1) },
-    //        new object[] { guid, guid },
-    //        new object[] { new { Name = "Proc1" }, data },
-    //        new object[] { JsonSerializer.Deserialize<dynamic?>(data)!, data }
-    //    };
+    [Theory]
+    [MemberData(nameof(GetData4CanNormalize), parameters: 19)]
+    public void CanNormalize(object data, object expected) => Assert.Equal(expected, DbHelper.Normalize(data));
 
-    //    return allData.Take(numTests);
-    //}
+    public static IEnumerable<object[]> GetData4CanNormalize(int numTests)
+    {
+        var guid = Guid.NewGuid();
+        string data = JsonSerializer.Serialize(new { Name = "Proc1" })!;
+        var allData = new List<object[]>
+        {
+            new object[] { "str1", "str1" },
+            new object[] { true, true },
+            new object[] { false, false },
+            new object[] { (byte)1, (byte)1 },
+            new object[] { new byte[] { 1, 2 }, new byte[] { 1, 2 } },
+            new object[] { new char[] { '1', '2' }, new char[] { '1', '2' } },
+            new object[] { 123.45d, 123.45d },
+            new object[] { 123.45f, 123.45f },
+            new object[] { 123, 123 },
+            new object[] { 12345, 12345 },
+            new object[] { 1234567890, 1234567890 },
+            new object[] { new DateOnly(2000, 1, 1), new DateOnly(2000, 1, 1) },
+            new object[] { new DateTime(2000, 1, 1, 1, 1, 1), new DateTime(2000, 1, 1, 1, 1, 1) },
+            new object[] { new DateTimeOffset(new DateTime(2000, 1, 1, 1, 1, 1)), new DateTimeOffset(new DateTime(2000, 1, 1, 1, 1, 1)) },
+            new object[] { new TimeOnly(1, 1, 1), new TimeOnly(1, 1, 1) },
+            new object[] { guid, guid },
+            new object[] { new { Name = "Proc1" }, data },
+            new object[] { JsonSerializer.Deserialize<dynamic?>(data)!, data }
+        };
+
+        return allData.Take(numTests);
+    }
 
     [Fact]
     public void CanExec()

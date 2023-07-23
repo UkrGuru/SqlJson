@@ -33,7 +33,8 @@ public class DbHelper
     /// </summary>
     /// <param name="tsql">The string to check.</param>
     /// <returns>True if the string is a valid name; otherwise, false.</returns>
-    internal static bool IsName(string? tsql) => tsql is not null && tsql.Length <= 100 && Regex.IsMatch(tsql, @"^(\w+|\[.+?\])(\.(\w+|\[.+?\]))?$");
+    public static bool IsName(string? tsql) => tsql is not null && tsql.Length <= 100 
+        && Regex.IsMatch(tsql, @"^([a-zA-Z_]\w*|\[.+?\])(\.([a-zA-Z_]\w*|\[.+?\]))?$");
 
     /// <summary>
     /// Converts a data object to the standard @Data parameter.
@@ -117,48 +118,47 @@ public class DbHelper
     }
 
     /// <summary>
-    /// Create, or add new entries
+    /// Creates a new record in the database.
     /// </summary>
-    /// <typeparam name="T">The type of results to return.</typeparam>
-    /// <param name="proc">The name of the stored procedure that will be used to create the T object. </param>
-    /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
-    /// <returns>The async task with T object.</returns>
-    public async Task<T?> CreateAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-        => await ExecAsync<T?>(proc, data, timeout, cancellationToken);
+    /// <typeparam name="T">The type of the record to be created.</typeparam>
+    /// <param name="proc">The stored procedure to execute.</param>
+    /// <param name="data">The data to be passed to the stored procedure.</param>
+    /// <param name="timeout">The command timeout.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The created record.</returns>
+    public static async Task<T?> CreateAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+        => await DbHelper.ExecAsync<T?>(proc, data, timeout, cancellationToken);
 
     /// <summary>
-    /// Read, retrieve, search, or view existing entries
+    /// Reads a record from the database.
     /// </summary>
-    /// <typeparam name="T">The type of results to return.</typeparam>
-    /// <param name="proc">The name of the stored procedure that will be used to read the T object.</param>
-    /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
-    /// <returns>The async task with T object.</returns>
-    public async Task<T?> ReadAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-        => await ExecAsync<T?>(proc, data, timeout, cancellationToken);
+    /// <typeparam name="T">The type of the record to be read.</typeparam>
+    /// <param name="proc">The stored procedure to execute.</param>
+    /// <param name="data">The data to be passed to the stored procedure.</param>
+    /// <param name="timeout">The command timeout.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The read record.</returns>
+    public static async Task<T?> ReadAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+        => await DbHelper.ExecAsync<T?>(proc, data, timeout, cancellationToken);
 
     /// <summary>
-    /// Update, or edit existing entries
+    /// Updates a record in the database.
     /// </summary>
-    /// <param name="proc">The name of the stored procedure that will be used to update the T object. </param>
-    /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
-    /// <returns>The async task.</returns>
-    public async Task UpdateAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-        => await ExecAsync(proc, data, timeout, cancellationToken);
+    /// <param name="proc">The stored procedure to execute.</param>
+    /// <param name="data">The data to be passed to the stored procedure.</param>
+    /// <param name="timeout">The command timeout.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    public static async Task<int> UpdateAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+        => await DbHelper.ExecAsync(proc, data, timeout, cancellationToken);
 
     /// <summary>
-    /// Delete, deactivate, or remove existing entries
+    /// Deletes a record from the database.
     /// </summary>
-    /// <param name="proc">The name of the stored procedure that will be used to delete the T object. </param>
-    /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
-    /// <returns>The async task.</returns>
-    public async Task DeleteAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-        => await ExecAsync(proc, data, timeout, cancellationToken);
+    /// <param name="proc">The stored procedure to execute.</param>
+    /// <param name="data">The data to be passed to the stored procedure.</param>
+    /// <param name="timeout">The command timeout.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    public static async Task<int> DeleteAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+        => await DbHelper.ExecAsync(proc, data, timeout, cancellationToken);
+
 }

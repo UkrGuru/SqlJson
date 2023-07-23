@@ -94,7 +94,7 @@ public interface IDbService
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
-    Task UpdateAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default);
+    Task<int> UpdateAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Delete, deactivate, or remove existing entries
@@ -104,7 +104,7 @@ public interface IDbService
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
-    Task DeleteAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default);
+    Task<int> DeleteAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default);
 }
 
 /// <summary>
@@ -125,23 +125,17 @@ public class DbService : IDbService
         => _connectionString = configuration.GetConnectionString(ConnectionStringName);
 
     /// <summary>
-    /// The ConnectionString name used to open the SQL Server database.
-    /// </summary>
-    public virtual string ConnectionStringName => "DefaultConnection";
-
-    /// <summary>
     /// Initializes a new instance of the SqlConnection class when given a string that contains the connection string.
     /// </summary>
     /// <returns>New instance of the SqlConnection class</returns>
     public SqlConnection CreateSqlConnection() => new(_connectionString);
 
     /// <summary>
-    /// Synchronous method that opens a database connection, then executes a Transact-SQL statement and returns the number of rows affected.
+    /// The ConnectionString name used to open the SQL Server database.
     /// </summary>
-    /// <param name="tsql">The text of the query or stored procedure name.</param>
-    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <returns>The number of rows affected.</returns>
+    public virtual string ConnectionStringName => "DefaultConnection";
+
+    /// <inheritdoc/>
     public int Exec(string tsql, object? data = null, int? timeout = null)
     {
         using SqlConnection connection = CreateSqlConnection();
@@ -150,15 +144,7 @@ public class DbService : IDbService
         return connection.Exec(tsql, data, timeout);
     }
 
-    /// <summary>
-    /// Synchronous method that opens a database connection, then executes a Transact-SQL statement with or without '@Data' parameter
-    /// and returns the result as an object.
-    /// </summary>
-    /// <typeparam name="T">The type of results to return.</typeparam>
-    /// <param name="tsql">The text of the query or stored procedure name.</param>
-    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <returns>Result as an object</returns>
+    /// <inheritdoc/>
     public T? Exec<T>(string tsql, object? data = null, int? timeout = null)
     {
         using SqlConnection connection = CreateSqlConnection();
@@ -167,14 +153,7 @@ public class DbService : IDbService
         return connection.Exec<T?>(tsql, data, timeout);
     }
 
-    /// <summary>
-    /// Asynchronous method that opens a database connection, then executes a Transact-SQL statement and returns the number of rows affected.
-    /// </summary>
-    /// <param name="tsql">The text of the query or stored procedure name.</param>
-    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
-    /// <returns>The number of rows affected.</returns>
+    /// <inheritdoc/>
     public async Task<int> ExecAsync(string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
         await using SqlConnection connection = CreateSqlConnection();
@@ -183,16 +162,7 @@ public class DbService : IDbService
         return await connection.ExecAsync(tsql, data, timeout, cancellationToken);
     }
 
-    /// <summary>
-    /// Asynchronous method that opens a database connection, then executes a Transact-SQL statement with or without '@Data' parameter
-    /// and returns the result as an object.
-    /// </summary>
-    /// <typeparam name="T">The type of results to return.</typeparam>
-    /// <param name="tsql">The text of the query or stored procedure name.</param>
-    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
-    /// <returns>Result as an object</returns>
+    /// <inheritdoc/>
     public async Task<T?> ExecAsync<T>(string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
         await using SqlConnection connection = CreateSqlConnection();
@@ -201,49 +171,19 @@ public class DbService : IDbService
         return await connection.ExecAsync<T?>(tsql, data, timeout, cancellationToken);
     }
 
-    /// <summary>
-    /// Create, or add new entries
-    /// </summary>
-    /// <typeparam name="T">The type of results to return.</typeparam>
-    /// <param name="proc">The name of the stored procedure that will be used to create the T object. </param>
-    /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
-    /// <returns>The async task with T object.</returns>
+    /// <inheritdoc/>
     public async Task<T?> CreateAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
         => await ExecAsync<T?>(proc, data, timeout, cancellationToken);
 
-    /// <summary>
-    /// Read, retrieve, search, or view existing entries
-    /// </summary>
-    /// <typeparam name="T">The type of results to return.</typeparam>
-    /// <param name="proc">The name of the stored procedure that will be used to read the T object.</param>
-    /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
-    /// <returns>The async task with T object.</returns>
+    /// <inheritdoc/>
     public async Task<T?> ReadAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
         => await ExecAsync<T?>(proc, data, timeout, cancellationToken);
 
-    /// <summary>
-    /// Update, or edit existing entries
-    /// </summary>
-    /// <param name="proc">The name of the stored procedure that will be used to update the T object. </param>
-    /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
-    /// <returns>The async task with number of rows affected.</returns>
-    public async Task UpdateAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+    /// <inheritdoc/>
+    public async Task<int> UpdateAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
         => await ExecAsync(proc, data, timeout, cancellationToken);
 
-    /// <summary>
-    /// Delete, deactivate, or remove existing entries
-    /// </summary>
-    /// <param name="proc">The name of the stored procedure that will be used to delete the T object. </param>
-    /// <param name="data">The only @Data parameter of any type available to a stored procedure.</param>
-    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
-    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
-    /// <returns>The async task with number of rows affected.</returns>
-    public async Task DeleteAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+    /// <inheritdoc/>
+    public async Task<int> DeleteAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
         => await ExecAsync(proc, data, timeout, cancellationToken);
 }

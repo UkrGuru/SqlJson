@@ -1,7 +1,6 @@
 using System.Reflection;
-using UkrGuru.Extensions;
-using UkrGuru.Extensions.Logging;
-using UkrGuru.SqlJson.Client;
+using UkrGuru.SqlJson;
+using UkrGuru.SqlJson.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +13,7 @@ builder.Services.AddRazorPages();
 var app = builder.Build();
 
 Assembly.GetExecutingAssembly().InitDb();
+
 typeof(ApiDbService).Assembly.InitDb();
 
 // Configure the HTTP request pipeline.

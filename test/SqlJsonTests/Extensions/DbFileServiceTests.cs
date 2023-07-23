@@ -1,22 +1,30 @@
 ﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using UkrGuru.Extensions.Data;
+using Microsoft.Extensions.Configuration;
 
-namespace UkrGuru.SqlJson.Client;
+namespace UkrGuru.SqlJson.Extensions;
 
-public class ApiDbFileServiceTests
+public class DbFileServiceTests
 {
-    private readonly HttpClient _http;
+    private readonly IConfiguration _configuration;
+
     private readonly IDbFileService _dbFile;
 
-    public ApiDbFileServiceTests()
+    public DbFileServiceTests()
     {
         int i = 0; while (!GlobalTests.DbOk && i++ < 100) { Thread.Sleep(100); }
 
-        _http = new HttpClient() { BaseAddress = new Uri("https://localhost:7285/") };
+        var inMemorySettings = new Dictionary<string, string?>() {
+            { "ConnectionStrings:DefaultConnection", GlobalTests.ConnectionString},
+            { "Logging:LogLevel:UkrGuru.SqlJson", "Information" }
+        };
 
-        _dbFile = new ApiDbFileService(_http);
+        _configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(inMemorySettings)
+            .Build();
+
+        _dbFile = new DbFileService(_configuration);
     }
 
     public static IEnumerable<object[]> GetTestBytes(int numTests)
@@ -35,18 +43,18 @@ public class ApiDbFileServiceTests
     [MemberData(nameof(GetTestBytes), parameters: 3)]
     public async Task BinFileTests(byte[] bytes)
     {
-        var fileName = $"{DateTime.Now.ToString("HHmmssnn")}.bin";
+        var fileName = $"{DateTime.Now.ToString("HHmmss")}.bin";
         var file1 = new DbFile { FileName = fileName, FileContent = bytes };
 
-        var guid1 = await _dbFile.SetAsync(file1);
+        var guid = await _dbFile.SetAsync(file1);
 
-        var file = await _dbFile.GetAsync(guid1);
+        var file = await _dbFile.GetAsync(guid);
 
         Assert.Equal(fileName, file?.FileName);
 
         Assert.Equal(bytes, file?.FileContent);
 
-        await _dbFile.DelAsync(guid1);
+        await _dbFile.DelAsync(guid);
     }
 
     public static IEnumerable<object[]> GetTestString(int numTests)

@@ -4,8 +4,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Telerik.Blazor.Components;
-using UkrGuru.Extensions.Logging;
 using UkrGuru.SqlJson;
+using UkrGuru.SqlJson.Extensions;
 
 namespace SqlJsonAppDemo.Shared;
 

@@ -4,8 +4,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Telerik.Blazor.Components;
-using UkrGuru.Extensions.Logging;
 using UkrGuru.SqlJson;
+using UkrGuru.SqlJson.Extensions;
 
 namespace SqlJsonWasmDemo.Client;
 
@@ -57,7 +57,7 @@ public class FormComponent : ComponentBase
         catch (Exception ex)
         {
             ErrMsg = $"Error: {ex.Message}";
-            dbLog.LogError($"{Title}/OnInitializedAsync", new { ex.Message, ex.StackTrace });
+            await dbLog.LogErrorAsync($"{Title}/OnInitializedAsync", new { ex.Message, ex.StackTrace });
         }
         Loading = false;
     }

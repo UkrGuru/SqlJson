@@ -2,9 +2,8 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using System.Reflection;
-using UkrGuru.SqlJson;
 
-namespace UkrGuru.Extensions;
+namespace UkrGuru.SqlJson.Extensions;
 
 /// <summary>
 /// Additional feature set for installing sql patches, saved as a resource in this assembly.
