@@ -294,9 +294,8 @@ public class DbHelperTests
     {
         Assert.Equal(-1, DbHelper.Exec("ProcNull"));
 
-        Assert.Equal(1, DbHelper.Exec<int?>("ProcInt", 1));
-
         Assert.Null(DbHelper.Exec<int?>("ProcInt", null));
+        Assert.Equal(1, DbHelper.Exec<int?>("ProcInt", 1));
 
         Assert.Equal("Data", DbHelper.Exec<string?>("ProcStr", "Data"));
 
