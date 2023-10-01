@@ -11,8 +11,80 @@ public class DbHelperTests
 {
     public DbHelperTests()
     {
-        int i = 0; while (!GlobalTests.DbOk && i++ < 100) { Thread.Sleep(100); }
-        DbHelper.ConnectionString = GlobalTests.ConnectionString;
+        DbHelper.ConnectionString = ConnectionString;
+    }
+
+    public static IEnumerable<object[]> GetData4CanNormalize(int numTests)
+    {
+        string data = JsonSerializer.Serialize(new { Name = "Proc1" })!;
+        var allData = new List<object[]>
+        {
+            new object[] { true, true },
+            new object[] { false, false },
+            new object[] { 0, 0 },
+            new object[] { byte.MaxValue, byte.MaxValue },
+            new object[] { short.MaxValue, short.MaxValue },
+            new object[] { int.MaxValue, int.MaxValue },
+            new object[] { long.MaxValue, long.MaxValue },
+            new object[] { 0.0, 0.0 },
+            new object[] { decimal.MaxValue, decimal.MaxValue },
+            new object[] { float.MaxValue, float.MaxValue },
+            new object[] { double.MaxValue, double.MaxValue },
+            new object[] { DateOnly.MaxValue, DateOnly.MaxValue },
+            new object[] { DateTime.MaxValue, DateTime.MaxValue },
+            new object[] { DateTimeOffset.MaxValue, DateTimeOffset.MaxValue },
+            new object[] { TimeOnly.MaxValue, TimeOnly.MaxValue },
+            new object[] { TimeSpan.MaxValue, TimeSpan.MaxValue },
+            new object[] { Guid.Empty, Guid.Empty },
+            new object[] { 'x', 'x' },
+            new object[] { string.Empty, string.Empty },
+            new object[] { "asd asd", "asd asd" },
+            new object[] { new byte[] { 0, 10, 100, byte.MaxValue }, new byte[] { 0, 10, 100, byte.MaxValue } },
+            new object[] { new char[] { '1', '2', '3' }, new char[] { '1', '2', '3' } },
+            new object[] { data, new { Name = "Proc1" } },
+            new object[] { UserType.Guest, UserType.Guest }
+        };
+
+        return allData.Take(numTests);
+    }
+
+    public static IEnumerable<object[]> GetTestBytes(int numTests)
+    {
+        var allData = new List<object[]>
+        {
+            new object[] { Array.Empty<byte>() },
+            new object[] { TestBytes1k },
+            new object[] { TestBytes5k },
+            new object[] { TestBytes55k }
+        };
+
+        return allData.Take(numTests);
+    }
+
+    public static IEnumerable<object[]> GetTestChars(int numTests)
+    {
+        var allData = new List<object[]>
+        {
+            new object[] { Array.Empty<char>() },
+            new object[] { TestChars1k },
+            new object[] { TestChars5k },
+            new object[] { TestChars55k }
+        };
+
+        return allData.Take(numTests);
+    }
+
+    public static IEnumerable<object[]> GetTestString(int numTests)
+    {
+        var allData = new List<object[]>
+        {
+            new object[] { string.Empty },
+            new object[] { TestString1k },
+            new object[] { TestString5k },
+            new object[] { TestString55k }
+        };
+
+        return allData.Take(numTests);
     }
 
     [Theory]
@@ -22,15 +94,17 @@ public class DbHelperTests
     [InlineData("SELECT 1", false)]
 
     [InlineData(" ", false)]
+    [InlineData("1", false)]
     [InlineData("_", true)]
     [InlineData("a", true)]
     [InlineData("A", true)]
-    [InlineData("1", false)]
     [InlineData("_1", true)]
     [InlineData("a1", true)]
     [InlineData("A1", true)]
+    [InlineData("A 1", false)]
     [InlineData("[ ]", true)]
     [InlineData("[1]", true)]
+    [InlineData("[A 1]", true)]
 
     [InlineData(" .A", false)]
     [InlineData("_.A", true)]
@@ -57,108 +131,45 @@ public class DbHelperTests
         => Assert.Equal(expected, DbHelper.IsName(cmdText));
 
     [Theory]
-    [MemberData(nameof(GetData4CanNormalize), parameters: 19)]
-    public void CanNormalize(object data, object expected) => Assert.Equal(expected, DbHelper.Normalize(data));
-
-    public static IEnumerable<object[]> GetData4CanNormalize(int numTests)
-    {
-        var guid = Guid.NewGuid();
-        string data = JsonSerializer.Serialize(new { Name = "Proc1" })!;
-        var allData = new List<object[]>
-        {
-            new object[] { "str1", "str1" },
-            new object[] { true, true },
-            new object[] { false, false },
-            new object[] { (byte)1, (byte)1 },
-            new object[] { new byte[] { 1, 2 }, new byte[] { 1, 2 } },
-            new object[] { new char[] { '1', '2' }, new char[] { '1', '2' } },
-            new object[] { 123.45d, 123.45d },
-            new object[] { 123.45f, 123.45f },
-            new object[] { 123, 123 },
-            new object[] { 12345, 12345 },
-            new object[] { 1234567890, 1234567890 },
-            new object[] { new DateOnly(2000, 1, 1), new DateOnly(2000, 1, 1) },
-            new object[] { new DateTime(2000, 1, 1, 1, 1, 1), new DateTime(2000, 1, 1, 1, 1, 1) },
-            new object[] { new DateTimeOffset(new DateTime(2000, 1, 1, 1, 1, 1)), new DateTimeOffset(new DateTime(2000, 1, 1, 1, 1, 1)) },
-            new object[] { new TimeOnly(1, 1, 1), new TimeOnly(1, 1, 1) },
-            new object[] { guid, guid },
-            new object[] { new { Name = "Proc1" }, data },
-            new object[] { JsonSerializer.Deserialize<dynamic?>(data)!, data }
-        };
-
-        return allData.Take(numTests);
-    }
-
-    [Fact]
-    public void CanExec()
-    {
-        Assert.Equal(-1, DbHelper.Exec("DECLARE @Num1 int = 1"));
-
-        Assert.Null(DbHelper.Exec<object?>("SELECT NULL"));
-
-        Assert.Equal(true, DbHelper.Exec<bool?>("SELECT CAST(@Data AS bit)", true));
-
-        Assert.Equal(Guid.Empty, DbHelper.Exec<Guid?>("SELECT CAST(@Data AS uniqueidentifier)", Guid.Empty));
-
-        Assert.Equal('X', DbHelper.Exec<char?>("SELECT @Data", 'X'));
-
-        Assert.Equal((byte)1, DbHelper.Exec<byte?>("SELECT @Data", (byte)1));
-        //Assert.Equal((sbyte)-1, DbHelper.Exec<sbyte?>("SELECT @Data", (sbyte)-1));
-        Assert.Equal(1, DbHelper.Exec<int?>("SELECT @Data", 1));
-        Assert.Equal((long)1, DbHelper.Exec<long?>("SELECT @Data", (long)1));
-        Assert.Equal(1.0f, DbHelper.Exec<float?>("SELECT @Data", 1.0f));
-        Assert.Equal(1.0d, DbHelper.Exec<double?>("SELECT @Data", 1.0d));
-        Assert.Equal(1.0m, DbHelper.Exec<decimal?>("SELECT @Data", 1.0m));
-
-        Assert.Equal(new DateOnly(2000, 1, 1), DbHelper.Exec<DateOnly?>("SELECT @Data", new DateOnly(2000, 1, 1)));
-        Assert.Equal(new DateTime(2000, 1, 1, 1, 1, 1), DbHelper.Exec<DateTime?>("SELECT @Data", new DateTime(2000, 1, 1, 1, 1, 1)));
-        Assert.Equal(new DateTimeOffset(new DateTime(2000, 1, 1)), DbHelper.Exec<DateTimeOffset?>("SELECT @Data", new DateTimeOffset(new DateTime(2000, 1, 1))));
-        Assert.Equal(new TimeOnly(1, 1, 1), DbHelper.Exec<TimeOnly?>("SELECT @Data", new TimeOnly(1, 1, 1)));
-        Assert.Equal(new TimeSpan(1, 1, 1), DbHelper.Exec<TimeSpan?>("SELECT @Data", new TimeSpan(1, 1, 1)));
-
-        Assert.Equal("John", DbHelper.Exec<string?>("SELECT JSON_VALUE(@Data, '$.Name');", new { Name = "John" }));
-
-        var rec1 = DbHelper.Exec<JsonObject>("SELECT 1 Id, 'John' Name FOR JSON PATH, WITHOUT_ARRAY_WRAPPER");
-        Assert.NotNull(rec1);
-        Assert.Equal(1, (int?)rec1["Id"]);
-        Assert.Equal("John", (string?)rec1["Name"]);
-
-        var recs = DbHelper.Exec<List<JsonObject>>("SELECT 1 Id, 'John' Name UNION ALL SELECT 2 Id, 'Mike' Name FOR JSON PATH");
-        Assert.NotNull(recs);
-        Assert.Equal(2, recs.Count);
-        Assert.Equal(1, (int?)recs[0]["Id"]);
-        Assert.Equal("John", (string?)recs[0]["Name"]);
-        Assert.Equal(2, (int?)recs[1]["Id"]);
-        Assert.Equal("Mike", (string?)recs[1]["Name"]);
-
-        Assert.Equal(UserType.User, DbHelper.Exec<UserType?>("SELECT @Data", UserType.User));
-    }
+    [MemberData(nameof(GetData4CanNormalize), parameters: 22)]
+    public void CanNormalize(object data, object expected)
+        => Assert.Equal(expected, DbHelper.Normalize(data));
 
     [Fact]
     public async Task CanExecAsync()
     {
-        Assert.Equal(-1, await DbHelper.ExecAsync("DECLARE @Num1 int = 1"));
+        Assert.Equal(-1, await DbHelper.ExecAsync("DECLARE @Num0 int = 0"));
+        Assert.Equal(1, await DbHelper.ExecAsync("DECLARE @Table1 TABLE(Column1 int); INSERT INTO @Table1 VALUES(1)"));
 
-        Assert.Null(await DbHelper.ExecAsync<int?>("SELECT NULL"));
+        Assert.Null(await DbHelper.ExecAsync<bool?>("DECLARE @Num0 int = 0"));
 
-        Assert.Equal(true, await DbHelper.ExecAsync<bool?>("SELECT @Data", true));
+        Assert.Null(await DbHelper.ExecAsync<bool?>("SELECT NULL"));
+        Assert.Null(await DbHelper.ExecAsync<object?>("SELECT NULL"));
 
-        Assert.Equal(Guid.Empty, await DbHelper.ExecAsync<Guid?>("SELECT @Data", Guid.Empty));
+        Assert.True(await DbHelper.ExecAsync<bool>("SELECT @Data", true));
+        Assert.False(await DbHelper.ExecAsync<bool>("SELECT @Data", false));
 
-        Assert.Equal('X', await DbHelper.ExecAsync<char?>("SELECT @Data", 'X'));
+        Assert.Equal(0, await DbHelper.ExecAsync<int>("SELECT @Data", 0));
+        Assert.Equal(byte.MaxValue, await DbHelper.ExecAsync<byte>("SELECT @Data", byte.MaxValue));
+        Assert.Equal(short.MaxValue, await DbHelper.ExecAsync<short>("SELECT @Data", short.MaxValue));
+        Assert.Equal(int.MaxValue, await DbHelper.ExecAsync<int>("SELECT @Data", int.MaxValue));
+        Assert.Equal(long.MaxValue, await DbHelper.ExecAsync<long>("SELECT @Data", long.MaxValue));
 
-        Assert.Equal((byte)1, await DbHelper.ExecAsync<byte?>("SELECT @Data", (byte)1));
-        Assert.Equal(1, await DbHelper.ExecAsync<int?>("SELECT @Data", 1));
-        Assert.Equal((long)1, await DbHelper.ExecAsync<long?>("SELECT @Data", (long)1));
-        Assert.Equal(1.0f, await DbHelper.ExecAsync<float?>("SELECT @Data", 1.0f));
-        Assert.Equal(1.0d, await DbHelper.ExecAsync<double?>("SELECT @Data", 1.0d));
-        Assert.Equal(1.0m, await DbHelper.ExecAsync<decimal?>("SELECT @Data", 1.0m));
+        Assert.Equal(decimal.MaxValue, await DbHelper.ExecAsync<decimal>("SELECT @Data", decimal.MaxValue));
+        Assert.Equal(float.MaxValue, await DbHelper.ExecAsync<float>("SELECT @Data", float.MaxValue));
+        Assert.Equal(double.MaxValue, await DbHelper.ExecAsync<double>("SELECT @Data", double.MaxValue));
 
-        Assert.Equal(new DateOnly(2000, 1, 1), await DbHelper.ExecAsync<DateOnly?>("SELECT @Data", new DateOnly(2000, 1, 1)));
-        Assert.Equal(new DateTime(2000, 1, 1, 1, 1, 1), await DbHelper.ExecAsync<DateTime?>("SELECT @Data", new DateTime(2000, 1, 1, 1, 1, 1)));
-        Assert.Equal(new DateTimeOffset(new DateTime(2000, 1, 1)), await DbHelper.ExecAsync<DateTimeOffset?>("SELECT @Data", new DateTimeOffset(new DateTime(2000, 1, 1))));
-        Assert.Equal(new TimeOnly(1, 1, 1), await DbHelper.ExecAsync<TimeOnly?>("SELECT @Data", new TimeOnly(1, 1, 1)));
-        Assert.Equal(new TimeSpan(1, 1, 1), await DbHelper.ExecAsync<TimeSpan?>("SELECT @Data", new TimeSpan(1, 1, 1)));
+        Assert.Equal(DateOnly.MaxValue, await DbHelper.ExecAsync<DateOnly>("SELECT @Data", DateOnly.MaxValue));
+        Assert.Equal(new DateTime(2000, 01, 13, 23, 0, 0), await DbHelper.ExecAsync<DateTime>("SELECT @Data", new DateTime(2000, 01, 13, 23, 0, 0)));
+        Assert.Equal(new DateTimeOffset(new DateTime(2000, 01, 13, 23, 0, 0)), await DbHelper.ExecAsync<DateTimeOffset>("SELECT @Data", new DateTimeOffset(new DateTime(2000, 01, 13, 23, 0, 0))));
+        Assert.Equal(new TimeOnly(23, 59, 59), await DbHelper.ExecAsync<TimeOnly>("SELECT @Data", new TimeOnly(23, 59, 59)));
+        Assert.Equal(new TimeSpan(23, 59, 59), await DbHelper.ExecAsync<TimeSpan>("SELECT @Data", new TimeSpan(23, 59, 59)));
+
+        Assert.Equal(Guid.Empty, await DbHelper.ExecAsync<Guid>("SELECT @Data", Guid.Empty));
+
+        Assert.Equal('x', await DbHelper.ExecAsync<char>("SELECT @Data", 'x'));
+        Assert.Equal(string.Empty, await DbHelper.ExecAsync<string>("SELECT @Data", string.Empty));
+        Assert.Equal("asd asd", await DbHelper.ExecAsync<string>("SELECT @Data", "asd asd"));
 
         Assert.Equal("John", await DbHelper.ExecAsync<string?>("SELECT JSON_VALUE(@Data, '$.Name');", new { Name = "John" }));
 
@@ -174,39 +185,14 @@ public class DbHelperTests
         Assert.Equal("John", (string?)recs[0]["Name"]);
         Assert.Equal(2, (int?)recs[1]["Id"]);
         Assert.Equal("Mike", (string?)recs[1]["Name"]);
-    }
 
-    public static IEnumerable<object[]> GetTestBytes(int numTests)
-    {
-        var allData = new List<object[]>
-        {
-            new object[] { Array.Empty<byte>() },
-            new object[] { GlobalTests.TestBytes1k },
-            new object[] { GlobalTests.TestBytes5k },
-            new object[] { GlobalTests.TestBytes55k }
-        };
-
-        return allData.Take(numTests);
+        Assert.Equal(UserType.User, await DbHelper.ExecAsync<UserType?>("SELECT @Data", UserType.User));
     }
 
     [Theory]
     [MemberData(nameof(GetTestBytes), parameters: 4)]
-    public void CanExec_Bytes(byte[] bytes) => Assert.Equal(bytes, DbHelper.Exec<byte[]?>("SELECT @Data", bytes));
-
-    [Theory]
-    [MemberData(nameof(GetTestBytes), parameters: 4)]
-    public async Task CanExecAsync_Bytes(byte[] bytes) => Assert.Equal(bytes, await DbHelper.ExecAsync<byte[]?>("SELECT @Data", bytes));
-
-    [Theory]
-    [MemberData(nameof(GetTestBytes), parameters: 4)]
-    public void CanExec_Stream(byte[] bytes)
-    {
-        using var msIn = new MemoryStream(bytes);
-        using var stream = DbHelper.Exec<Stream>("SELECT @Data", msIn);
-
-        Assert.NotNull(stream);
-        Assert.Equal(bytes, Stream2Bytes(stream));
-    }
+    public async Task CanExecAsync_Bytes(byte[] bytes) 
+        => Assert.Equal(bytes, await DbHelper.ExecAsync<byte[]?>("SELECT @Data", bytes));
 
     [Theory]
     [MemberData(nameof(GetTestBytes), parameters: 4)]
@@ -217,69 +203,27 @@ public class DbHelperTests
 
         Assert.NotNull(stream);
         Assert.Equal(bytes, Stream2Bytes(stream));
-    }
 
-    private static byte[] Stream2Bytes(Stream input)
-    {
-        MemoryStream ms = new();
-        input.CopyTo(ms);
-        return ms.ToArray();
-    }
-
-    public static IEnumerable<object[]> GetTestChars(int numTests)
-    {
-        var allData = new List<object[]>
+        byte[] Stream2Bytes(Stream input)
         {
-            new object[] { Array.Empty<char>() },
-            new object[] { GlobalTests.TestChars1k },
-            new object[] { GlobalTests.TestChars5k },
-            new object[] { GlobalTests.TestChars55k }
-        };
-
-        return allData.Take(numTests);
+            MemoryStream ms = new();
+            input.CopyTo(ms);
+            return ms.ToArray();
+        }
     }
 
     [Theory]
     [MemberData(nameof(GetTestChars), parameters: 4)]
-    public void CanExec_Chars(char[] chars) => Assert.Equal(chars, DbHelper.Exec<char[]?>("SELECT @Data", chars));
+    public async Task CanExecAsync_Chars(char[] chars) 
+        => Assert.Equal(chars, await DbHelper.ExecAsync<char[]?>("SELECT @Data", chars));
 
     [Theory]
-    [MemberData(nameof(GetTestChars), parameters: 4)]
-    public async Task CanExecAsync_Chars(char[] chars) => Assert.Equal(chars, await DbHelper.ExecAsync<char[]?>("SELECT @Data", chars));
-
-    public static IEnumerable<object[]> GetTestString(int numTests)
-    {
-        var allData = new List<object[]>
-        {
-            new object[] { GlobalTests.TestString1k },
-            new object[] { GlobalTests.TestString5k },
-            new object[] { GlobalTests.TestString55k }
-        };
-
-        return allData.Take(numTests);
-    }
+    [MemberData(nameof(GetTestString), parameters: 4)]
+    public async Task CanExecAsync_String(string str) 
+        => Assert.Equal(str, await DbHelper.ExecAsync<string?>("SELECT @Data", str));
 
     [Theory]
-    [MemberData(nameof(GetTestString), parameters: 3)]
-    public void CanExec_String(string str) => Assert.Equal(str, DbHelper.Exec<string?>("SELECT @Data", str));
-
-    [Theory]
-    [MemberData(nameof(GetTestString), parameters: 3)]
-    public async Task CanExecAsync_String(string str) => Assert.Equal(str, await DbHelper.ExecAsync<string?>("SELECT @Data", str));
-
-    [Theory]
-    [MemberData(nameof(GetTestString), parameters: 3)]
-    public void CanExec_TextReader(string text)
-    {
-        using TextReader readerSource = new StringReader(text);
-        using var readerResult = DbHelper.Exec<TextReader>("SELECT @Data", readerSource);
-
-        Assert.NotNull(readerResult);
-        Assert.Equal(text, readerResult.ReadToEnd());
-    }
-
-    [Theory]
-    [MemberData(nameof(GetTestString), parameters: 3)]
+    [MemberData(nameof(GetTestString), parameters: 4)]
     public async Task CanExecAsync_TextReader(string text)
     {
         using TextReader readerSource = new StringReader(text);
@@ -290,29 +234,64 @@ public class DbHelperTests
     }
 
     [Fact]
-    public void CanExec_StorProc()
+    public async Task CanCrudAsync()
     {
-        Assert.Equal(-1, DbHelper.Exec("ProcNull"));
+        var item1 = new { Name = "DbHelperName1" };
 
-        Assert.Null(DbHelper.Exec<int?>("ProcInt", null));
-        Assert.Equal(1, DbHelper.Exec<int?>("ProcInt", 1));
+        var id = await DbHelper.CreateAsync<decimal?>(@"
+INSERT INTO TestItems 
+SELECT * FROM OPENJSON(@Data) 
+WITH (Name nvarchar(50))
 
-        Assert.Equal("Data", DbHelper.Exec<string?>("ProcStr", "Data"));
+SELECT SCOPE_IDENTITY()
+", item1);
 
-        Assert.Equal("John", DbHelper.Exec<string?>("ProcObj", new { Name = "John" }));
-    }
+        Assert.NotNull(id);
 
-    [Fact]
-    public async Task CanExecAsync_StorProc()
-    {
-        Assert.Equal(-1, await DbHelper.ExecAsync("ProcNull"));
+        var item2 = await DbHelper.ReadAsync<Region?>(@"
+SELECT *
+FROM TestItems
+WHERE Id = @Data
+FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+", id);
 
-        Assert.Equal(1, await DbHelper.ExecAsync<int?>("ProcInt", 1));
+        Assert.NotNull(item2);
+        Assert.Equal(id, item2.Id);
+        Assert.Equal(item1.Name, item2.Name);
 
-        Assert.Null(await DbHelper.ExecAsync<int?>("ProcInt", null));
+        item2.Name = "DbHelperName2";
 
-        Assert.Equal("Data", await DbHelper.ExecAsync<string?>("ProcStr", "Data"));
+        await DbHelper.UpdateAsync(@"
+UPDATE TestItems
+SET Name = D.Name
+FROM OPENJSON(@Data) 
+WITH (Id int, Name nvarchar(50)) D
+WHERE TestItems.Id = D.Id
+", item2);
 
-        Assert.Equal("John", await DbHelper.ExecAsync<string?>("ProcObj", new { Name = "John" }));
+        var item3 = await DbHelper.ReadAsync<Region?>(@"
+SELECT *
+FROM TestItems
+WHERE Id = @Data
+FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+", id);
+
+        Assert.NotNull(item3);
+        Assert.Equal(item2.Id, item3.Id);
+        Assert.Equal(item2.Name, item3.Name);
+
+        await DbHelper.DeleteAsync(@"
+DELETE TestItems
+WHERE Id = @Data
+", id);
+
+        var item4 = await DbHelper.ReadAsync<Region?>(@"
+SELECT *
+FROM TestItems
+WHERE Id = @Data
+FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+", id);
+
+        Assert.Null(item4);
     }
 }

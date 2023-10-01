@@ -25,8 +25,7 @@ public static class SqlJsonServiceCollectionExtensions
         DbHelper.ConnectionString = connectionString;
 
         services.AddScoped<IDbService, DbService>();
-        //services.AddScoped<IDbCrudService, DbCrudService>();
-
+ 
         return services;
     }
 
@@ -44,32 +43,6 @@ public static class SqlJsonServiceCollectionExtensions
 
         services.AddScoped<IDbLogService, DbLogService>();
         services.AddScoped<IDbFileService, DbFileService>();
-
-        return services;
-    }
-
-    /// <summary>
-    /// Registers UkrGuru SqlJson services for client side application.
-    /// </summary>
-    /// <param name="services">The IServiceCollection argument the ConfigureServices method receives.</param>
-    /// <returns>The updated IServiceCollection collection argument the ConfigureServices method receives.</returns>
-    public static IServiceCollection AddSqlJsonApi(this IServiceCollection services)
-    {
-        services.AddScoped<IDbService, ApiDbService>();
-        //services.AddScoped<IDbCrudService, ApiDbCrudService>();
-
-        return services;
-    }
-
-    /// <summary>
-    /// Registers UkrGuru Extensions for client side application.
-    /// </summary>
-    /// <param name="services">The IServiceCollection argument the ConfigureServices method receives.</param>
-    /// <returns>The updated IServiceCollection collection argument the ConfigureServices method receives.</returns>
-    public static IServiceCollection AddSqlJsonApiExt(this IServiceCollection services)
-    {
-        services.AddScoped<IDbLogService, ApiDbLogService>();
-        services.AddScoped<IDbFileService, ApiDbFileService>();
 
         return services;
     }

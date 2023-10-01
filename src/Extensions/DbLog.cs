@@ -8,8 +8,6 @@ namespace UkrGuru.SqlJson.Extensions;
 /// </summary>
 public class DbLog
 {
-    internal const string WJbLogs_Ins = "WJbLogs_Ins";
-
     /// <summary>
     /// Date/Time of the log
     /// </summary>

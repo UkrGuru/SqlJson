@@ -45,8 +45,8 @@ public class DbHelper
     {
         // or sbyte or ushort or uint or ulong 
         bool or byte or short or int or long or float or double or decimal or
-        DateOnly or DateTime or DateTimeOffset or TimeOnly or TimeSpan or Guid or
-        char or string or byte[] or char[] or Stream or TextReader => data,
+        DateOnly or DateTime or DateTimeOffset or TimeOnly or TimeSpan or Guid or char or
+        string or byte[] or char[] or Stream or TextReader => data,
 
         _ => JsonSerializer.Serialize(data),
     };
@@ -118,7 +118,7 @@ public class DbHelper
     }
 
     /// <summary>
-    /// Creates a new record in the database.
+    /// Creates new item(s) in the database.
     /// </summary>
     /// <typeparam name="T">The type of the record to be created.</typeparam>
     /// <param name="proc">The stored procedure to execute.</param>
@@ -127,10 +127,10 @@ public class DbHelper
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The created record.</returns>
     public static async Task<T?> CreateAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-        => await DbHelper.ExecAsync<T?>(proc, data, timeout, cancellationToken);
+        => await ExecAsync<T?>(proc, data, timeout, cancellationToken);
 
     /// <summary>
-    /// Reads a record from the database.
+    /// Reads item(s) from the database.
     /// </summary>
     /// <typeparam name="T">The type of the record to be read.</typeparam>
     /// <param name="proc">The stored procedure to execute.</param>
@@ -139,26 +139,25 @@ public class DbHelper
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The read record.</returns>
     public static async Task<T?> ReadAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-        => await DbHelper.ExecAsync<T?>(proc, data, timeout, cancellationToken);
+        => await ExecAsync<T?>(proc, data, timeout, cancellationToken);
 
     /// <summary>
-    /// Updates a record in the database.
+    /// Updates item(s) in the database.
     /// </summary>
     /// <param name="proc">The stored procedure to execute.</param>
     /// <param name="data">The data to be passed to the stored procedure.</param>
     /// <param name="timeout">The command timeout.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     public static async Task<int> UpdateAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-        => await DbHelper.ExecAsync(proc, data, timeout, cancellationToken);
+        => await ExecAsync(proc, data, timeout, cancellationToken);
 
     /// <summary>
-    /// Deletes a record from the database.
+    /// Deletes item(s) from the database.
     /// </summary>
     /// <param name="proc">The stored procedure to execute.</param>
     /// <param name="data">The data to be passed to the stored procedure.</param>
     /// <param name="timeout">The command timeout.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     public static async Task<int> DeleteAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-        => await DbHelper.ExecAsync(proc, data, timeout, cancellationToken);
-
+        => await ExecAsync(proc, data, timeout, cancellationToken);
 }

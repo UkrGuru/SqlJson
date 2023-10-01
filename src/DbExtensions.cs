@@ -3,7 +3,6 @@
 
 using Microsoft.Data.SqlClient;
 using System.Data;
-using System.Globalization;
 using System.Text;
 using System.Text.Json;
 
@@ -15,13 +14,19 @@ namespace UkrGuru.SqlJson;
 public static class DbExtensions
 {
     /// <summary>
+    /// Determines whether the specified type is a long.
+    /// </summary>
+    /// <typeparam name="T">The type to check.</typeparam>
+    /// <returns><c>true</c> if the specified type is a long; otherwise, <c>false</c>.</returns>
+    public static bool IsLong<T>() => (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)).IsLong();
+
+    /// <summary>
     /// Determines whether a given type is considered "long" for database purposes.
     /// </summary>
     /// <param name="type">The type to check.</param>
     /// <returns>True if the type is considered "long", false otherwise.</returns>
     public static bool IsLong(this Type? type) => type == null || type.IsEnum ? false : type.Name switch
     {
-        // or "SByte" or "UInt16"  or "UInt32" or "UInt64" 
         "Boolean" or "Byte" or "Int16" or "Int32" or "Int64" or "Single" or "Double" or "Decimal" or
         "DateOnly" or "DateTime" or "DateTimeOffset" or "TimeOnly" or "TimeSpan" or "Guid" or "Char" => false,
         _ => true,
@@ -35,7 +40,7 @@ public static class DbExtensions
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>New instance of the SqlCommand class with initialize parameters</returns>
-    public static SqlCommand CreateSqlCommand(this SqlConnection connection, string tsql, object? data = null, int? timeout = null)
+    public static SqlCommand CreateSqlCommand(this SqlConnection connection, string tsql, object? data = default, int? timeout = default)
     {
         SqlCommand command = new(tsql, connection);
 
@@ -76,19 +81,17 @@ public static class DbExtensions
     /// <returns>Result as an object</returns>
     public static T? Exec<T>(this SqlConnection connection, string tsql, object? data = null, int? timeout = null)
     {
-        var type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
-
         using var command = connection.CreateSqlCommand(tsql, data, timeout);
 
-        if (type.IsLong())
+        if (IsLong<T?>())
         {
             using SqlDataReader reader = command.ExecuteReader(CommandBehavior.CloseConnection);
 
-            return reader.Read<T?>(type);
+            return reader.ReadAll<T?>();
         }
         else
         {
-            return command.ExecuteScalar().ToObj<T?>();
+            return command.ExecuteScalar<T?>();
         }
     }
 
@@ -122,19 +125,17 @@ public static class DbExtensions
     /// <returns>Result as an object</returns>
     public static async Task<T?> ExecAsync<T>(this SqlConnection connection, string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
-        var type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
-
         await using var command = connection.CreateSqlCommand(tsql, data, timeout);
 
-        if (type.IsLong())
+        if (IsLong<T?>())
         {
             await using SqlDataReader reader = await command.ExecuteReaderAsync(CommandBehavior.CloseConnection, cancellationToken);
 
-            return await reader.ReadAsync<T?>(type, cancellationToken);
+            return await reader.ReadAllAsync<T?>(cancellationToken);
         }
         else
         {
-            return (await command.ExecuteScalarAsync(cancellationToken)).ToObj<T?>();
+            return await command.ExecuteScalarAsync<T?>(cancellationToken);
         }
     }
 
@@ -143,23 +144,39 @@ public static class DbExtensions
     /// </summary>
     /// <typeparam name="T">The type to which the value should be casted.</typeparam>
     /// <param name="reader">The SqlDataReader instance.</param>
-    /// <param name="type">The type of the value to be returned.</param>
     /// <returns>The value casted to type T.</returns>
-    public static T? Read<T>(this SqlDataReader reader, Type type)
+    public static T? ReadAll<T>(this SqlDataReader reader)
     {
-        StringBuilder result = new();
+        Type type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
 
-        if (reader.HasRows)
+        if (type == typeof(byte[]))
+            return (reader.Read()) && !reader.IsDBNull(0) ? (T?)reader.GetValue(0) : default;
+
+        else if (type == typeof(char[]))
+            return (reader.Read()) && !reader.IsDBNull(0) ? (T?)(object)reader.GetSqlChars(0).Value : default;
+
+        else if (type == typeof(Stream))
+            return (T?)(object)((reader.Read()) && !reader.IsDBNull(0) ? reader.GetStream(0) : Stream.Null);
+
+        else if (type == typeof(TextReader))
+            return (T?)(object)((reader.Read()) && !reader.IsDBNull(0) ? reader.GetTextReader(0) : TextReader.Null);
+
+        else
+        {
+            StringBuilder sb = new();
+
             while (reader.Read())
-                if (!reader.IsDBNull(0))
-                {
-                    var value = reader.GetValue<T?>(type);
-                    if (value != null) return value;
+                sb.Append(reader.GetValue(0));
 
-                    result.Append(reader.GetValue(0));
-                }
+            var result = sb.ToString();
 
-        return result.ToObj<T?>();
+            if (type == typeof(string))
+                return (T?)(object)result;
+            else if (string.IsNullOrEmpty(result))
+                return default;
+            else
+                return JsonSerializer.Deserialize<T?>(result);
+        }
     }
 
     /// <summary>
@@ -167,73 +184,72 @@ public static class DbExtensions
     /// </summary>
     /// <typeparam name="T">The type to which the value should be casted.</typeparam>
     /// <param name="reader">The SqlDataReader instance.</param>
-    /// <param name="type">The type of the value to be returned.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The value casted to type T.</returns>
-    public static async Task<T?> ReadAsync<T>(this SqlDataReader reader, Type type, CancellationToken cancellationToken)
+    public static async Task<T?> ReadAllAsync<T>(this SqlDataReader reader, CancellationToken cancellationToken = default)
     {
-        StringBuilder result = new();
+        Type type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
 
-        if (reader.HasRows)
+        if (type == typeof(byte[]))
+            return (await reader.ReadAsync(cancellationToken)) && !reader.IsDBNull(0) ? (T?)reader.GetValue(0) : default;
+
+        else if (type == typeof(char[]))
+            return (await reader.ReadAsync(cancellationToken)) && !reader.IsDBNull(0) ? (T?)(object)reader.GetSqlChars(0).Value : default;
+
+        else if (type == typeof(Stream))
+            return (T?)(object)((await reader.ReadAsync(cancellationToken)) && !reader.IsDBNull(0) ? reader.GetStream(0) : Stream.Null);
+
+        else if (type == typeof(TextReader))
+            return (T?)(object)((await reader.ReadAsync(cancellationToken)) && !reader.IsDBNull(0) ? reader.GetTextReader(0) : TextReader.Null);
+
+        else
+        {
+            StringBuilder sb = new();
+
             while (await reader.ReadAsync(cancellationToken))
-                if (!await reader.IsDBNullAsync(0, cancellationToken))
-                {
-                    var value = reader.GetValue<T?>(type);
-                    if (value != null) return await Task.FromResult<T?>(value);
+                sb.Append(reader.GetValue(0));
 
-                    result.Append(reader.GetValue(0));
-                }
+            var result = sb.ToString();
 
-        return await Task.FromResult(result.ToObj<T?>());
+            if (type == typeof(string))
+                return (T?)(object)result;
+            else if (string.IsNullOrEmpty(result))
+                return default;
+            else
+                return JsonSerializer.Deserialize<T?>(result);
+        }
     }
 
     /// <summary>
-    /// Gets a value of the specified type from the SqlDataReader.
+    /// 
     /// </summary>
-    /// <typeparam name="T">The type of the value to return.</typeparam>
-    /// <param name="reader">The SqlDataReader to get the value from.</param>
-    /// <param name="type">The Type of the value to return.</param>
-    /// <returns>A value of the specified type from the SqlDataReader.</returns>
-    public static T? GetValue<T>(this SqlDataReader reader, Type type) => type switch
-    {
-        _ when type == typeof(byte[]) => (T?)reader.GetValue(0),
-        _ when type == typeof(char[]) => (T?)(object)reader.GetSqlChars(0).Value,
-        _ when type == typeof(Stream) => (T?)(object)reader.GetStream(0),
-        _ when type == typeof(TextReader) => (T?)(object)reader.GetTextReader(0),
-        _ => default,
-    };
+    /// <typeparam name="T"></typeparam>
+    /// <param name="command"></param>
+    /// <returns></returns>
+    public static T? ExecuteScalar<T>(this SqlCommand command)
+        => ConvertScalar<T?>(command.ExecuteScalar());
 
     /// <summary>
-    /// Converts the object value to an equivalent T object.
+    /// 
     /// </summary>
-    /// <typeparam name="T">The type of results to return.</typeparam>
-    /// <param name="value">The sql object value to convert.</param>
-    /// <param name="defaultValue">The default value to return if the conversion fails.</param>
-    /// <returns>The converted object of type T.</returns>
-    public static T? ToObj<T>(this object? value, T? defaultValue = default)
+    /// <typeparam name="T"></typeparam>
+    /// <param name="command"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public static async Task<T?> ExecuteScalarAsync<T>(this SqlCommand command, CancellationToken cancellationToken = default)
+        => ConvertScalar<T?>(await command.ExecuteScalarAsync(cancellationToken));
+
+    /// <summary>
+    /// Converts a scalar value to the specified type.
+    /// </summary>
+    /// <typeparam name="T">The target type.</typeparam>
+    /// <param name="value">The value to convert.</param>
+    /// <returns>The converted value of type <typeparamref name="T"/>.</returns>
+    public static T? ConvertScalar<T>(object? value)
     {
-        if (value == null || value == DBNull.Value)
-            return defaultValue;
-
-        if (value is string svalue && string.IsNullOrEmpty(svalue))
-            return defaultValue;
-
-        if (value is StringBuilder sb)
-            return sb?.Length > 0 ? sb.ToString().ToObj(defaultValue) : defaultValue;
+        if (value == null || value == DBNull.Value) return default;
 
         var type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
-
-        if (type == typeof(string))
-            return (T?)value;
-
-        else if (type.IsClass)
-            return value.JsonDeserialize<T?>();
-
-        else if (type == typeof(Guid))
-            return (T?)(object)Guid.Parse(Convert.ToString(value)!);
-
-        else if (type.IsEnum)
-            return (T?)Enum.Parse(type, Convert.ToString(value)!);
 
         if (type == typeof(DateOnly))
             return (T)(object)DateOnly.FromDateTime((DateTime)value);
@@ -241,24 +257,12 @@ public static class DbExtensions
         else if (type == typeof(TimeOnly))
             return (T)(object)TimeOnly.FromTimeSpan((TimeSpan)value);
 
-        else if (type.IsPrimitive)
-            return (T?)Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
+        else if (type == typeof(char))
+            return (T)(object)char.Parse((string)value);
 
-        else
-            return (T?)Convert.ChangeType(value, type);
-    }
+        else if (type.IsEnum)
+            return (T?)Enum.Parse(type, (string)value);
 
-    /// <summary>
-    /// Reads the UTF-8 encoded text or parses the text representing a single JSON value into a <typeparamref name="T"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of results to return.</typeparam>
-    /// <param name="value">The object value to convert.</param>
-    /// <returns>The converted object of type T.</returns>
-    public static T? JsonDeserialize<T>(this object value)
-    {
-        if (value is Stream stream)
-            return JsonSerializer.Deserialize<T>(stream);
-
-        return JsonSerializer.Deserialize<T>(Convert.ToString(value)!);
+        return (T)value;
     }
 }

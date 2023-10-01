@@ -1,129 +1,183 @@
 ﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using Microsoft.Extensions.Configuration;
-using System.Text.Json;
+using System.Text.Json.Nodes;
+using static UkrGuru.SqlJson.GlobalTests;
 
 namespace UkrGuru.SqlJson;
 
 public class DbServiceTests
 {
-    private readonly IConfiguration _configuration;
-
     private readonly IDbService _db;
 
     public DbServiceTests()
     {
-        int i = 0; while (!GlobalTests.DbOk && i++ < 100) { Thread.Sleep(100); }
-
-        var inMemorySettings = new Dictionary<string, string?>() {
-            { "ConnectionStrings:DefaultConnection", GlobalTests.ConnectionString},
-            { "Logging:LogLevel:UkrGuru.SqlJson", "Information" }
-        };
-
-        _configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(inMemorySettings)
-            .Build();
-
-        _db = new DbService(_configuration);
+        _db = new DbService(Configuration);
     }
 
-    public static IEnumerable<object[]> GetData4CanNormalize(int numTests)
+    public static IEnumerable<object[]> GetTestBytes(int numTests)
     {
-        var guid = Guid.Empty;
-        string data = JsonSerializer.Serialize(new { Name = "Proc1" })!;
         var allData = new List<object[]>
         {
-            new object[] { "str1", "str1" },
-            new object[] { true, "True"  },
-            new object[] { false, "False" },
-            new object[] { (byte)1, "1" },
-            //new object[] { new byte[] { 1, 2 }, new byte[] { 1, 2 } },
-            //new object[] { new char[] { '1', '2' }, new char[] { '1', '2' } },
-            new object[] { 123.45d, "123.45"  },
-            new object[] { 123.45f, "123.45"  },
-            new object[] { 123, "123"  },
-            new object[] { 12345, "12345"  },
-            new object[] { 1234567890, "1234567890" },
-            //new object[] { new DateOnly(2000, 1, 1), "" },
-            new object[] { new DateTime(2000, 1, 1, 1, 1, 1), "01/01/2000 01:01:01" },
-            //new object[] { new DateTimeOffset(new DateTime(2000, 1, 1, 1, 1, 1)), "" },
-            //new object[] { new TimeOnly(1, 1, 1), "" },
-            //new object[] { guid, "00000000-0000-0000-0000-000000000000" },
-            //new object[] { new { Name = "Proc1" }, data },
-            //new object[] { JsonSerializer.Deserialize<dynamic?>(data)!, data }
+            new object[] { Array.Empty<byte>() },
+            new object[] { TestBytes1k },
+            new object[] { TestBytes5k },
+            new object[] { TestBytes55k }
         };
 
         return allData.Take(numTests);
     }
 
-    [Theory]
-    [MemberData(nameof(GetData4CanNormalize), parameters: 17)]
-    public async Task CanExecAsync(string? data, object expected) => Assert.Equal(expected, await _db.ExecAsync<string?>("ProcVar", data));
-
-    [Fact]
-    public async Task CanHaveResultsAsync()
+    public static IEnumerable<object[]> GetTestChars(int numTests)
     {
-        //Assert.Null(await _db.ExecAsync<int?>("ProcNull"));
+        var allData = new List<object[]>
+        {
+            new object[] { Array.Empty<char>() },
+            new object[] { TestChars1k },
+            new object[] { TestChars5k },
+            new object[] { TestChars55k }
+        };
 
-        //Assert.Null(await _db.ExecAsync<int?>("ProcVar", null));
-        //Assert.Equal(1, await _db.ExecAsync<int?>("ProcVar", 1));
-
-        //Assert.Equal("Data", await _db.ExecAsync<string?>("ProcVar", "Data"));
-
-        //Assert.Equal(true, await _db.ExecAsync<bool?>("ProcVar", true));
-
-        //Assert.Equal(Guid.Empty, await _db.ExecAsync<Guid?>("ProcVar", Guid.Empty));
-
-        //Assert.Equal('X', await _db.ExecAsync<char?>("ProcVar", 'X'));
-
-        //Assert.Equal((byte)1, await _db.ExecAsync<byte?>("ProcVar", (byte)1));
-        //Assert.Equal(1, await _db.ExecAsync<int?>("ProcVar", 1));
-        //Assert.Equal((long)1, await _db.ExecAsync<long?>("ProcVar", (long)1));
-        //Assert.Equal(1.0f, await _db.ExecAsync<float?>("ProcVar", 1.0f));
-        //Assert.Equal(1.0d, await _db.ExecAsync<double?>("ProcVar", 1.0d));
-        //Assert.Equal(1.0m, await _db.ExecAsync<decimal?>("ProcVar", 1.0m));
-
-        //Assert.Equal(new DateOnly(2000, 1, 1), await _db.ExecAsync<DateOnly?>("ProcVar", new DateOnly(2000, 1, 1)));
-        //Assert.Equal(new DateTime(2000, 1, 1, 1, 1, 1), await _db.ExecAsync<DateTime?>("ProcVar", new DateTime(2000, 1, 1, 1, 1, 1)));
-        //Assert.Equal(new DateTimeOffset(new DateTime(2000, 1, 1)), await _db.ExecAsync<DateTimeOffset?>("ProcVar", new DateTimeOffset(new DateTime(2000, 1, 1))));
-        //Assert.Equal(new TimeOnly(1, 1, 1), await _db.ExecAsync<TimeOnly?>("ProcVar", new TimeOnly(1, 1, 1)));
-        //Assert.Equal(new TimeSpan(1, 1, 1), await _db.ExecAsync<TimeSpan?>("ProcVar", new TimeSpan(1, 1, 1)));
-
-        Assert.Equal("John", await _db.ExecAsync<string?>("ProcObj", new { Name = "John" }));
-        //Assert.Equal("John", await _db.ExecAsync<string?>("SELECT JSON_VALUE(@Data, '$.Name');", new { Name = "John" }));
-
-        //var rec1 = await _db.ExecAsync<JsonObject>("SELECT 1 Id, 'John' Name FOR JSON PATH, WITHOUT_ARRAY_WRAPPER");
-        //Assert.NotNull(rec1);
-        //Assert.Equal(1, (int?)rec1["Id"]);
-        //Assert.Equal("John", (string?)rec1["Name"]);
-
-        //var recs = await _db.ExecAsync<List<JsonObject>>("SELECT 1 Id, 'John' Name UNION ALL SELECT 2 Id, 'Mike' Name FOR JSON PATH");
-        //Assert.NotNull(recs);
-        //Assert.Equal(2, recs.Count);
-        //Assert.Equal(1, (int?)recs[0]["Id"]);
-        //Assert.Equal("John", (string?)recs[0]["Name"]);
-        //Assert.Equal(2, (int?)recs[1]["Id"]);
-        //Assert.Equal("Mike", (string?)recs[1]["Name"]);
+        return allData.Take(numTests);
     }
 
-    //[Fact]
-    //public void CanExec()
-    //{
-    //    Assert.Null(_db.Exec<bool?>("SELECT NULL"));
-    //    Assert.True(_db.Exec<bool?>("SELECT @Data", true));
+    public static IEnumerable<object[]> GetTestString(int numTests)
+    {
+        var allData = new List<object[]>
+        {
+            new object[] { string.Empty },
+            new object[] { TestString1k },
+            new object[] { TestString5k },
+            new object[] { TestString55k }
+        };
 
-    //    Assert.Equal(-1, _db.Exec("ProcNull"));
-    //    Assert.Equal(1, _db.Exec<int?>("ProcInt", 1));
-    //}
+        return allData.Take(numTests);
+    }
 
-    //[Fact]
-    //public async Task CanExecAsync()
-    //{
-    //    Assert.Null(await _db.ExecAsync<bool?>("SELECT NULL"));
-    //    Assert.True(await _db.ExecAsync<bool?>("SELECT @Data", true));
+    [Fact]
+    public async Task CanExecAsync()
+    {
+        Assert.Equal(-1, await _db.ExecAsync("Exec0"));
+        Assert.Equal(1, await _db.ExecAsync("Exec1"));
 
-    //    Assert.Equal(-1, await _db.ExecAsync("ProcNull"));
-    //    Assert.Equal(1, await _db.ExecAsync<int?>("ProcInt", 1));
-    //}
+        Assert.Null(await _db.ExecAsync<bool?>("Exec0"));
+
+        Assert.Null(await _db.ExecAsync<bool?>("ProcNull"));
+        Assert.Null(await _db.ExecAsync<object?>("ProcNull"));
+
+        Assert.True(await _db.ExecAsync<bool>("ProcVar", true));
+        Assert.False(await _db.ExecAsync<bool>("ProcVar", false));
+
+        Assert.Equal(0, await _db.ExecAsync<int>("ProcVar", 0));
+        Assert.Equal(byte.MaxValue, await _db.ExecAsync<byte>("ProcVar", byte.MaxValue));
+        Assert.Equal(short.MaxValue, await _db.ExecAsync<short>("ProcVar", short.MaxValue));
+        Assert.Equal(int.MaxValue, await _db.ExecAsync<int>("ProcVar", int.MaxValue));
+        Assert.Equal(long.MaxValue, await _db.ExecAsync<long>("ProcVar", long.MaxValue));
+
+        Assert.Equal(decimal.MaxValue, await _db.ExecAsync<decimal>("ProcVar", decimal.MaxValue));
+        Assert.Equal(float.MaxValue, await _db.ExecAsync<float>("ProcVar", float.MaxValue));
+        Assert.Equal(double.MaxValue, await _db.ExecAsync<double>("ProcVar", double.MaxValue));
+
+        Assert.Equal(DateOnly.MaxValue, await _db.ExecAsync<DateOnly>("ProcVar", DateOnly.MaxValue));
+        Assert.Equal(new DateTime(2000, 01, 13, 23, 0, 0), await _db.ExecAsync<DateTime>("ProcVar", new DateTime(2000, 01, 13, 23, 0, 0)));
+        Assert.Equal(new DateTimeOffset(new DateTime(2000, 01, 13, 23, 0, 0)), await _db.ExecAsync<DateTimeOffset>("ProcVar", new DateTimeOffset(new DateTime(2000, 01, 13, 23, 0, 0))));
+        Assert.Equal(new TimeOnly(23, 59, 59), await _db.ExecAsync<TimeOnly>("ProcVar", new TimeOnly(23, 59, 59)));
+        Assert.Equal(new TimeSpan(23, 59, 59), await _db.ExecAsync<TimeSpan>("ProcVar", new TimeSpan(23, 59, 59)));
+
+        Assert.Equal(Guid.Empty, await _db.ExecAsync<Guid>("ProcVar", Guid.Empty));
+
+        Assert.Equal('x', await _db.ExecAsync<char>("ProcVar", 'x'));
+        Assert.Equal(string.Empty, await _db.ExecAsync<string>("ProcVar", string.Empty));
+        Assert.Equal("asd asd", await _db.ExecAsync<string>("ProcVar", "asd asd"));
+
+        Assert.Equal("John", await _db.ExecAsync<string?>("ProcObj", new { Name = "John" }));
+
+        var rec1 = await _db.ExecAsync<JsonObject>("ProcObj1");
+        Assert.NotNull(rec1);
+        Assert.Equal(1, (int?)rec1["Id"]);
+        Assert.Equal("John", (string?)rec1["Name"]);
+
+        var recs = await _db.ExecAsync<List<JsonObject>>("ProcObj2");
+        Assert.NotNull(recs);
+        Assert.Equal(2, recs.Count);
+        Assert.Equal(1, (int?)recs[0]["Id"]);
+        Assert.Equal("John", (string?)recs[0]["Name"]);
+        Assert.Equal(2, (int?)recs[1]["Id"]);
+        Assert.Equal("Mike", (string?)recs[1]["Name"]);
+
+        Assert.Equal(UserType.User, await _db.ExecAsync<UserType?>("ProcVar", UserType.User));
+    }
+
+    [Theory]
+    [MemberData(nameof(GetTestBytes), parameters: 4)]
+    public async Task CanExecAsync_Bytes(byte[] bytes) => Assert.Equal(bytes, await _db.ExecAsync<byte[]?>("ProcVarBin", bytes));
+
+    [Theory]
+    [MemberData(nameof(GetTestBytes), parameters: 4)]
+    public async Task CanExecAsync_Stream(byte[] bytes)
+    {
+        using var msIn = new MemoryStream(bytes);
+        using var stream = await _db.ExecAsync<Stream>("ProcVarBin", msIn);
+
+        Assert.NotNull(stream);
+        Assert.Equal(bytes, Stream2Bytes(stream));
+
+        byte[] Stream2Bytes(Stream input)
+        {
+            MemoryStream ms = new();
+            input.CopyTo(ms);
+            return ms.ToArray();
+        }
+    }
+
+    [Theory]
+    [MemberData(nameof(GetTestChars), parameters: 4)]
+    public async Task CanExecAsync_Chars(char[] chars) => Assert.Equal(chars, await _db.ExecAsync<char[]?>("ProcVarChar", chars));
+
+    [Theory]
+    [MemberData(nameof(GetTestString), parameters: 4)]
+    public async Task CanExecAsync_String(string str) => Assert.Equal(str, await _db.ExecAsync<string?>("ProcVarChar", str));
+
+    [Theory]
+    [MemberData(nameof(GetTestString), parameters: 4)]
+    public async Task CanExecAsync_TextReader(string text)
+    {
+        using TextReader readerSource = new StringReader(text);
+        using var readerResult = await _db.ExecAsync<TextReader>("ProcVarChar", readerSource);
+
+        Assert.NotNull(readerResult);
+        Assert.Equal(text, await readerResult.ReadToEndAsync());
+    }
+
+    [Fact]
+    public async Task CanCrudAsync()
+    {
+        var item1 = new { Name = "DbName1" };
+
+        var id = await _db.CreateAsync<decimal?>("TestItems_Ins", item1);
+
+        Assert.NotNull(id);
+
+        var item2 = await _db.ReadAsync<Region?>("TestItems_Get", id);
+
+        Assert.NotNull(item2);
+        Assert.Equal(id, item2.Id);
+        Assert.Equal(item1.Name, item2.Name);
+
+        item2.Name = "DbName2";
+
+        await _db.UpdateAsync("TestItems_Upd", item2);
+
+        var item3 = await _db.ReadAsync<Region?>("TestItems_Get", id);
+
+        Assert.NotNull(item3);
+        Assert.Equal(item2.Id, item3.Id);
+        Assert.Equal(item2.Name, item3.Name);
+
+        await _db.DeleteAsync("TestItems_Del", id);
+
+        var item4 = await _db.ReadAsync<Region?>("TestItems_Get", id);
+
+        Assert.Null(item4);
+    }
 }

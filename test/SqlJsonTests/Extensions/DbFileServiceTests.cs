@@ -1,46 +1,47 @@
 ﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using Microsoft.Extensions.Configuration;
+using static UkrGuru.SqlJson.GlobalTests;
 
 namespace UkrGuru.SqlJson.Extensions;
 
 public class DbFileServiceTests
 {
-    private readonly IConfiguration _configuration;
-
     private readonly IDbFileService _dbFile;
 
     public DbFileServiceTests()
     {
-        int i = 0; while (!GlobalTests.DbOk && i++ < 100) { Thread.Sleep(100); }
-
-        var inMemorySettings = new Dictionary<string, string?>() {
-            { "ConnectionStrings:DefaultConnection", GlobalTests.ConnectionString},
-            { "Logging:LogLevel:UkrGuru.SqlJson", "Information" }
-        };
-
-        _configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(inMemorySettings)
-            .Build();
-
-        _dbFile = new DbFileService(_configuration);
+        _dbFile = new DbFileService(Configuration);
     }
 
     public static IEnumerable<object[]> GetTestBytes(int numTests)
     {
         var allData = new List<object[]>
         {
-            new object[] { GlobalTests.TestBytes1k },
-            new object[] { GlobalTests.TestBytes5k },
-            new object[] { GlobalTests.TestBytes55k }
+            new object[] { Array.Empty<byte>() },
+            new object[] { TestBytes1k },
+            new object[] { TestBytes5k },
+            new object[] { TestBytes55k }
+        };
+
+        return allData.Take(numTests);
+    }
+
+    public static IEnumerable<object[]> GetTestString(int numTests)
+    {
+        var allData = new List<object[]>
+        {
+            new object[] { string.Empty },
+            new object[] { TestString1k },
+            new object[] { TestString5k },
+            new object[] { TestString55k }
         };
 
         return allData.Take(numTests);
     }
 
     [Theory]
-    [MemberData(nameof(GetTestBytes), parameters: 3)]
+    [MemberData(nameof(GetTestBytes), parameters: 4)]
     public async Task BinFileTests(byte[] bytes)
     {
         var fileName = $"{DateTime.Now.ToString("HHmmss")}.bin";
@@ -55,18 +56,6 @@ public class DbFileServiceTests
         Assert.Equal(bytes, file?.FileContent);
 
         await _dbFile.DelAsync(guid);
-    }
-
-    public static IEnumerable<object[]> GetTestString(int numTests)
-    {
-        var allData = new List<object[]>
-        {
-            new object[] { GlobalTests.TestString1k },
-            new object[] { GlobalTests.TestString5k },
-            new object[] { GlobalTests.TestString55k }
-        };
-
-        return allData.Take(numTests);
     }
 
     [Theory]

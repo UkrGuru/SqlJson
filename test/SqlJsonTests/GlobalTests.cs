@@ -9,7 +9,7 @@ namespace UkrGuru.SqlJson;
 
 public class GlobalTests
 {
-    public const string DbName = "SqlJsonTest5";
+    public const string DbName = "SqlJsonTest7";
 
     private static string? _connectionString;
 
@@ -23,9 +23,39 @@ public class GlobalTests
         }
     }
 
-    public static bool DbOk { get; set; }
+    private static IConfiguration _configuration;
 
-    public static IConfiguration Configuration { get; set; }
+    public static IConfiguration Configuration
+    {
+        get
+        {
+            if (_configuration == null)
+            {
+                var inMemorySettings = new Dictionary<string, string?>() {
+                    { "ConnectionStrings:DefaultConnection", ConnectionString},
+                    { "Logging:LogLevel:UkrGuru.SqlJson", "Information" }
+                };
+
+                _configuration = new ConfigurationBuilder()
+                    .AddInMemoryCollection(inMemorySettings)
+                    .Build();
+            }
+
+            return _configuration;
+        }
+    }
+
+    private static HttpClient _http;
+
+    public static HttpClient Http
+    {
+        get
+        {
+            _http ??= new HttpClient() { BaseAddress = new Uri("https://localhost:7271/") };
+
+            return _http;
+        }
+    }
 
     public static Random Random = new Random(2511);
 
@@ -69,7 +99,7 @@ public class GlobalTests
         {
             if (_testBytes55k == null)
             {
-                _testBytes55k = new byte[1024 * 5];
+                _testBytes55k = new byte[1024 * 55];
                 Random.NextBytes(_testBytes55k);
             }
 
@@ -94,34 +124,16 @@ public class GlobalTests
         SysAdmin
     }
 
-    public GlobalTests()
-    {
-        if (DbOk) return;
-
-        var connectionString = $"Server=(localdb)\\mssqllocaldb;Database={DbName};Trusted_Connection=True";
-
-        DbHelper.ConnectionString = connectionString.Replace(DbName, "master");
-
-        DbHelper.Exec($"IF DB_ID('{DbName}') IS NULL CREATE DATABASE {DbName};");
-
-        DbHelper.ConnectionString = connectionString;
-
-        Assembly.GetAssembly(typeof(DbFile)).InitDb();
-
-        Assembly.GetExecutingAssembly().InitDb();
-
-        var inMemorySettings = new Dictionary<string, string?>() {
-            { "ConnectionStrings:DefaultConnection", connectionString },
-            { "Logging:LogLevel:UkrGuru.SqlJson", "Information" }
-        };
-
-        Configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(inMemorySettings)
-            .Build();
-
-        DbOk = true;
-    }
-
     [Fact]
-    public void CanInitDbs() { }
+    public void CanInitDbs()
+    {
+        //var connectionString = ConnectionString;
+        //DbHelper.ConnectionString = connectionString.Replace(DbName, "master");
+        //DbHelper.Exec($"IF DB_ID('{DbName}') IS NULL CREATE DATABASE {DbName};");
+        //DbHelper.ConnectionString = connectionString;
+
+        Assembly.GetAssembly(typeof(DbHelper)).InitDb();
+
+        //Assembly.GetExecutingAssembly().InitDb();
+    }
 }

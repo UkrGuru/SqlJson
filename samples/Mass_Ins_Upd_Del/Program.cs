@@ -21,7 +21,7 @@ WITH (ID int, Name varchar(50))";
 
 started = DateTime.Now;
 
-await DbHelper.ExecAsync(sql_insert, students);
+_ = await DbHelper.CreateAsync<string?>(sql_insert, students);
 
 Console.WriteLine($"Inserted {N / 1024}K - {DateTime.Now.Subtract(started)}");
 
@@ -40,7 +40,7 @@ INNER JOIN (SELECT * FROM OPENJSON(@Data)
 
 started = DateTime.Now;
 
-await DbHelper.ExecAsync(sql_update,
+await DbHelper.UpdateAsync(sql_update,
     students.Select(c => new { c.ID, c.Class, c.Grade }));
 
 Console.WriteLine($"Updated {N / 1024}K - {DateTime.Now.Subtract(started)}");
@@ -51,7 +51,7 @@ WHERE ID IN (SELECT value FROM OPENJSON(@Data))";
 
 started = DateTime.Now;
 
-await DbHelper.ExecAsync(sql_delete,
+await DbHelper.DeleteAsync(sql_delete,
     students.Where(x => x.Grade < 1).Select(c => c.ID ));
 
 Console.WriteLine($"Deleted {(N / 5) / 1024}K - {DateTime.Now.Subtract(started)}");

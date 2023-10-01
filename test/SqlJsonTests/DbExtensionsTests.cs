@@ -3,50 +3,122 @@
 
 using Microsoft.Data.SqlClient;
 using System.Data;
-using System.Text;
-using System.Text.Json;
 using static UkrGuru.SqlJson.GlobalTests;
 
 namespace UkrGuru.SqlJson;
 
 public class DbExtensionsTests
 {
+    [Fact]
+    public void IsLong_FactTests()
+    {
+        Assert.False(DbExtensions.IsLong<bool?>());
+        Assert.False(DbExtensions.IsLong<bool>());
+
+        Assert.False(DbExtensions.IsLong<byte?>());
+        Assert.False(DbExtensions.IsLong<byte>());
+
+        Assert.False(DbExtensions.IsLong<bool?>());
+        Assert.False(DbExtensions.IsLong<bool>());
+
+        Assert.False(DbExtensions.IsLong<short?>());
+        Assert.False(DbExtensions.IsLong<short>());
+
+        Assert.False(DbExtensions.IsLong<int?>());
+        Assert.False(DbExtensions.IsLong<int>());
+
+        Assert.False(DbExtensions.IsLong<long?>());
+        Assert.False(DbExtensions.IsLong<long>());
+
+        Assert.False(DbExtensions.IsLong<float?>());
+        Assert.False(DbExtensions.IsLong<float>());
+
+        Assert.False(DbExtensions.IsLong<double?>());
+        Assert.False(DbExtensions.IsLong<double>());
+
+        Assert.False(DbExtensions.IsLong<decimal?>());
+        Assert.False(DbExtensions.IsLong<decimal>());
+
+        Assert.False(DbExtensions.IsLong<DateOnly?>());
+        Assert.False(DbExtensions.IsLong<DateOnly>());
+
+        Assert.False(DbExtensions.IsLong<DateTime?>());
+        Assert.False(DbExtensions.IsLong<DateTime>());
+
+        Assert.False(DbExtensions.IsLong<DateTimeOffset?>());
+        Assert.False(DbExtensions.IsLong<DateTimeOffset>());
+
+        Assert.False(DbExtensions.IsLong<TimeOnly?>());
+        Assert.False(DbExtensions.IsLong<TimeOnly>());
+
+        Assert.False(DbExtensions.IsLong<TimeSpan?>());
+        Assert.False(DbExtensions.IsLong<TimeSpan>());
+
+        Assert.False(DbExtensions.IsLong<Guid?>());
+        Assert.False(DbExtensions.IsLong<Guid>());
+
+        Assert.False(DbExtensions.IsLong<char?>());
+        Assert.False(DbExtensions.IsLong<char>());
+
+        Assert.False(DbExtensions.IsLong<UserType?>());
+        Assert.False(DbExtensions.IsLong<UserType>());
+
+        Assert.True(DbExtensions.IsLong<string?>());
+        Assert.True(DbExtensions.IsLong<string>());
+
+        Assert.True(DbExtensions.IsLong<byte[]?>());
+        Assert.True(DbExtensions.IsLong<byte[]>());
+
+        Assert.True(DbExtensions.IsLong<char[]?>());
+        Assert.True(DbExtensions.IsLong<char[]>());
+
+        Assert.True(DbExtensions.IsLong<Stream>());
+        Assert.True(DbExtensions.IsLong<TextReader>());
+        Assert.True(DbExtensions.IsLong<object>());
+    }
+
     [Theory]
     [InlineData(null, false)]
-    [InlineData(typeof(Boolean), false)]
-    [InlineData(typeof(Byte), false)]
-    [InlineData(typeof(Int16), false)]
-    [InlineData(typeof(Int32), false)]
-    [InlineData(typeof(Int64), false)]
-    [InlineData(typeof(Single), false)]
-    [InlineData(typeof(Double), false)]
-    [InlineData(typeof(Decimal), false)]
+    [InlineData(typeof(bool), false)]
+    [InlineData(typeof(byte), false)]
+    [InlineData(typeof(short), false)]
+    [InlineData(typeof(int), false)]
+    [InlineData(typeof(long), false)]
+    [InlineData(typeof(float), false)]
+    [InlineData(typeof(double), false)]
+    [InlineData(typeof(decimal), false)]
     [InlineData(typeof(DateOnly), false)]
     [InlineData(typeof(DateTime), false)]
     [InlineData(typeof(DateTimeOffset), false)]
     [InlineData(typeof(TimeOnly), false)]
     [InlineData(typeof(TimeSpan), false)]
     [InlineData(typeof(Guid), false)]
-    [InlineData(typeof(Char), false)]
+    [InlineData(typeof(char), false)]
     [InlineData(typeof(UserType), false)]
-    [InlineData(typeof(Byte[]), true)]
-    [InlineData(typeof(Char[]), true)]
-    public void IsLongTests(Type? t, bool expected)
+    [InlineData(typeof(string), true)]
+    [InlineData(typeof(byte[]), true)]
+    [InlineData(typeof(char[]), true)]
+    [InlineData(typeof(Stream), true)]
+    [InlineData(typeof(TextReader), true)]
+    [InlineData(typeof(object), true)]
+    public void IsLong_TheoryTests(Type? t, bool expected)
         => Assert.Equal(expected, t.IsLong());
 
     [Theory]
-    [InlineData("SELECT 1;", null)]
-    [InlineData("SELECT 1;", 1)]
-    [InlineData("SELECT 1;", null, 15)]
-    [InlineData("SELECT 1;", null, 45)]
+    [InlineData("SELECT @Data", null)]
+    [InlineData("SELECT @Data", 1)]
+    [InlineData("SELECT @Data", null, 15)]
+    [InlineData("SELECT @Data", null, 45)]
     [InlineData("ProcTest", null, null, CommandType.StoredProcedure)]
     public static void CanCreateSqlCommand(string cmdText, object? data = null, int? timeout = null, CommandType expected = CommandType.Text)
     {
-        using var connection = new SqlConnection(ConnectionString);
-        connection.Open();
+        // Arrange
+        SqlConnection connection = new SqlConnection(ConnectionString);
 
+        // Act
         var command = connection.CreateSqlCommand(cmdText, data, timeout);
 
+        // Assert
         Assert.NotNull(command);
         Assert.Equal(cmdText, command.CommandText);
 
@@ -68,96 +140,57 @@ public class DbExtensionsTests
     }
 
     [Fact]
-    public void CanStringBuilderToObj()
+    public static void CanConvertScalar()
     {
-        Assert.Null(((StringBuilder?)null).ToObj<string?>()); ;
-        Assert.Null((new StringBuilder()).ToObj<string?>()); ;
+        Assert.Equal((bool?)null, DbExtensions.ConvertScalar<bool?>(null));
+        Assert.Equal((bool?)null, DbExtensions.ConvertScalar<bool?>(DBNull.Value));
 
-        StringBuilder sb = new();
-        sb.Append("t");
-        sb.Append("r");
-        sb.Append("u");
-        sb.Append("e");
+        Assert.Equal(true, DbExtensions.ConvertScalar<bool?>(true));
+        Assert.Equal(false, DbExtensions.ConvertScalar<bool?>(false));
 
-        Assert.True(sb.ToObj(false));
-    }
+        Assert.Null(DbExtensions.ConvertScalar<byte?>(null));
+        Assert.Equal(byte.MaxValue, DbExtensions.ConvertScalar<byte?>(byte.MaxValue));
 
-    [Theory]
-    [InlineData(null, null, null)]
-    [InlineData(null, "A", "A")]
-    [InlineData("", "A", "A")]
-    [InlineData("A", "A", "A")]
-    [InlineData("A", "B", "A")]
-    public static void CanStringToObj(object? value, string? defaultValue = default, string? expected = default)
-        => Assert.Equal(expected, value.ToObj(defaultValue));
+        Assert.Null(DbExtensions.ConvertScalar<short?>(null));
+        Assert.Equal(short.MaxValue, DbExtensions.ConvertScalar<short?>(short.MaxValue));
 
-    [Fact]
-    public static void CanClassToObj()
-    {
-        var region = new Region() { Id = 1, Name = "West" };
-        var actual = JsonSerializer.Serialize(region).ToObj<Region?>();
+        Assert.Null(DbExtensions.ConvertScalar<int?>(null));
+        Assert.Equal(int.MaxValue, DbExtensions.ConvertScalar<int?>(int.MaxValue));
 
-        Assert.Equal(region.Id, actual?.Id);
-        Assert.Equal(region.Name, actual?.Name);
+        Assert.Null(DbExtensions.ConvertScalar<long?>(null));
+        Assert.Equal(long.MaxValue, DbExtensions.ConvertScalar<long?>(long.MaxValue));
 
-        var stream = new MemoryStream(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(region)));
-        actual = stream.ToObj<Region?>();
+        Assert.Null(DbExtensions.ConvertScalar<float?>(null));
+        Assert.Equal(float.MaxValue, DbExtensions.ConvertScalar<float?>(float.MaxValue));
 
-        Assert.Equal(region.Id, actual?.Id);
-        Assert.Equal(region.Name, actual?.Name);
-    }
+        Assert.Null(DbExtensions.ConvertScalar<double?>(null));
+        Assert.Equal(double.MaxValue, DbExtensions.ConvertScalar<double?>(double.MaxValue));
 
-    [Fact]
-    public static void CanGuidToObj()
-    {
-        Assert.Equal((Guid?)null, (null as object).ToObj<Guid?>());
-        Assert.Equal(Guid.Empty, (null as string).ToObj<Guid?>(Guid.Empty));
-        Assert.Equal(Guid.Empty, string.Empty.ToObj<Guid?>(Guid.Empty));
+        Assert.Null(DbExtensions.ConvertScalar<decimal?>(null));
+        Assert.Equal(decimal.MaxValue, DbExtensions.ConvertScalar<decimal?>(decimal.MaxValue));
 
-        var someguid = Guid.NewGuid();
-        var actual = someguid.ToString().ToObj<Guid?>();
+        Assert.Null(DbExtensions.ConvertScalar<DateOnly?>(null));
+        Assert.Equal(DateOnly.MaxValue, DbExtensions.ConvertScalar<DateOnly?>(DateOnly.MaxValue.ToDateTime(TimeOnly.MinValue)));
 
-        Assert.Equal(someguid, actual);
-    }
+        Assert.Null(DbExtensions.ConvertScalar<DateTime?>(null));
+        Assert.Equal(DateTime.MaxValue, DbExtensions.ConvertScalar<DateTime?>(DateTime.MaxValue));
 
-    [Fact]
-    public static void CanEnumToObj()
-    {
-        Assert.Equal((UserType?)null, (null as string).ToObj<UserType?>());
-        Assert.Equal(UserType.Guest, (null as string).ToObj<UserType?>(UserType.Guest));
-        Assert.Equal(UserType.Guest, UserType.Guest.ToString().ToObj<UserType?>());
-        Assert.Equal(UserType.Guest, UserType.Guest.ToString("g").ToObj<UserType?>());
-    }
+        Assert.Null(DbExtensions.ConvertScalar<DateTimeOffset?>(null));
+        Assert.Equal(DateTimeOffset.MaxValue, DbExtensions.ConvertScalar<DateTimeOffset?>(DateTimeOffset.MaxValue));
 
-    [Fact]
-    public static void CanDateOnlyToObj()
-    {
-        Assert.Equal((DateOnly?)null, (null as string).ToObj<DateOnly?>());
-        Assert.Equal(DateOnly.MinValue, (null as string).ToObj<DateOnly?>(DateOnly.MinValue));
-        Assert.Equal(DateOnly.MinValue, DateOnly.MinValue.ToDateTime(TimeOnly.MinValue).ToObj<DateOnly?>());
-    }
+        Assert.Null(DbExtensions.ConvertScalar<TimeOnly?>(null));
+        Assert.Equal(TimeOnly.MaxValue, DbExtensions.ConvertScalar<TimeOnly?>(TimeOnly.MaxValue.ToTimeSpan()));
 
-    [Fact]
-    public static void CanTimeOnlyToObj()
-    {
-        Assert.Equal((TimeOnly?)null, (null as string).ToObj<TimeOnly?>());
-        Assert.Equal(TimeOnly.MinValue, (null as string).ToObj<TimeOnly?>(TimeOnly.MinValue));
-        Assert.Equal(TimeOnly.MinValue, TimeOnly.MinValue.ToTimeSpan().ToObj<TimeOnly?>());
-    }
+        Assert.Null(DbExtensions.ConvertScalar<TimeSpan?>(null));
+        Assert.Equal(TimeSpan.MaxValue, DbExtensions.ConvertScalar<TimeSpan?>(TimeSpan.MaxValue));
 
-    [Fact]
-    public static void CanPrimitiveToObj()
-    {
-        Assert.Equal((Int32?)null, (null as string).ToObj<Int32?>());
-        Assert.Equal(Int32.MaxValue, (null as string).ToObj<Int32?>(Int32.MaxValue));
-        Assert.Equal(Int32.MaxValue, Int32.MaxValue.ToString().ToObj<Int32?>());
-    }
+        Assert.Null(DbExtensions.ConvertScalar<Guid?>(null));
+        Assert.Equal(Guid.Empty, DbExtensions.ConvertScalar<Guid?>(Guid.Empty));
 
-    [Fact]
-    public static void CanOtherToObj()
-    {
-        Assert.Equal((DateTime?)null, (null as string).ToObj<DateTime?>());
-        Assert.Equal(DateTime.MinValue, (null as string).ToObj<DateTime?>(DateTime.MinValue));
-        Assert.Equal(DateTime.MinValue, DateTime.MinValue.ToString().ToObj<DateTime?>());
+        Assert.Null(DbExtensions.ConvertScalar<char?>(null));
+        Assert.Equal('x', DbExtensions.ConvertScalar<char?>('x'.ToString()));
+
+        Assert.Null(DbExtensions.ConvertScalar<string?>(null));
+        Assert.Equal(string.Empty, DbExtensions.ConvertScalar<string?>(string.Empty));
     }
 }
