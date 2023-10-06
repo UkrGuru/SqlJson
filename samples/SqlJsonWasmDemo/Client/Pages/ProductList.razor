@@ -1,0 +1,89 @@
+﻿@page "/products"
+@using Telerik.DataSource;
+@inherits FormComponent
+
+<TitleErrMsg Title="@Title" ErrMsg="@ErrMsg"></TitleErrMsg>
+
+<TelerikGrid Data=@GridData OnCreate="@CreateHandler" OnUpdate="@UpdateHandler" OnDelete="@DeleteHandler" ConfirmDelete="true"
+             Pageable="true" Groupable="true" Sortable="true" FilterMode="GridFilterMode.FilterMenu"
+             Resizable="true" Reorderable="true" EditMode="GridEditMode.Popup"
+             PageSize="10" Navigable="true">
+    <GridColumns>
+        <GridColumn Field="@nameof(ProductDto.ProductName)" Title="Product Name" Width="195px" />
+        <GridColumn Field="@nameof(ProductDto.UnitPrice)" DisplayFormat="{0:c2}" Width="120px" Title="Cost" TextAlign="@ColumnTextAlign.Right"></GridColumn>
+        <GridColumn Field="@nameof(ProductDto.Discontinued)" Width="135px" Title="Discontinued" Editable="false" TextAlign="@ColumnTextAlign.Center">
+            <Template>
+                @{
+                    var product = context as ProductDto;
+                    if (product?.Discontinued.GetValueOrDefault() == true)
+                    {
+                        <span class="k-badge k-badge-md k-badge-solid k-badge-solid-error k-rounded-md">Discontinued</span>
+                    }
+                    else
+                    {
+                        <span class="k-badge k-badge-md k-badge-solid k-badge-solid-success k-rounded-md">Available</span>
+                    }
+                }
+            </Template>
+        </GridColumn>
+        <GridColumn Field="@nameof(ProductDto.CategoryName)" Title="Category" Width="140px"></GridColumn>
+        <GridColumn Field="@nameof(ProductDto.UnitsInStock)" Title="In Stock" Width="170px">
+            <Template>
+                @{
+                    var product = context as ProductDto;
+                    var value = product.UnitsInStock.GetValueOrDefault();
+                }
+                <TelerikProgressBar Class="width-100" Max="125" Value="(double)value">
+                    <ProgressBarLabel Visible="true" Position="@ProgressBarLabelPosition.Center">
+                        <Template Context="progressBarContext">
+                            @if (value > 125)
+                            {
+                                <span style="font-weight:bold">Over 125 in stock</span>
+                            }
+                            else
+                            {
+                                <span>In stock:<span style="font-weight:bold">@(progressBarContext.Value)</span></span>
+                            }
+                        </Template>
+                    </ProgressBarLabel>
+                </TelerikProgressBar>
+            </Template>
+        </GridColumn>
+        <GridColumn Field="@nameof(ProductDto.QuantityPerUnit)" Title="Quantity Per Unit" Width="200px" />
+        <GridCommandColumn Width="190px">
+            <GridCommandButton Command="Edit" Icon="@FontIcon.Pencil" ThemeColor="@ThemeConstants.Button.ThemeColor.Primary">Edit</GridCommandButton>
+            <GridCommandButton Command="Delete" Icon="@FontIcon.Trash">Delete</GridCommandButton>
+        </GridCommandColumn>
+    </GridColumns>
+    <GridToolBarTemplate>
+        <GridCommandButton Command="Add" Icon="@FontIcon.Plus">Add Product</GridCommandButton>
+    </GridToolBarTemplate>
+</TelerikGrid>
+
+@code {
+    public List<ProductDto>? GridData { get; set; }
+
+    protected override object? ID { get; }
+    
+    protected override async Task InitData() { Title ??= "Products"; await Task.CompletedTask; }
+
+    protected override async Task LoadData()
+    {
+        GridData = await db.ReadAsync<List<ProductDto>>("Products_Grd");
+    }
+
+    protected override async Task InsItemAsync(GridCommandEventArgs args)
+        => await db.CreateAsync<int?>("Products_Ins", (ProductDto)args.Item);
+
+    protected override async Task UpdItemAsync(GridCommandEventArgs args)
+        => await db.UpdateAsync("Products_Upd", (ProductDto)args.Item);
+
+    protected override async Task DelItemAsync(GridCommandEventArgs args)
+        => await db.DeleteAsync("Products_Del", ((ProductDto)args.Item)?.ProductId);
+}
+
+<style>
+    .width-100 {
+        width: 100%;
+    }
+</style>

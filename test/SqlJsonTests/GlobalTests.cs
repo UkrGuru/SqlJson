@@ -9,7 +9,7 @@ namespace UkrGuru.SqlJson;
 
 public class GlobalTests
 {
-    public const string DbName = "SqlJsonTest7";
+    public const string DbName = "SqlJsonTest";
 
     private static string? _connectionString;
 
@@ -124,16 +124,28 @@ public class GlobalTests
         SysAdmin
     }
 
+    public GlobalTests()
+    {
+        //var connectionString = $"Server=(localdb)\\mssqllocaldb;Database={DbName};Trusted_Connection=True";
+
+        //DbHelper.ConnectionString = connectionString.Replace(DbName, "master");
+
+        //DbHelper.Exec($"IF DB_ID('{DbName}') IS NULL CREATE DATABASE {DbName};");
+
+        //DbHelper.ConnectionString = connectionString;
+
+        //Assembly.GetAssembly(typeof(DbHelper)).InitDb();
+
+        //Assembly.GetExecutingAssembly().InitDb();
+    }
+
     [Fact]
     public void CanInitDbs()
     {
-        //var connectionString = ConnectionString;
-        //DbHelper.ConnectionString = connectionString.Replace(DbName, "master");
-        //DbHelper.Exec($"IF DB_ID('{DbName}') IS NULL CREATE DATABASE {DbName};");
-        //DbHelper.ConnectionString = connectionString;
+        DbHelper.ConnectionString = ConnectionString;
 
         Assembly.GetAssembly(typeof(DbHelper)).InitDb();
 
-        //Assembly.GetExecutingAssembly().InitDb();
+        Assembly.GetExecutingAssembly().InitDb();
     }
 }

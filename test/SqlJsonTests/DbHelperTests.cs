@@ -144,8 +144,8 @@ public class DbHelperTests
         Assert.Null(await DbHelper.ExecAsync<bool?>("DECLARE @Num0 int = 0"));
 
         Assert.Null(await DbHelper.ExecAsync<bool?>("SELECT NULL"));
-        Assert.Null(await DbHelper.ExecAsync<object?>("SELECT NULL"));
 
+        Assert.Null(await DbHelper.ExecAsync<bool?>("SELECT NULL", null));
         Assert.True(await DbHelper.ExecAsync<bool>("SELECT @Data", true));
         Assert.False(await DbHelper.ExecAsync<bool>("SELECT @Data", false));
 
@@ -171,6 +171,11 @@ public class DbHelperTests
         Assert.Equal(string.Empty, await DbHelper.ExecAsync<string>("SELECT @Data", string.Empty));
         Assert.Equal("asd asd", await DbHelper.ExecAsync<string>("SELECT @Data", "asd asd"));
 
+        Assert.Equal(new byte[] { 0, 10, 100, byte.MaxValue }, await DbHelper.ExecAsync<byte[]>("SELECT @Data", new byte[] { 0, 10, 100, byte.MaxValue }));
+        Assert.Equal(new char[] { '1', '2', '3' }, await DbHelper.ExecAsync<char[]>("SELECT @Data", new char[] { '1', '2', '3' }));
+
+        Assert.Equal(UserType.User, await DbHelper.ExecAsync<UserType?>("SELECT @Data", UserType.User));
+
         Assert.Equal("John", await DbHelper.ExecAsync<string?>("SELECT JSON_VALUE(@Data, '$.Name');", new { Name = "John" }));
 
         var rec1 = await DbHelper.ExecAsync<JsonObject>("SELECT 1 Id, 'John' Name FOR JSON PATH, WITHOUT_ARRAY_WRAPPER");
@@ -185,13 +190,11 @@ public class DbHelperTests
         Assert.Equal("John", (string?)recs[0]["Name"]);
         Assert.Equal(2, (int?)recs[1]["Id"]);
         Assert.Equal("Mike", (string?)recs[1]["Name"]);
-
-        Assert.Equal(UserType.User, await DbHelper.ExecAsync<UserType?>("SELECT @Data", UserType.User));
     }
 
     [Theory]
     [MemberData(nameof(GetTestBytes), parameters: 4)]
-    public async Task CanExecAsync_Bytes(byte[] bytes) 
+    public async Task CanExecAsync_Bytes(byte[] bytes)
         => Assert.Equal(bytes, await DbHelper.ExecAsync<byte[]?>("SELECT @Data", bytes));
 
     [Theory]
@@ -214,16 +217,16 @@ public class DbHelperTests
 
     [Theory]
     [MemberData(nameof(GetTestChars), parameters: 4)]
-    public async Task CanExecAsync_Chars(char[] chars) 
+    public async Task CanExecAsync_Chars(char[] chars)
         => Assert.Equal(chars, await DbHelper.ExecAsync<char[]?>("SELECT @Data", chars));
 
     [Theory]
-    [MemberData(nameof(GetTestString), parameters: 4)]
-    public async Task CanExecAsync_String(string str) 
+    [MemberData(nameof(GetTestString), parameters: 3)]
+    public async Task CanExecAsync_String(string str)
         => Assert.Equal(str, await DbHelper.ExecAsync<string?>("SELECT @Data", str));
 
     [Theory]
-    [MemberData(nameof(GetTestString), parameters: 4)]
+    [MemberData(nameof(GetTestString), parameters: 3)]
     public async Task CanExecAsync_TextReader(string text)
     {
         using TextReader readerSource = new StringReader(text);

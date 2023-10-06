@@ -105,6 +105,16 @@ public interface IDbService
     /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
     Task<int> DeleteAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default);
+
+    ///// <summary>
+    ///// 
+    ///// </summary>
+    ///// <param name="proc"></param>
+    ///// <param name="data"></param>
+    ///// <param name="timeout"></param>
+    ///// <param name="cancellationToken"></param>
+    ///// <returns></returns>
+    //Task TestAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default);
 }
 
 /// <summary>
@@ -186,4 +196,8 @@ public class DbService : IDbService
     /// <inheritdoc/>
     public async Task<int> DeleteAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
         => await ExecAsync(proc, data, timeout, cancellationToken);
+
+    ///// <inheritdoc/>
+    //public async Task TestAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default) 
+    //    => await ExecAsync(proc, data, timeout, cancellationToken);
 }

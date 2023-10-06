@@ -4,12 +4,11 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
+        <Version>6.7.0</Version>
     </PropertyGroup>
     <ItemGroup>
       <Compile Remove="ApiExtensionsTests.cs" />
       <Compile Remove="ApiHelperTests.cs" />
-      <Compile Remove="Extensions\ApiDbFileServiceTests.cs" />
-      <Compile Remove="Extensions\ApiDbLogTests.cs" />
     </ItemGroup>
     <ItemGroup>
       <None Remove="Resources\InitDb.sql" />

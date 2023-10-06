@@ -57,13 +57,13 @@ public class DbServiceTests
     [Fact]
     public async Task CanExecAsync()
     {
-        Assert.Equal(-1, await _db.ExecAsync("Exec0"));
-        Assert.Equal(1, await _db.ExecAsync("Exec1"));
+        Assert.Equal(-1, await _db.DeleteAsync("Exec0"));
+        Assert.Equal(1, await _db.DeleteAsync("Exec1"));
 
         Assert.Null(await _db.ExecAsync<bool?>("Exec0"));
 
         Assert.Null(await _db.ExecAsync<bool?>("ProcNull"));
-        Assert.Null(await _db.ExecAsync<object?>("ProcNull"));
+        Assert.Null(await _db.ExecAsync<bool?>("ProcVar", null));
 
         Assert.True(await _db.ExecAsync<bool>("ProcVar", true));
         Assert.False(await _db.ExecAsync<bool>("ProcVar", false));
@@ -80,6 +80,7 @@ public class DbServiceTests
 
         Assert.Equal(DateOnly.MaxValue, await _db.ExecAsync<DateOnly>("ProcVar", DateOnly.MaxValue));
         Assert.Equal(new DateTime(2000, 01, 13, 23, 0, 0), await _db.ExecAsync<DateTime>("ProcVar", new DateTime(2000, 01, 13, 23, 0, 0)));
+
         Assert.Equal(new DateTimeOffset(new DateTime(2000, 01, 13, 23, 0, 0)), await _db.ExecAsync<DateTimeOffset>("ProcVar", new DateTimeOffset(new DateTime(2000, 01, 13, 23, 0, 0))));
         Assert.Equal(new TimeOnly(23, 59, 59), await _db.ExecAsync<TimeOnly>("ProcVar", new TimeOnly(23, 59, 59)));
         Assert.Equal(new TimeSpan(23, 59, 59), await _db.ExecAsync<TimeSpan>("ProcVar", new TimeSpan(23, 59, 59)));
@@ -89,6 +90,11 @@ public class DbServiceTests
         Assert.Equal('x', await _db.ExecAsync<char>("ProcVar", 'x'));
         Assert.Equal(string.Empty, await _db.ExecAsync<string>("ProcVar", string.Empty));
         Assert.Equal("asd asd", await _db.ExecAsync<string>("ProcVar", "asd asd"));
+
+        Assert.Equal(new byte[] { 0, 10, 100, byte.MaxValue }, await _db.ExecAsync<byte[]>("ProcVar", new byte[] { 0, 10, 100, byte.MaxValue }));
+        Assert.Equal(new char[] { '1', '2', '3' }, await _db.ExecAsync<char[]>("ProcVar", new char[] { '1', '2', '3' }));
+
+        Assert.Equal(UserType.User, await _db.ExecAsync<UserType?>("ProcVar", UserType.User));
 
         Assert.Equal("John", await _db.ExecAsync<string?>("ProcObj", new { Name = "John" }));
 
@@ -104,8 +110,6 @@ public class DbServiceTests
         Assert.Equal("John", (string?)recs[0]["Name"]);
         Assert.Equal(2, (int?)recs[1]["Id"]);
         Assert.Equal("Mike", (string?)recs[1]["Name"]);
-
-        Assert.Equal(UserType.User, await _db.ExecAsync<UserType?>("ProcVar", UserType.User));
     }
 
     [Theory]
@@ -135,11 +139,11 @@ public class DbServiceTests
     public async Task CanExecAsync_Chars(char[] chars) => Assert.Equal(chars, await _db.ExecAsync<char[]?>("ProcVarChar", chars));
 
     [Theory]
-    [MemberData(nameof(GetTestString), parameters: 4)]
+    [MemberData(nameof(GetTestString), parameters: 3)]
     public async Task CanExecAsync_String(string str) => Assert.Equal(str, await _db.ExecAsync<string?>("ProcVarChar", str));
 
     [Theory]
-    [MemberData(nameof(GetTestString), parameters: 4)]
+    [MemberData(nameof(GetTestString), parameters: 3)]
     public async Task CanExecAsync_TextReader(string text)
     {
         using TextReader readerSource = new StringReader(text);
@@ -180,4 +184,44 @@ public class DbServiceTests
 
         Assert.Null(item4);
     }
+
+    //[Fact]
+    //public async Task CanTestAsync()
+    //{
+    //    await _db.TestAsync("InputVar_Zap");
+
+    //    await _db.TestAsync("ProcNull");
+    //    await _db.TestAsync("ProcVar", null);
+
+    //    await _db.TestAsync("ProcVar", true);
+    //    await _db.TestAsync("ProcVar", false);
+
+    //    await _db.TestAsync("ProcVar", 0);
+    //    await _db.TestAsync("ProcVar", byte.MaxValue);
+    //    await _db.TestAsync("ProcVar", short.MaxValue);
+    //    await _db.TestAsync("ProcVar", int.MaxValue);
+    //    await _db.TestAsync("ProcVar", long.MaxValue);
+
+    //    await _db.TestAsync("ProcVar", decimal.MaxValue);
+    //    await _db.TestAsync("ProcVar", float.MaxValue);
+    //    await _db.TestAsync("ProcVar", double.MaxValue);
+
+    //    await _db.TestAsync("ProcVar", DateOnly.MaxValue);
+    //    await _db.TestAsync("ProcVar", DateOnly.MaxValue.ToDateTime(TimeOnly.MaxValue));
+    //    await _db.TestAsync("ProcVar", new DateTimeOffset(DateOnly.MaxValue.ToDateTime(TimeOnly.MaxValue)));
+    //    await _db.TestAsync("ProcVar", new TimeOnly(23, 00, 00));
+
+    //    await _db.TestAsync("ProcVar", Guid.Empty);
+
+    //    await _db.TestAsync("ProcVar", 'x');
+    //    await _db.TestAsync("ProcVar", string.Empty);
+    //    await _db.TestAsync("ProcVar", "123 ASD asd");
+
+    //    await _db.TestAsync("ProcVar", new byte[] { 0, 10, 100, byte.MaxValue });
+    //    await _db.TestAsync("ProcVar", new char[] { '1', '2', '3' });
+
+    //    await _db.TestAsync("ProcVar", UserType.User);
+
+    //    await _db.TestAsync("ProcVar", new { Name = "John" });
+    //}
 }

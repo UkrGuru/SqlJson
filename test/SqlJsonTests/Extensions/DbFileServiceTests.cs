@@ -52,7 +52,6 @@ public class DbFileServiceTests
         var file = await _dbFile.GetAsync(guid);
 
         Assert.Equal(fileName, file?.FileName);
-
         Assert.Equal(bytes, file?.FileContent);
 
         await _dbFile.DelAsync(guid);

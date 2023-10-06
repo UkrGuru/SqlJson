@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlJsonWasmDemo.Server", "SqlJsonWasmDemo\Server\SqlJsonWasmDemo.Server.csproj", "{B77014AF-5F19-478D-AFCE-35F24AC124DD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlJsonWasmDemo.Client", "SqlJsonWasmDemo\Client\SqlJsonWasmDemo.Client.csproj", "{BE245D5E-8E77-43C1-A32E-F52C7C06F3CB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlJsonWasmDemo.Shared", "SqlJsonWasmDemo\Shared\SqlJsonWasmDemo.Shared.csproj", "{DF8246BB-4387-4B3D-9054-C9F8B1B77FE3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B77014AF-5F19-478D-AFCE-35F24AC124DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B77014AF-5F19-478D-AFCE-35F24AC124DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B77014AF-5F19-478D-AFCE-35F24AC124DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B77014AF-5F19-478D-AFCE-35F24AC124DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE245D5E-8E77-43C1-A32E-F52C7C06F3CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE245D5E-8E77-43C1-A32E-F52C7C06F3CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE245D5E-8E77-43C1-A32E-F52C7C06F3CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE245D5E-8E77-43C1-A32E-F52C7C06F3CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF8246BB-4387-4B3D-9054-C9F8B1B77FE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF8246BB-4387-4B3D-9054-C9F8B1B77FE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF8246BB-4387-4B3D-9054-C9F8B1B77FE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF8246BB-4387-4B3D-9054-C9F8B1B77FE3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E2571FEA-2F57-4998-95DB-CDEEB5EBFF96}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34031.279
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiHole", "ApiHole\ApiHole.csproj", "{EBD4B215-02D8-49CF-98A0-2C4A7F440473}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlJson", "..\src\SqlJson.csproj", "{D41D6CB4-C9B5-43E1-9EE4-7594652EF287}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EBD4B215-02D8-49CF-98A0-2C4A7F440473}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBD4B215-02D8-49CF-98A0-2C4A7F440473}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBD4B215-02D8-49CF-98A0-2C4A7F440473}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBD4B215-02D8-49CF-98A0-2C4A7F440473}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D41D6CB4-C9B5-43E1-9EE4-7594652EF287}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D41D6CB4-C9B5-43E1-9EE4-7594652EF287}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D41D6CB4-C9B5-43E1-9EE4-7594652EF287}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D41D6CB4-C9B5-43E1-9EE4-7594652EF287}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C90F13C1-AA6B-4D40-92A9-7DF5F8DB5C70}
+	EndGlobalSection
+EndGlobal

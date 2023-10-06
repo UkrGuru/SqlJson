@@ -71,6 +71,13 @@ WHERE Id = @Data
 FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
 ';
 EXEC dbo.sp_executesql @statement = N'
+CREATE OR ALTER PROCEDURE [WJbFiles_Get_Api]
+	@Data uniqueidentifier = NULL
+AS
+EXEC WJbFiles_Get @Data
+';
+
+EXEC dbo.sp_executesql @statement = N'
 CREATE OR ALTER PROCEDURE [WJbFiles_Ins]
     @Data nvarchar(max)
 AS
@@ -90,11 +97,24 @@ WITH ([FileName] nvarchar(100), FileContent varbinary(max))
 SELECT @Id
 ';
 EXEC dbo.sp_executesql @statement = N'
+CREATE OR ALTER PROCEDURE [WJbFiles_Ins_Api]
+    @Data nvarchar(max)
+AS
+EXEC WJbFiles_Ins @Data
+';
+
+EXEC dbo.sp_executesql @statement = N'
 CREATE OR ALTER PROCEDURE [WJbFiles_Del]
 	@Data uniqueidentifier = NULL
 AS
 DELETE WJbFiles
 WHERE Id = @Data
+';
+EXEC dbo.sp_executesql @statement = N'
+CREATE OR ALTER PROCEDURE [WJbFiles_Del_Api]
+	@Data uniqueidentifier = NULL
+AS
+EXEC WJbFiles_Del @Data
 ';
 END
 
@@ -106,5 +126,11 @@ AS
 INSERT INTO [WJbLogs] ([Logged], [LogLevel], [Title], [LogMore])
 VALUES (GETDATE(),JSON_VALUE(@Data, ''$.LogLevel''), JSON_VALUE(@Data, ''$.Title''), 
     ISNULL(JSON_QUERY(@Data, ''$.LogMore''), JSON_VALUE(@Data, ''$.LogMore'')))
+';
+EXEC dbo.sp_executesql @statement = N'
+CREATE OR ALTER PROCEDURE [WJbLogs_Ins_Api]
+    @Data nvarchar(max)
+AS
+EXEC WJbLogs_Ins @Data
 ';
 END

@@ -3,8 +3,10 @@
 
 using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Globalization;
 using System.Text;
 using System.Text.Json;
+using UkrGuru.SqlJson.Extensions;
 
 namespace UkrGuru.SqlJson;
 
@@ -170,6 +172,8 @@ public static class DbExtensions
 
             var result = sb.ToString();
 
+            //return result.ToObj<T>();
+
             if (type == typeof(string))
                 return (T?)(object)result;
             else if (string.IsNullOrEmpty(result))
@@ -211,6 +215,8 @@ public static class DbExtensions
 
             var result = sb.ToString();
 
+            //return result.ToObj<T>();
+
             if (type == typeof(string))
                 return (T?)(object)result;
             else if (string.IsNullOrEmpty(result))
@@ -247,22 +253,59 @@ public static class DbExtensions
     /// <returns>The converted value of type <typeparamref name="T"/>.</returns>
     public static T? ConvertScalar<T>(object? value)
     {
+        //return value.ToObj<T>();
+
         if (value == null || value == DBNull.Value) return default;
 
         var type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
 
-        if (type == typeof(DateOnly))
-            return (T)(object)DateOnly.FromDateTime((DateTime)value);
+        if (value is string)
+        {
+            string s = (string)value;
 
-        else if (type == typeof(TimeOnly))
-            return (T)(object)TimeOnly.FromTimeSpan((TimeSpan)value);
+            if (type == typeof(DateOnly) || type == typeof(DateTime))
+            {
+                var dt = DateTime.ParseExact(s, "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
 
-        else if (type == typeof(char))
-            return (T)(object)char.Parse((string)value);
+                if (type == typeof(DateOnly))
+                    return (T)(object)DateOnly.FromDateTime(dt);
 
-        else if (type.IsEnum)
-            return (T?)Enum.Parse(type, (string)value);
+                return (T)(object)dt;
+            }
 
-        return (T)value;
+            else if (type == typeof(DateTimeOffset))
+                return (T)(object)DateTimeOffset.ParseExact(s, "yyyy-MM-dd HH:mm:ss.fffffff zzz", CultureInfo.InvariantCulture);
+
+            else if (type == typeof(TimeOnly))
+                return (T)(object)TimeOnly.ParseExact(s, "HH:mm:ss", CultureInfo.InvariantCulture);
+
+            else if (type == typeof(TimeSpan))
+                return (T)(object)TimeSpan.ParseExact(s, "hh':'mm':'ss", CultureInfo.InvariantCulture);
+
+            else if (type.IsEnum)
+                return (T?)Enum.Parse(type, s);
+
+            if (type.IsPrimitive)
+                return (T?)Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
+
+            else
+                return (T?)Convert.ChangeType(value, type);
+        }
+        else
+        {
+            if (type == typeof(DateOnly))
+                return (T)(object)DateOnly.FromDateTime((DateTime)value);
+
+            else if (type == typeof(TimeOnly))
+                return (T)(object)TimeOnly.FromTimeSpan((TimeSpan)value);
+
+            else if (type == typeof(char))
+                return (T)(object)char.Parse((string)value);
+
+            else if (type.IsEnum)
+                return (T?)Enum.Parse(type, (string)value);
+
+            return (T)value;
+        }
     }
 }

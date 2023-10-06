@@ -44,13 +44,39 @@ public static class ObjExtensions
         else if (type.IsEnum)
             return (T?)Enum.Parse(type, Convert.ToString(value)!);
 
-        if (type == typeof(DateOnly))
-            return (T)(object)DateOnly.FromDateTime((DateTime)value);
+        if (value is string)
+        {
+            string s = (string)value;
 
-        else if (type == typeof(TimeOnly))
-            return (T)(object)TimeOnly.FromTimeSpan((TimeSpan)value);
+            if (type == typeof(DateOnly) || type == typeof(DateTime))
+            {
+                var dt = DateTime.ParseExact(s, "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
 
-        else if (type.IsPrimitive)
+                if (type == typeof(DateOnly))
+                    return (T)(object)DateOnly.FromDateTime(dt);
+
+                return (T)(object)dt;
+            }
+
+            else if (type == typeof(DateTimeOffset))
+                return (T)(object)DateTimeOffset.ParseExact(s, "yyyy-MM-dd HH:mm:ss.fffffff zzz", CultureInfo.InvariantCulture);
+
+            else if (type == typeof(TimeOnly))
+                return (T)(object)TimeOnly.ParseExact(s, "HH:mm:ss", CultureInfo.InvariantCulture);
+
+            else if (type == typeof(TimeSpan))
+                return (T)(object)TimeSpan.ParseExact(s, "hh':'mm':'ss", CultureInfo.InvariantCulture);
+        }
+        else
+        {
+            if (type == typeof(DateOnly))
+                return (T)(object)DateOnly.FromDateTime((DateTime)value);
+
+            else if (type == typeof(TimeOnly))
+                return (T)(object)TimeOnly.FromTimeSpan((TimeSpan)value);
+        }
+
+        if (type.IsPrimitive)
             return (T?)Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
 
         else

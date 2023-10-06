@@ -8,11 +8,13 @@ namespace UkrGuru.SqlJson.Extensions;
 public class DbLogTests
 {
     private readonly IDbLogService _dbLog;
+    private readonly IDbService _db;
 
     public DbLogTests()
     {
         DbHelper.ConnectionString = ConnectionString;
         _dbLog = new DbLogService(Configuration);
+        _db = new DbService(Configuration);
     }
 
     [Fact]
@@ -31,7 +33,7 @@ public class DbLogTests
         await _dbLog.LogInformationAsync("Information DbLogService Async #4", "Information More Async #4");
         await _dbLog.LogDebugAsync("Debug DbLogService Async #5", "Debug More Async");
         await _dbLog.LogErrorAsync("Error DbLogService Async #6", new { id = 6 });
-        Assert.Equal(2, await DbHelper.ExecAsync<int?>("SELECT COUNT(*) FROM WJbLogs WHERE Title LIKE '% DbLogService %'"));
-        Assert.Equal(1, await DbHelper.ExecAsync<int?>("SELECT COUNT(*) FROM WJbLogs WHERE Title LIKE '% DbLogService %' AND LogLevel = 4"));
+        Assert.Equal(2, await _db.ExecAsync<int?>("CalcErr_Api", new { Title = "DbLogService" }));
+        Assert.Equal(1, await _db.ExecAsync<int?>("CalcErr_Api", new { Title = "DbLogService", LogLevel = 4 }));
     }
 }
