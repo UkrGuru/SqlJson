@@ -101,8 +101,8 @@ public class DbExtensionsTests
     [InlineData(typeof(Stream), true)]
     [InlineData(typeof(TextReader), true)]
     [InlineData(typeof(object), true)]
-    public void IsLong_TheoryTests(Type? t, bool expected)
-        => Assert.Equal(expected, t.IsLong());
+    public void IsLong_TheoryTests(Type? type, bool expected)
+        => Assert.Equal(expected, type.IsLong());
 
     [Theory]
     [InlineData("SELECT @Data", null)]

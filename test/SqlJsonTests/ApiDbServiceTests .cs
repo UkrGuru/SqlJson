@@ -192,44 +192,5 @@ public class ApiDbServiceTests
     //public async Task CanTestAsync()
     //{
     //    await _db.TestAsync("InputVar_Zap");
-
-    //    await _db.TestAsync("ProcNull");
-    //    await _db.TestAsync("ProcVar", null);
-
-    //    await _db.TestAsync("ProcVar", true);
-    //    await _db.TestAsync("ProcVar", false);
-
-    //    await _db.TestAsync("ProcVar", 0);
-    //    await _db.TestAsync("ProcVar", byte.MaxValue);
-    //    await _db.TestAsync("ProcVar", short.MaxValue);
-    //    await _db.TestAsync("ProcVar", int.MaxValue);
-    //    await _db.TestAsync("ProcVar", long.MaxValue);
-
-    //    await _db.TestAsync("ProcVar", decimal.MaxValue);
-    //    await _db.TestAsync("ProcVar", float.MaxValue);
-    //    await _db.TestAsync("ProcVar", double.MaxValue);
-
-    //    await _db.TestAsync("ProcVar", DateOnly.MaxValue);
-    //    await _db.TestAsync("ProcVar", DateOnly.MaxValue.ToDateTime(TimeOnly.MaxValue));
-    //    await _db.TestAsync("ProcVar", new DateTimeOffset(DateOnly.MaxValue.ToDateTime(TimeOnly.MaxValue)));
-    //    await _db.TestAsync("ProcVar", new TimeOnly(23, 00, 00));
-
-    //    await _db.TestAsync("ProcVar", Guid.Empty);
-
-    //    await _db.TestAsync("ProcVar", 'x');
-    //    await _db.TestAsync("ProcVar", string.Empty);
-    //    await _db.TestAsync("ProcVar", "123 ASD asd");
-
-    //    await _db.ExecAsync<byte[]>("ProcVar", new byte[] { 0, 10, 100, byte.MaxValue });
-    //    await _db.ExecAsync("ProcVar", new char[] { '1', '2', '3' });
-
-    //    await _db.TestAsync("ProcVar", UserType.User);
-
-    //    await _db.TestAsync("ProcVar", new { Name = "John" });
-
-    //    var bytes = new byte[] { 0, 10, 100, byte.MaxValue };
-
-    //    using var msIn = new MemoryStream(bytes);
-    //    await _db.TestAsync("ProcVarBin", msIn);
     //}
 }

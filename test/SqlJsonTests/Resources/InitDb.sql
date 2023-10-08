@@ -46,28 +46,9 @@ BEGIN
 	) ON [PRIMARY]
 END
 
-
 TRUNCATE TABLE [dbo].[InputVar]
 TRUNCATE TABLE [dbo].[InputVarBin]
 TRUNCATE TABLE [dbo].[InputVarChar]
-
-TRUNCATE TABLE [dbo].[TestItems]
-
-TRUNCATE TABLE [dbo].[WJbFiles]
-
-TRUNCATE TABLE [dbo].[WJbLogs]
-
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[TestItems]') AND type in (N'U'))
-BEGIN
-	CREATE TABLE [dbo].[TestItems](
-		[Id] [int] IDENTITY(1,1) NOT NULL,
-		[Name] [nvarchar](50) NOT NULL,
-	 CONSTRAINT [PK_TestItems] PRIMARY KEY CLUSTERED 
-	(
-		[Id] ASC
-	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-	) ON [PRIMARY]
-END
 
 TRUNCATE TABLE [dbo].[TestItems]
 
@@ -96,6 +77,21 @@ CREATE OR ALTER PROCEDURE [dbo].[CalcErr_Api]
 	@Data nvarchar(200) = NULL 
 AS
 EXEC CalcErr @Data
+';
+
+EXEC dbo.sp_executesql @statement = N'
+CREATE OR ALTER PROCEDURE [dbo].[DelErr] 
+	@Data nvarchar(200) = NULL 
+AS 
+DELETE FROM WJbLogs 
+WHERE Title LIKE @Data;
+';
+
+EXEC dbo.sp_executesql @statement = N'
+CREATE OR ALTER PROCEDURE [dbo].[DelErr_Api] 
+	@Data nvarchar(200) = NULL 
+AS
+EXEC DelErr @Data
 ';
 
 EXEC dbo.sp_executesql @statement = N'
