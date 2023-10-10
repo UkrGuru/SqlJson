@@ -1,9 +1,7 @@
 ﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using System.Text.Json;
 using System.Text.Json.Nodes;
-using UkrGuru.SqlJson.Extensions;
 using static UkrGuru.SqlJson.GlobalTests;
 
 namespace UkrGuru.SqlJson;
@@ -47,7 +45,7 @@ public class ApiDbServiceTests
     {
         var allData = new List<object[]>
         {
-            //new object[] { string.Empty },
+            new object[] { string.Empty },
             new object[] { TestString1k },
             new object[] { TestString5k },
             new object[] { TestString55k }
@@ -91,7 +89,7 @@ public class ApiDbServiceTests
         Assert.Equal(Guid.Empty, await _db.ExecAsync<Guid>("ProcVar", Guid.Empty));
 
         Assert.Equal('x', await _db.ExecAsync<char>("ProcVar", 'x'));
-        Assert.Null(await _db.ExecAsync<string>("ProcVar", string.Empty));
+        Assert.Equal(string.Empty, await _db.ExecAsync<string>("ProcVar", string.Empty));
         Assert.Equal("asd asd", await _db.ExecAsync<string>("ProcVar", "asd asd"));
 
         Assert.Equal(new byte[] { 0, 10, 100, byte.MaxValue }, await _db.ExecAsync<byte[]>("ProcVar", new byte[] { 0, 10, 100, byte.MaxValue }));

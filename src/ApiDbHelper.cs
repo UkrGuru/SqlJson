@@ -65,5 +65,6 @@ public class ApiDbHelper
     /// </summary>
     /// <param name="data">The object to convert.</param>
     /// <returns>The HttpContent object.</returns>
-    public static HttpContent? NormalizeContent(object data) => new StringContent(Normalize(data), Encoding.UTF8, "text/plain");  // "application/json"
+    public static HttpContent? NormalizeContent(object data) 
+        => new StringContent(Normalize(data), Encoding.UTF8, "text/plain");  // "application/json"
 }

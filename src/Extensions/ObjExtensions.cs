@@ -24,18 +24,21 @@ public static class ObjExtensions
         if (value == null || value == DBNull.Value)
             return defaultValue;
 
-        if (value is string svalue && string.IsNullOrEmpty(svalue))
-            return defaultValue;
-
         if (value is StringBuilder sb)
-            return sb?.Length > 0 ? sb.ToString().ToObj(defaultValue) : defaultValue;
+        {
+            if (sb.Length == 0) return defaultValue;
+            value = sb.ToString();
+        }
 
         var type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
 
         if (type == typeof(string))
             return (T?)value;
 
-        else if (type.IsClass)
+        if (value is string svalue && string.IsNullOrEmpty(svalue))
+            return defaultValue;
+
+        if (type.IsClass)
             return value.JsonDeserialize<T?>();
 
         else if (type == typeof(Guid))

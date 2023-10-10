@@ -3,7 +3,6 @@
 
 using Microsoft.Data.SqlClient;
 using System.Data;
-using System.Globalization;
 using System.Text;
 using System.Text.Json;
 using UkrGuru.SqlJson.Extensions;
@@ -233,7 +232,7 @@ public static class DbExtensions
     /// <param name="command"></param>
     /// <returns></returns>
     public static T? ExecuteScalar<T>(this SqlCommand command)
-        => ConvertScalar<T?>(command.ExecuteScalar());
+        => command.ExecuteScalar().ToObj<T?>();
 
     /// <summary>
     /// 
@@ -243,69 +242,69 @@ public static class DbExtensions
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public static async Task<T?> ExecuteScalarAsync<T>(this SqlCommand command, CancellationToken cancellationToken = default)
-        => ConvertScalar<T?>(await command.ExecuteScalarAsync(cancellationToken));
+        => (await command.ExecuteScalarAsync(cancellationToken)).ToObj<T?>();
 
-    /// <summary>
-    /// Converts a scalar value to the specified type.
-    /// </summary>
-    /// <typeparam name="T">The target type.</typeparam>
-    /// <param name="value">The value to convert.</param>
-    /// <returns>The converted value of type <typeparamref name="T"/>.</returns>
-    public static T? ConvertScalar<T>(object? value)
-    {
-        //return value.ToObj<T>();
+    ///// <summary>
+    ///// Converts a scalar value to the specified type.
+    ///// </summary>
+    ///// <typeparam name="T">The target type.</typeparam>
+    ///// <param name="value">The value to convert.</param>
+    ///// <returns>The converted value of type <typeparamref name="T"/>.</returns>
+    //public static T? ConvertScalar<T>(object? value)
+    //{
+    //    //return value.ToObj<T>();
 
-        if (value == null || value == DBNull.Value) return default;
+    //    if (value == null || value == DBNull.Value) return default;
 
-        var type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
+    //    var type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
 
-        if (value is string)
-        {
-            string s = (string)value;
+    //    if (value is string)
+    //    {
+    //        string s = (string)value;
 
-            if (type == typeof(DateOnly) || type == typeof(DateTime))
-            {
-                var dt = DateTime.ParseExact(s, "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+    //        if (type == typeof(DateOnly) || type == typeof(DateTime))
+    //        {
+    //            var dt = DateTime.ParseExact(s, "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
 
-                if (type == typeof(DateOnly))
-                    return (T)(object)DateOnly.FromDateTime(dt);
+    //            if (type == typeof(DateOnly))
+    //                return (T)(object)DateOnly.FromDateTime(dt);
 
-                return (T)(object)dt;
-            }
+    //            return (T)(object)dt;
+    //        }
 
-            else if (type == typeof(DateTimeOffset))
-                return (T)(object)DateTimeOffset.ParseExact(s, "yyyy-MM-dd HH:mm:ss.fffffff zzz", CultureInfo.InvariantCulture);
+    //        else if (type == typeof(DateTimeOffset))
+    //            return (T)(object)DateTimeOffset.ParseExact(s, "yyyy-MM-dd HH:mm:ss.fffffff zzz", CultureInfo.InvariantCulture);
 
-            else if (type == typeof(TimeOnly))
-                return (T)(object)TimeOnly.ParseExact(s, "HH:mm:ss", CultureInfo.InvariantCulture);
+    //        else if (type == typeof(TimeOnly))
+    //            return (T)(object)TimeOnly.ParseExact(s, "HH:mm:ss", CultureInfo.InvariantCulture);
 
-            else if (type == typeof(TimeSpan))
-                return (T)(object)TimeSpan.ParseExact(s, "hh':'mm':'ss", CultureInfo.InvariantCulture);
+    //        else if (type == typeof(TimeSpan))
+    //            return (T)(object)TimeSpan.ParseExact(s, "hh':'mm':'ss", CultureInfo.InvariantCulture);
 
-            else if (type.IsEnum)
-                return (T?)Enum.Parse(type, s);
+    //        else if (type.IsEnum)
+    //            return (T?)Enum.Parse(type, s);
 
-            if (type.IsPrimitive)
-                return (T?)Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
+    //        if (type.IsPrimitive)
+    //            return (T?)Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
 
-            else
-                return (T?)Convert.ChangeType(value, type);
-        }
-        else
-        {
-            if (type == typeof(DateOnly))
-                return (T)(object)DateOnly.FromDateTime((DateTime)value);
+    //        else
+    //            return (T?)Convert.ChangeType(value, type);
+    //    }
+    //    else
+    //    {
+    //        if (type == typeof(DateOnly))
+    //            return (T)(object)DateOnly.FromDateTime((DateTime)value);
 
-            else if (type == typeof(TimeOnly))
-                return (T)(object)TimeOnly.FromTimeSpan((TimeSpan)value);
+    //        else if (type == typeof(TimeOnly))
+    //            return (T)(object)TimeOnly.FromTimeSpan((TimeSpan)value);
 
-            else if (type == typeof(char))
-                return (T)(object)char.Parse((string)value);
+    //        else if (type == typeof(char))
+    //            return (T)(object)char.Parse((string)value);
 
-            else if (type.IsEnum)
-                return (T?)Enum.Parse(type, (string)value);
+    //        else if (type.IsEnum)
+    //            return (T?)Enum.Parse(type, (string)value);
 
-            return (T)value;
-        }
-    }
+    //        return (T)value;
+    //    }
+    //}
 }

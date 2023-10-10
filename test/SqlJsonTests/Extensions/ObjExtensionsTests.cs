@@ -27,7 +27,7 @@ public class ObjExtensionsTests
     [Theory]
     [InlineData(null, null, null)]
     [InlineData(null, "A", "A")]
-    [InlineData("", "A", "A")]
+    [InlineData("", "A", "")]
     [InlineData("A", "A", "A")]
     [InlineData("A", "B", "A")]
     public static void CanStringToObj(object? value, string? defaultValue = default, string? expected = default)

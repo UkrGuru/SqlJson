@@ -139,58 +139,58 @@ public class DbExtensionsTests
         Assert.Equal(expected, command.CommandType);
     }
 
-    [Fact]
-    public static void CanConvertScalar()
-    {
-        Assert.Equal((bool?)null, DbExtensions.ConvertScalar<bool?>(null));
-        Assert.Equal((bool?)null, DbExtensions.ConvertScalar<bool?>(DBNull.Value));
+    //[Fact]
+    //public static void CanConvertScalar()
+    //{
+    //    Assert.Equal((bool?)null, DbExtensions.ConvertScalar<bool?>(null));
+    //    Assert.Equal((bool?)null, DbExtensions.ConvertScalar<bool?>(DBNull.Value));
 
-        Assert.Equal(true, DbExtensions.ConvertScalar<bool?>(true));
-        Assert.Equal(false, DbExtensions.ConvertScalar<bool?>(false));
+    //    Assert.Equal(true, DbExtensions.ConvertScalar<bool?>(true));
+    //    Assert.Equal(false, DbExtensions.ConvertScalar<bool?>(false));
 
-        Assert.Null(DbExtensions.ConvertScalar<byte?>(null));
-        Assert.Equal(byte.MaxValue, DbExtensions.ConvertScalar<byte?>(byte.MaxValue));
+    //    Assert.Null(DbExtensions.ConvertScalar<byte?>(null));
+    //    Assert.Equal(byte.MaxValue, DbExtensions.ConvertScalar<byte?>(byte.MaxValue));
 
-        Assert.Null(DbExtensions.ConvertScalar<short?>(null));
-        Assert.Equal(short.MaxValue, DbExtensions.ConvertScalar<short?>(short.MaxValue));
+    //    Assert.Null(DbExtensions.ConvertScalar<short?>(null));
+    //    Assert.Equal(short.MaxValue, DbExtensions.ConvertScalar<short?>(short.MaxValue));
 
-        Assert.Null(DbExtensions.ConvertScalar<int?>(null));
-        Assert.Equal(int.MaxValue, DbExtensions.ConvertScalar<int?>(int.MaxValue));
+    //    Assert.Null(DbExtensions.ConvertScalar<int?>(null));
+    //    Assert.Equal(int.MaxValue, DbExtensions.ConvertScalar<int?>(int.MaxValue));
 
-        Assert.Null(DbExtensions.ConvertScalar<long?>(null));
-        Assert.Equal(long.MaxValue, DbExtensions.ConvertScalar<long?>(long.MaxValue));
+    //    Assert.Null(DbExtensions.ConvertScalar<long?>(null));
+    //    Assert.Equal(long.MaxValue, DbExtensions.ConvertScalar<long?>(long.MaxValue));
 
-        Assert.Null(DbExtensions.ConvertScalar<float?>(null));
-        Assert.Equal(float.MaxValue, DbExtensions.ConvertScalar<float?>(float.MaxValue));
+    //    Assert.Null(DbExtensions.ConvertScalar<float?>(null));
+    //    Assert.Equal(float.MaxValue, DbExtensions.ConvertScalar<float?>(float.MaxValue));
 
-        Assert.Null(DbExtensions.ConvertScalar<double?>(null));
-        Assert.Equal(double.MaxValue, DbExtensions.ConvertScalar<double?>(double.MaxValue));
+    //    Assert.Null(DbExtensions.ConvertScalar<double?>(null));
+    //    Assert.Equal(double.MaxValue, DbExtensions.ConvertScalar<double?>(double.MaxValue));
 
-        Assert.Null(DbExtensions.ConvertScalar<decimal?>(null));
-        Assert.Equal(decimal.MaxValue, DbExtensions.ConvertScalar<decimal?>(decimal.MaxValue));
+    //    Assert.Null(DbExtensions.ConvertScalar<decimal?>(null));
+    //    Assert.Equal(decimal.MaxValue, DbExtensions.ConvertScalar<decimal?>(decimal.MaxValue));
 
-        Assert.Null(DbExtensions.ConvertScalar<DateOnly?>(null));
-        Assert.Equal(DateOnly.MaxValue, DbExtensions.ConvertScalar<DateOnly?>(DateOnly.MaxValue.ToDateTime(TimeOnly.MinValue)));
+    //    Assert.Null(DbExtensions.ConvertScalar<DateOnly?>(null));
+    //    Assert.Equal(DateOnly.MaxValue, DbExtensions.ConvertScalar<DateOnly?>(DateOnly.MaxValue.ToDateTime(TimeOnly.MinValue)));
 
-        Assert.Null(DbExtensions.ConvertScalar<DateTime?>(null));
-        Assert.Equal(DateTime.MaxValue, DbExtensions.ConvertScalar<DateTime?>(DateTime.MaxValue));
+    //    Assert.Null(DbExtensions.ConvertScalar<DateTime?>(null));
+    //    Assert.Equal(DateTime.MaxValue, DbExtensions.ConvertScalar<DateTime?>(DateTime.MaxValue));
 
-        Assert.Null(DbExtensions.ConvertScalar<DateTimeOffset?>(null));
-        Assert.Equal(DateTimeOffset.MaxValue, DbExtensions.ConvertScalar<DateTimeOffset?>(DateTimeOffset.MaxValue));
+    //    Assert.Null(DbExtensions.ConvertScalar<DateTimeOffset?>(null));
+    //    Assert.Equal(DateTimeOffset.MaxValue, DbExtensions.ConvertScalar<DateTimeOffset?>(DateTimeOffset.MaxValue));
 
-        Assert.Null(DbExtensions.ConvertScalar<TimeOnly?>(null));
-        Assert.Equal(TimeOnly.MaxValue, DbExtensions.ConvertScalar<TimeOnly?>(TimeOnly.MaxValue.ToTimeSpan()));
+    //    Assert.Null(DbExtensions.ConvertScalar<TimeOnly?>(null));
+    //    Assert.Equal(TimeOnly.MaxValue, DbExtensions.ConvertScalar<TimeOnly?>(TimeOnly.MaxValue.ToTimeSpan()));
 
-        Assert.Null(DbExtensions.ConvertScalar<TimeSpan?>(null));
-        Assert.Equal(TimeSpan.MaxValue, DbExtensions.ConvertScalar<TimeSpan?>(TimeSpan.MaxValue));
+    //    Assert.Null(DbExtensions.ConvertScalar<TimeSpan?>(null));
+    //    Assert.Equal(TimeSpan.MaxValue, DbExtensions.ConvertScalar<TimeSpan?>(TimeSpan.MaxValue));
 
-        Assert.Null(DbExtensions.ConvertScalar<Guid?>(null));
-        Assert.Equal(Guid.Empty, DbExtensions.ConvertScalar<Guid?>(Guid.Empty));
+    //    Assert.Null(DbExtensions.ConvertScalar<Guid?>(null));
+    //    Assert.Equal(Guid.Empty, DbExtensions.ConvertScalar<Guid?>(Guid.Empty));
 
-        Assert.Null(DbExtensions.ConvertScalar<char?>(null));
-        Assert.Equal('x', DbExtensions.ConvertScalar<char?>('x'.ToString()));
+    //    Assert.Null(DbExtensions.ConvertScalar<char?>(null));
+    //    Assert.Equal('x', DbExtensions.ConvertScalar<char?>('x'.ToString()));
 
-        Assert.Null(DbExtensions.ConvertScalar<string?>(null));
-        Assert.Equal(string.Empty, DbExtensions.ConvertScalar<string?>(string.Empty));
-    }
+    //    Assert.Null(DbExtensions.ConvertScalar<string?>(null));
+    //    Assert.Equal(string.Empty, DbExtensions.ConvertScalar<string?>(string.Empty));
+    //}
 }
