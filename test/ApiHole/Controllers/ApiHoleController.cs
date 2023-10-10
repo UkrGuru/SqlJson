@@ -23,7 +23,7 @@ public class ApiHoleController : ControllerBase
         }
         catch (Exception ex)
         {
-            return $"Error: {ex.Message}. Proc={proc}";
+            return await Task.FromResult($"Error: {ex.Message}. Proc={proc}");
         }
     }
 
@@ -36,7 +36,7 @@ public class ApiHoleController : ControllerBase
         }
         catch (Exception ex)
         {
-            return $"Error: {ex.Message}. Proc={proc}";
+            return await Task.FromResult($"Error: {ex.Message}. Proc={proc}");
         }
     }
 
@@ -49,7 +49,7 @@ public class ApiHoleController : ControllerBase
         }
         catch (Exception ex)
         {
-            return $"Error: {ex.Message}. Proc={proc}";
+            return await Task.FromResult($"Error: {ex.Message}. Proc={proc}");
         }
     }
 
@@ -62,7 +62,7 @@ public class ApiHoleController : ControllerBase
         }
         catch (Exception ex)
         {
-            return $"Error: {ex.Message}. Proc={proc}";
+            return await Task.FromResult($"Error: {ex.Message}. Proc={proc}");
         }
     }
 }

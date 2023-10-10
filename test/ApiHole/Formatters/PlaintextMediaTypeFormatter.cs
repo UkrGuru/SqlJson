@@ -12,13 +12,12 @@ public class PlaintextMediaTypeFormatter : TextInputFormatter
     {
         SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("text/plain"));
         SupportedEncodings.Add(Encoding.UTF8);
-        SupportedEncodings.Add(Encoding.Unicode);
+        //SupportedEncodings.Add(Encoding.Unicode);
     }
 
     public override async Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context, Encoding effectiveEncoding)
     {
         var httpContext = context.HttpContext;
-        //var serviceProvider = httpContext.RequestServices;
 
         using var reader = new StreamReader(httpContext.Request.Body, effectiveEncoding);
 
