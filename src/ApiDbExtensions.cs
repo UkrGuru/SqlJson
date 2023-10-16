@@ -60,4 +60,81 @@ public static class ApiDbExtensions
             throw new HttpRequestException(errorMessage);
         }
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="db"></param>
+    /// <param name="proc"></param>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    public static async Task<string?> TryCreateAsync(this IDbService db, string proc, string? data = default)
+    {
+        try
+        {
+            return await db.CreateAsync<string?>(proc, data);
+        }
+        catch (Exception ex)
+        {
+            return await Task.FromResult($"Error: {ex.Message}. Proc={proc}");
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="db"></param>
+    /// <param name="proc"></param>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    public static async Task<string?> TryReadAsync(this IDbService db, string proc, string? data = default)
+    {
+        try
+        {
+            return await db.ReadAsync<string?>(proc, data);
+        }
+        catch (Exception ex)
+        {
+            return await Task.FromResult($"Error: {ex.Message}. Proc={proc}");
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="db"></param>
+    /// <param name="proc"></param>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    public static async Task<string?> TryUpdateAsync(this IDbService db, string proc, string? data = default)
+    {
+        try
+        {
+            return Convert.ToString(await db.UpdateAsync(proc, data));
+        }
+        catch (Exception ex)
+        {
+            return await Task.FromResult($"Error: {ex.Message}. Proc={proc}");
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="db"></param>
+    /// <param name="proc"></param>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    public static async Task<string?> TryDeleteAsync(this IDbService db, string proc, string? data = default)
+    {
+        try
+        {
+            return Convert.ToString(await db.DeleteAsync(proc, data));
+        }
+        catch (Exception ex)
+        {
+            return await Task.FromResult($"Error: {ex.Message}. Proc={proc}");
+        }
+    }
+
 }

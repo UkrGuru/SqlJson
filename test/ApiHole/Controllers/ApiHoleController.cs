@@ -15,54 +15,18 @@ public class ApiHoleController : ControllerBase
     private readonly string _suffix = "_Api";
 
     [HttpPost("{proc}")]
-    public async Task<string?> Create(string proc, [FromBody] string? data = null)
-    {
-        try
-        {
-            return await _db.CreateAsync<string?>($"{proc}{_suffix}", data);
-        }
-        catch (Exception ex)
-        {
-            return await Task.FromResult($"Error: {ex.Message}. Proc={proc}");
-        }
-    }
+    public async Task<string?> Create(string proc, [FromBody] string? data = default)
+        => await _db.TryCreateAsync($"{proc}{_suffix}", data);
 
     [HttpGet("{proc}")]
-    public async Task<string?> Read(string proc, string? data = null)
-    {
-        try
-        {
-            return await _db.ReadAsync<string?>($"{proc}{_suffix}", data);
-        }
-        catch (Exception ex)
-        {
-            return await Task.FromResult($"Error: {ex.Message}. Proc={proc}");
-        }
-    }
+    public async Task<string?> Read(string proc, string? data = default)
+        => await _db.TryReadAsync($"{proc}{_suffix}", data);
 
     [HttpPut("{proc}")]
-    public async Task<string?> Update(string proc, [FromBody] string? data = null)
-    {
-        try
-        {
-            return Convert.ToString(await _db.UpdateAsync($"{proc}{_suffix}", data));
-        }
-        catch (Exception ex)
-        {
-            return await Task.FromResult($"Error: {ex.Message}. Proc={proc}");
-        }
-    }
+    public async Task<string?> Update(string proc, [FromBody] string? data = default)
+        => await _db.TryUpdateAsync($"{proc}{_suffix}", data);
 
     [HttpDelete("{proc}")]
-    public async Task<string?> Delete(string proc, string? data = null)
-    {
-        try
-        {
-            return Convert.ToString(await _db.DeleteAsync($"{proc}{_suffix}", data));
-        }
-        catch (Exception ex)
-        {
-            return await Task.FromResult($"Error: {ex.Message}. Proc={proc}");
-        }
-    }
+    public async Task<string?> Delete(string proc, string? data = default)
+        => await _db.TryDeleteAsync($"{proc}{_suffix}", data);
 }

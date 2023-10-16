@@ -244,6 +244,7 @@ public static class DbExtensions
     public static async Task<T?> ExecuteScalarAsync<T>(this SqlCommand command, CancellationToken cancellationToken = default)
         => (await command.ExecuteScalarAsync(cancellationToken)).ToObj<T?>();
 
+
     ///// <summary>
     ///// Converts a scalar value to the specified type.
     ///// </summary>
