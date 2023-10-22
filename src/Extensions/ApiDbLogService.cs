@@ -40,7 +40,7 @@ public class ApiDbLogService : ApiDbService, IDbLogService
         {
             if ((byte)logLevel >= (byte)MinDbLogLevel)
             {
-                await CreateAsync<int?>(DbLogHelper.WJbLogs_Ins, DbLogHelper.Normalize(logLevel, title, more), cancellationToken: cancellationToken);
+                _ = await CreateAsync<int?>(DbLogHelper.WJbLogs_Ins, DbLogHelper.Normalize(logLevel, title, more), cancellationToken: cancellationToken);
             }
         }
         finally { await Task.CompletedTask; }

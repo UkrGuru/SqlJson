@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="UkrGuru.SqlJson" Version="6.7.1" />
+    <PackageReference Include="UkrGuru.SqlJson" Version="6.7.5" />
   </ItemGroup>
 
 </Project>

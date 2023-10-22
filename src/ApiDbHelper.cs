@@ -25,7 +25,7 @@ public class ApiDbHelper
 
         if (!string.IsNullOrEmpty(apiHoleUri)) result = $"{apiHoleUri}/{result}";
 
-        if (data != null) result += $"?Data={Uri.EscapeDataString(Normalize(data))}";
+        if (data != null) result = $"{result}?Data={Uri.EscapeDataString(Normalize(data))}";
 
         return result;
     }

@@ -18,7 +18,7 @@ public static class ApiDbExtensions
     /// <returns>A task that represents the asynchronous read operation.</returns>
     public static async Task<int> ReadAsync(this HttpResponseMessage httpResponse, CancellationToken cancellationToken = default)
     {
-        httpResponse.EnsureSuccessStatusCode();
+        _ = httpResponse.EnsureSuccessStatusCode();
 
         var content = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
 
@@ -38,7 +38,7 @@ public static class ApiDbExtensions
     /// <returns>A task that represents the asynchronous read operation and contains the deserialized object.</returns>
     public static async Task<T?> ReadAsync<T>(this HttpResponseMessage httpResponse, CancellationToken cancellationToken = default)
     {
-        httpResponse.EnsureSuccessStatusCode();
+        _ = httpResponse.EnsureSuccessStatusCode();
 
         var content = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
 
@@ -62,11 +62,11 @@ public static class ApiDbExtensions
     }
 
     /// <summary>
-    /// 
+    /// Tries to create a new record in the database.
     /// </summary>
-    /// <param name="db"></param>
-    /// <param name="proc"></param>
-    /// <param name="data"></param>
+    /// <param name="db">The database service.</param>
+    /// <param name="proc">The stored procedure name.</param>
+    /// <param name="data">The data to be passed to the stored procedure.</param>
     /// <returns></returns>
     public static async Task<string?> TryCreateAsync(this IDbService db, string proc, string? data = default)
     {
@@ -81,12 +81,12 @@ public static class ApiDbExtensions
     }
 
     /// <summary>
-    /// 
+    /// Tries to read a record from the database.
     /// </summary>
-    /// <param name="db"></param>
-    /// <param name="proc"></param>
-    /// <param name="data"></param>
-    /// <returns></returns>
+    /// <param name="db">The database service.</param>
+    /// <param name="proc">The stored procedure name.</param>
+    /// <param name="data">The data to be passed to the stored procedure.</param>
+    /// <returns>The record read from the database.</returns>
     public static async Task<string?> TryReadAsync(this IDbService db, string proc, string? data = default)
     {
         try
@@ -100,12 +100,12 @@ public static class ApiDbExtensions
     }
 
     /// <summary>
-    /// 
+    /// Tries to update a record in the database.
     /// </summary>
-    /// <param name="db"></param>
-    /// <param name="proc"></param>
-    /// <param name="data"></param>
-    /// <returns></returns>
+    /// <param name="db">The database service.</param>
+    /// <param name="proc">The stored procedure name.</param>
+    /// <param name="data">The data to be passed to the stored procedure.</param>
+    /// <returns>The number of records updated in the database.</returns>
     public static async Task<string?> TryUpdateAsync(this IDbService db, string proc, string? data = default)
     {
         try
@@ -119,12 +119,12 @@ public static class ApiDbExtensions
     }
 
     /// <summary>
-    /// 
+    /// Tries to delete a record from the database.
     /// </summary>
-    /// <param name="db"></param>
-    /// <param name="proc"></param>
-    /// <param name="data"></param>
-    /// <returns></returns>
+    /// <param name="db">The database service.</param>
+    /// <param name="proc">The stored procedure name.</param>
+    /// <param name="data">The data to be passed to the stored procedure.</param>
+    /// <returns>The number of records deleted from the database.</returns>
     public static async Task<string?> TryDeleteAsync(this IDbService db, string proc, string? data = default)
     {
         try
@@ -136,5 +136,4 @@ public static class ApiDbExtensions
             return await Task.FromResult($"Error: {ex.Message}. Proc={proc}");
         }
     }
-
 }

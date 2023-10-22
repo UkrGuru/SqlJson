@@ -91,8 +91,8 @@ public class ObjExtensionsTests
     public static void CanPrimitiveToObj()
     {
         Assert.Null((null as string).ToObj<int?>());
-        Assert.Equal(int.MaxValue, (null as string).ToObj<int?>(int.MaxValue));
-        Assert.Equal(int.MaxValue, int.MaxValue.ToString().ToObj<int?>());
+        Assert.Equal((int?)int.MaxValue, (null as string).ToObj<int?>(int.MaxValue));
+        Assert.Equal((int?)int.MaxValue, int.MaxValue.ToString().ToObj<int?>());
     }
 
     [Fact]

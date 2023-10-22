@@ -4,7 +4,6 @@
 using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Text;
-using System.Text.Json;
 using UkrGuru.SqlJson.Extensions;
 
 namespace UkrGuru.SqlJson;
@@ -88,7 +87,7 @@ public static class DbExtensions
         {
             using SqlDataReader reader = command.ExecuteReader(CommandBehavior.CloseConnection);
 
-            return reader.ReadAll<T?>();
+            return reader.ReadAll<T?>().ToObj<T?>();
         }
         else
         {
@@ -132,7 +131,7 @@ public static class DbExtensions
         {
             await using SqlDataReader reader = await command.ExecuteReaderAsync(CommandBehavior.CloseConnection, cancellationToken);
 
-            return await reader.ReadAllAsync<T?>(cancellationToken);
+            return (await reader.ReadAllAsync<T?>(cancellationToken)).ToObj<T?>();
         }
         else
         {
@@ -146,21 +145,21 @@ public static class DbExtensions
     /// <typeparam name="T">The type to which the value should be casted.</typeparam>
     /// <param name="reader">The SqlDataReader instance.</param>
     /// <returns>The value casted to type T.</returns>
-    public static T? ReadAll<T>(this SqlDataReader reader)
+    public static object? ReadAll<T>(this SqlDataReader reader)
     {
         Type type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
 
         if (type == typeof(byte[]))
-            return (reader.Read()) && !reader.IsDBNull(0) ? (T?)reader.GetValue(0) : default;
+            return reader.Read() ? reader[0] : default;
 
         else if (type == typeof(char[]))
-            return (reader.Read()) && !reader.IsDBNull(0) ? (T?)(object)reader.GetSqlChars(0).Value : default;
+            return reader.Read() ? reader.GetSqlChars(0).Value : default;
 
         else if (type == typeof(Stream))
-            return (T?)(object)((reader.Read()) && !reader.IsDBNull(0) ? reader.GetStream(0) : Stream.Null);
+            return reader.Read() ? reader.GetStream(0) : Stream.Null;
 
         else if (type == typeof(TextReader))
-            return (T?)(object)((reader.Read()) && !reader.IsDBNull(0) ? reader.GetTextReader(0) : TextReader.Null);
+            return reader.Read() ? reader.GetTextReader(0) : TextReader.Null;
 
         else
         {
@@ -169,16 +168,7 @@ public static class DbExtensions
             while (reader.Read())
                 sb.Append(reader.GetValue(0));
 
-            var result = sb.ToString();
-
-            //return result.ToObj<T>();
-
-            if (type == typeof(string))
-                return (T?)(object)result;
-            else if (string.IsNullOrEmpty(result))
-                return default;
-            else
-                return JsonSerializer.Deserialize<T?>(result);
+            return sb.ToString();
         }
     }
 
@@ -189,21 +179,21 @@ public static class DbExtensions
     /// <param name="reader">The SqlDataReader instance.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The value casted to type T.</returns>
-    public static async Task<T?> ReadAllAsync<T>(this SqlDataReader reader, CancellationToken cancellationToken = default)
+    public static async Task<object?> ReadAllAsync<T>(this SqlDataReader reader, CancellationToken cancellationToken = default)
     {
         Type type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
 
         if (type == typeof(byte[]))
-            return (await reader.ReadAsync(cancellationToken)) && !reader.IsDBNull(0) ? (T?)reader.GetValue(0) : default;
+            return (await reader.ReadAsync(cancellationToken)) ? reader[0] : default;
 
         else if (type == typeof(char[]))
-            return (await reader.ReadAsync(cancellationToken)) && !reader.IsDBNull(0) ? (T?)(object)reader.GetSqlChars(0).Value : default;
+            return (await reader.ReadAsync(cancellationToken)) ? reader.GetSqlChars(0).Value : default;
 
         else if (type == typeof(Stream))
-            return (T?)(object)((await reader.ReadAsync(cancellationToken)) && !reader.IsDBNull(0) ? reader.GetStream(0) : Stream.Null);
+            return (await reader.ReadAsync(cancellationToken)) ? reader.GetStream(0) : Stream.Null;
 
         else if (type == typeof(TextReader))
-            return (T?)(object)((await reader.ReadAsync(cancellationToken)) && !reader.IsDBNull(0) ? reader.GetTextReader(0) : TextReader.Null);
+            return (await reader.ReadAsync(cancellationToken)) ? reader.GetTextReader(0) : TextReader.Null;
 
         else
         {
@@ -212,16 +202,7 @@ public static class DbExtensions
             while (await reader.ReadAsync(cancellationToken))
                 sb.Append(reader.GetValue(0));
 
-            var result = sb.ToString();
-
-            //return result.ToObj<T>();
-
-            if (type == typeof(string))
-                return (T?)(object)result;
-            else if (string.IsNullOrEmpty(result))
-                return default;
-            else
-                return JsonSerializer.Deserialize<T?>(result);
+            return sb.ToString();
         }
     }
 
@@ -243,69 +224,4 @@ public static class DbExtensions
     /// <returns></returns>
     public static async Task<T?> ExecuteScalarAsync<T>(this SqlCommand command, CancellationToken cancellationToken = default)
         => (await command.ExecuteScalarAsync(cancellationToken)).ToObj<T?>();
-
-
-    ///// <summary>
-    ///// Converts a scalar value to the specified type.
-    ///// </summary>
-    ///// <typeparam name="T">The target type.</typeparam>
-    ///// <param name="value">The value to convert.</param>
-    ///// <returns>The converted value of type <typeparamref name="T"/>.</returns>
-    //public static T? ConvertScalar<T>(object? value)
-    //{
-    //    //return value.ToObj<T>();
-
-    //    if (value == null || value == DBNull.Value) return default;
-
-    //    var type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
-
-    //    if (value is string)
-    //    {
-    //        string s = (string)value;
-
-    //        if (type == typeof(DateOnly) || type == typeof(DateTime))
-    //        {
-    //            var dt = DateTime.ParseExact(s, "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
-
-    //            if (type == typeof(DateOnly))
-    //                return (T)(object)DateOnly.FromDateTime(dt);
-
-    //            return (T)(object)dt;
-    //        }
-
-    //        else if (type == typeof(DateTimeOffset))
-    //            return (T)(object)DateTimeOffset.ParseExact(s, "yyyy-MM-dd HH:mm:ss.fffffff zzz", CultureInfo.InvariantCulture);
-
-    //        else if (type == typeof(TimeOnly))
-    //            return (T)(object)TimeOnly.ParseExact(s, "HH:mm:ss", CultureInfo.InvariantCulture);
-
-    //        else if (type == typeof(TimeSpan))
-    //            return (T)(object)TimeSpan.ParseExact(s, "hh':'mm':'ss", CultureInfo.InvariantCulture);
-
-    //        else if (type.IsEnum)
-    //            return (T?)Enum.Parse(type, s);
-
-    //        if (type.IsPrimitive)
-    //            return (T?)Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
-
-    //        else
-    //            return (T?)Convert.ChangeType(value, type);
-    //    }
-    //    else
-    //    {
-    //        if (type == typeof(DateOnly))
-    //            return (T)(object)DateOnly.FromDateTime((DateTime)value);
-
-    //        else if (type == typeof(TimeOnly))
-    //            return (T)(object)TimeOnly.FromTimeSpan((TimeSpan)value);
-
-    //        else if (type == typeof(char))
-    //            return (T)(object)char.Parse((string)value);
-
-    //        else if (type.IsEnum)
-    //            return (T?)Enum.Parse(type, (string)value);
-
-    //        return (T)value;
-    //    }
-    //}
 }

@@ -19,83 +19,45 @@ public static class ObjExtensions
     /// <param name="value">The sql object value to convert.</param>
     /// <param name="defaultValue">The default value to return if the conversion fails.</param>
     /// <returns>The converted object of type T.</returns>
-    public static T? ToObj<T>(this object? value, T? defaultValue = default)
-    {
-        if (value == null || value == DBNull.Value)
-            return defaultValue;
-
-        if (value is StringBuilder sb)
-        {
-            if (sb.Length == 0) return defaultValue;
-            value = sb.ToString();
-        }
-
-        var type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
-
-        if (type == typeof(string))
-            return (T?)value;
-
-        if (value is string svalue && string.IsNullOrEmpty(svalue))
-            return defaultValue;
-
-        if (type.IsClass)
-            return value.JsonDeserialize<T?>();
-
-        else if (type == typeof(Guid))
-            return (T?)(object)Guid.Parse(Convert.ToString(value)!);
-
-        else if (type.IsEnum)
-            return (T?)Enum.Parse(type, Convert.ToString(value)!);
-
-        if (value is string)
-        {
-            string s = (string)value;
-
-            if (type == typeof(DateOnly) || type == typeof(DateTime))
-            {
-                var dt = DateTime.ParseExact(s, "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
-
-                if (type == typeof(DateOnly))
-                    return (T)(object)DateOnly.FromDateTime(dt);
-
-                return (T)(object)dt;
-            }
-
-            else if (type == typeof(DateTimeOffset))
-                return (T)(object)DateTimeOffset.ParseExact(s, "yyyy-MM-dd HH:mm:ss.fffffff zzz", CultureInfo.InvariantCulture);
-
-            else if (type == typeof(TimeOnly))
-                return (T)(object)TimeOnly.ParseExact(s, "HH:mm:ss", CultureInfo.InvariantCulture);
-
-            else if (type == typeof(TimeSpan))
-                return (T)(object)TimeSpan.ParseExact(s, "hh':'mm':'ss", CultureInfo.InvariantCulture);
-        }
-        else
-        {
-            if (type == typeof(DateOnly))
-                return (T)(object)DateOnly.FromDateTime((DateTime)value);
-
-            else if (type == typeof(TimeOnly))
-                return (T)(object)TimeOnly.FromTimeSpan((TimeSpan)value);
-        }
-
-        if (type.IsPrimitive)
-            return (T?)Convert.ChangeType(value, type, CultureInfo.InvariantCulture);
-
-        else
-            return (T?)Convert.ChangeType(value, type);
-    }
+    public static T? ToObj<T>(this object? value, T? defaultValue = default) =>
+        value == null || value == DBNull.Value ? defaultValue :
+        value is T t ? t:
+        value is string s ? (string.IsNullOrEmpty(s) ? defaultValue : s.ToTypes<T>()) :
+        value is StringBuilder sb ? (sb.Length == 0 ? defaultValue : sb.ToString().ToTypes<T>()) :
+        value.ToType<T>();
 
     /// <summary>
-    /// Reads the UTF-8 encoded text or parses the text representing a single JSON value into a <typeparamref name="T"/>.
+    /// Converts an object to a specified type.
     /// </summary>
-    /// <typeparam name="T">The type of results to return.</typeparam>
-    /// <param name="value">The object value to convert.</param>
-    /// <returns>The converted object of type T.</returns>
-    public static T? JsonDeserialize<T>(this object value) => value switch
+    /// <typeparam name="T">The type to convert to.</typeparam>
+    /// <param name="value">The object to convert.</param>
+    /// <returns>The converted object.</returns>
+    public static T? ToType<T>(this object value) => (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)) switch
     {
-        Stream stream => JsonSerializer.Deserialize<T>(stream),
-        string svalue => JsonSerializer.Deserialize<T>(svalue),
-        _ => default,
+        Type t when t.IsClass => JsonSerializer.Deserialize<T?>((Stream)value),
+        Type t when t == typeof(Guid) => (T)(object)Guid.Parse(Convert.ToString(value)!),
+        Type t when t.IsEnum => (T)Enum.Parse(t, Convert.ToString(value)!),
+        Type t when t == typeof(DateOnly) => (T)(object)DateOnly.FromDateTime((DateTime)value),
+        Type t when t == typeof(TimeOnly) => (T)(object)TimeOnly.FromTimeSpan((TimeSpan)value),
+        _ => (T?)Convert.ChangeType(value, Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T), CultureInfo.InvariantCulture),
+    };
+
+    /// <summary>
+    /// Converts a string to a specified type.
+    /// </summary>
+    /// <typeparam name="T">The type to convert to.</typeparam>
+    /// <param name="value">The string to convert.</param>
+    /// <returns>The converted object.</returns>
+    public static T? ToTypes<T>(this string value) => (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)) switch
+    {
+        Type t when t.IsClass => JsonSerializer.Deserialize<T?>(value),
+        Type t when t == typeof(Guid) => (T)(object)Guid.Parse(value),
+        Type t when t.IsEnum => (T)Enum.Parse(t, value),
+        Type t when t == typeof(DateOnly) => (T)(object)DateOnly.FromDateTime(DateTime.ParseExact(value, "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture)),
+        Type t when t == typeof(DateTime) => (T)(object)DateTime.ParseExact(value, "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture),
+        Type t when t == typeof(DateTimeOffset) => (T)(object)DateTimeOffset.ParseExact(value, "yyyy-MM-dd HH:mm:ss.fffffff zzz", CultureInfo.InvariantCulture),
+        Type t when t == typeof(TimeOnly) => (T)(object)TimeOnly.ParseExact(value, "HH:mm:ss", CultureInfo.InvariantCulture),
+        Type t when t == typeof(TimeSpan) => (T)(object)TimeSpan.ParseExact(value, "hh':'mm':'ss", CultureInfo.InvariantCulture),
+        _ => (T?)Convert.ChangeType(value, Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T), CultureInfo.InvariantCulture),
     };
 }
