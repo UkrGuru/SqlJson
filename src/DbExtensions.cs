@@ -140,37 +140,32 @@ public static class DbExtensions
     }
 
     /// <summary>
+    /// Executes the query, and returns the first column of the first row in the result set returned by the query as an object of type T.
+    /// </summary>
+    /// <typeparam name="T">The type of object to return.</typeparam>
+    /// <param name="command">The SqlCommand to execute.</param>
+    /// <returns>An object of type T that represents the first column of the first row in the result set.</returns>
+    public static T? ExecuteScalar<T>(this SqlCommand command)
+        => command.ExecuteScalar().ToObj<T?>();
+
+    /// <summary>
+    /// Asynchronously executes the query, and returns the first column of the first row in the result set returned by the query as an object of type T.
+    /// </summary>
+    /// <typeparam name="T">The type of object to return.</typeparam>
+    /// <param name="command">The SqlCommand to execute.</param>
+    /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains an object of type T that represents the first column of the first row in the result set.</returns>
+    public static async Task<T?> ExecuteScalarAsync<T>(this SqlCommand command, CancellationToken cancellationToken = default)
+        => (await command.ExecuteScalarAsync(cancellationToken)).ToObj<T?>();
+
+    /// <summary>
     /// Reads the first column of the first row of the result set returned by the query and returns the value casted to type T.
     /// </summary>
     /// <typeparam name="T">The type to which the value should be casted.</typeparam>
     /// <param name="reader">The SqlDataReader instance.</param>
     /// <returns>The value casted to type T.</returns>
     public static object? ReadAll<T>(this SqlDataReader reader)
-    {
-        Type type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
-
-        if (type == typeof(byte[]))
-            return reader.Read() ? reader[0] : default;
-
-        else if (type == typeof(char[]))
-            return reader.Read() ? reader.GetSqlChars(0).Value : default;
-
-        else if (type == typeof(Stream))
-            return reader.Read() ? reader.GetStream(0) : Stream.Null;
-
-        else if (type == typeof(TextReader))
-            return reader.Read() ? reader.GetTextReader(0) : TextReader.Null;
-
-        else
-        {
-            StringBuilder sb = new();
-
-            while (reader.Read())
-                sb.Append(reader.GetValue(0));
-
-            return sb.ToString();
-        }
-    }
+        => reader.Read() ? reader.ReadObj<T>() : default(T);
 
     /// <summary>
     /// Reads the first column of the first row of the result set returned by the query and returns the value casted to type T.
@@ -180,48 +175,67 @@ public static class DbExtensions
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The value casted to type T.</returns>
     public static async Task<object?> ReadAllAsync<T>(this SqlDataReader reader, CancellationToken cancellationToken = default)
+        => (await reader.ReadAsync(cancellationToken)) ? await reader.ReadObjAsync<T>(cancellationToken) : await Task.FromResult(default(T));
+
+    /// <summary>
+    /// Reads more data from the SqlDataReader and returns it as a string.
+    /// </summary>
+    /// <param name="reader">The SqlDataReader to read from.</param>
+    /// <returns>A string containing the concatenated data.</returns>
+    public static object? ReadMore(this SqlDataReader reader)
     {
-        Type type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
+        StringBuilder sb = new();
 
-        if (type == typeof(byte[]))
-            return (await reader.ReadAsync(cancellationToken)) ? reader[0] : default;
+        do { sb.Append(reader.GetValue(0)); } while (reader.Read());
 
-        else if (type == typeof(char[]))
-            return (await reader.ReadAsync(cancellationToken)) ? reader.GetSqlChars(0).Value : default;
-
-        else if (type == typeof(Stream))
-            return (await reader.ReadAsync(cancellationToken)) ? reader.GetStream(0) : Stream.Null;
-
-        else if (type == typeof(TextReader))
-            return (await reader.ReadAsync(cancellationToken)) ? reader.GetTextReader(0) : TextReader.Null;
-
-        else
-        {
-            StringBuilder sb = new();
-
-            while (await reader.ReadAsync(cancellationToken))
-                sb.Append(reader.GetValue(0));
-
-            return sb.ToString();
-        }
+        return sb.ToString();
     }
 
     /// <summary>
-    /// 
+    /// Reads more data from the SqlDataReader and returns it as a string asynchronously.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="command"></param>
-    /// <returns></returns>
-    public static T? ExecuteScalar<T>(this SqlCommand command)
-        => command.ExecuteScalar().ToObj<T?>();
+    /// <param name="reader">The SqlDataReader to read from.</param>
+    /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains a string containing the concatenated data.</returns>
+    public static async Task<object?> ReadMoreAsync(this SqlDataReader reader, CancellationToken cancellationToken = default)
+    {
+        StringBuilder sb = new();
+
+        do { sb.Append(reader.GetValue(0)); } while (await reader.ReadAsync(cancellationToken));
+
+        return await Task.FromResult(sb.ToString());
+    }
 
     /// <summary>
-    /// 
+    /// Reads data from the SqlDataReader and returns it as an object of type T.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="command"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    public static async Task<T?> ExecuteScalarAsync<T>(this SqlCommand command, CancellationToken cancellationToken = default)
-        => (await command.ExecuteScalarAsync(cancellationToken)).ToObj<T?>();
+    /// <typeparam name="T">The type of object to return.</typeparam>
+    /// <param name="reader">The SqlDataReader to read from.</param>
+    /// <returns>An object of type T containing the data read from the SqlDataReader.</returns>
+    public static object? ReadObj<T>(this SqlDataReader reader)
+        => (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)).Name switch
+        {
+            "Byte[]" => reader[0],
+            "Char[]" => reader.GetSqlChars(0).Value,
+            nameof(Stream) => reader.GetStream(0),
+            nameof(TextReader) => reader.GetTextReader(0),
+            _ => reader.ReadMore(),
+        };
+
+    /// <summary>
+    /// Reads data from the SqlDataReader and returns it as an object of type T asynchronously.
+    /// </summary>
+    /// <typeparam name="T">The type of object to return.</typeparam>
+    /// <param name="reader">The SqlDataReader to read from.</param>
+    /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains an object of type T containing the data read from the SqlDataReader.</returns>
+    public static async Task<object?> ReadObjAsync<T>(this SqlDataReader reader, CancellationToken cancellationToken = default)
+        => await Task.FromResult((Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)).Name switch
+        {
+            "Byte[]" => reader[0],
+            "Char[]" => reader.GetSqlChars(0).Value,
+            nameof(Stream) => reader.GetStream(0),
+            nameof(TextReader) => reader.GetTextReader(0),
+            _ => await reader.ReadMoreAsync(cancellationToken),
+        });
 }
