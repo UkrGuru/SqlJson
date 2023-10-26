@@ -4,7 +4,6 @@ using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Reports;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json.Nodes;
 using UkrGuru.SqlJson;
 
 namespace BenchmarkDotNet.Samples
@@ -47,22 +46,22 @@ namespace BenchmarkDotNet.Samples
             DbHelper.ConnectionString = SQLConnectionString;
         }
 
-[Benchmark]
-public void UkrGuru_SqlJson_SqlUpdate() => DbHelper.Exec("UPDATE [Blogs] SET [LastUpdated] = @Data;", DateTime.UtcNow);
+        [Benchmark]
+        public void UkrGuru_SqlJson_SqlUpdate() => DbHelper.Exec("UPDATE [Blogs] SET [LastUpdated] = @Data;", DateTime.UtcNow);
 
-[Benchmark]
-public void UkrGuru_SqlJson_NetUpdate()
-{
-    var date = DateTime.UtcNow;
+        [Benchmark]
+        public void UkrGuru_SqlJson_NetUpdate()
+        {
+            var date = DateTime.UtcNow;
 
-    var blogs = DbHelper.Exec<List<JsonNode>>("SELECT [BlogId], [LastUpdated] FROM [Blogs] FOR JSON PATH") ?? new();
+            var blogs = DbHelper.Exec<List<Blog>>("SELECT [BlogId], [LastUpdated] FROM [Blogs] FOR JSON PATH") ?? new();
 
-    DbHelper.Exec("""
-        UPDATE [Blogs] SET [LastUpdated] = D.[LastUpdated]
-        FROM OPENJSON(@Data) WITH([BlogId] int, [LastUpdated] datetime2(7)) D
-        WHERE [Blogs].[BlogId] = D.[BlogId]
-        """, blogs.Select(blog => { blog["LastUpdated"] = date; return blog; }));
-}
+            DbHelper.Exec("""
+                UPDATE [Blogs] SET [LastUpdated] = D.[LastUpdated]
+                FROM OPENJSON(@Data) WITH([BlogId] int, [LastUpdated] datetime2(7)) D
+                WHERE [Blogs].[BlogId] = D.[BlogId]
+                """, blogs.Select(blog => { blog.LastUpdated = date; return new { blog.BlogId, blog.LastUpdated }; }));
+        }
 
         [Benchmark]
         public void EF_PlainSQL_BulkUpdate()
