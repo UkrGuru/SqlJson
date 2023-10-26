@@ -19,6 +19,6 @@ public void UkrGuru_SqlJson_NetUpdate()
         UPDATE [Blogs] SET [LastUpdated] = D.[LastUpdated]
         FROM OPENJSON(@Data) WITH([BlogId] int, [LastUpdated] datetime2(7)) D
         WHERE [Blogs].[BlogId] = D.[BlogId]
-        """, blogs.Select(blog => { blog["LastUpdated"] = date; return blog; }));
+        """, blogs.Select(blog => { blog["LastUpdated"] = date; return new { blog.BlogId, blog.LastUpdated }; }));
 }
 ```
