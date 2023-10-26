@@ -4,6 +4,7 @@ using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Reports;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Nodes;
 using UkrGuru.SqlJson;
 
 namespace BenchmarkDotNet.Samples
@@ -54,7 +55,7 @@ namespace BenchmarkDotNet.Samples
         {
             var date = DateTime.UtcNow;
 
-            var blogs = DbHelper.Exec<List<Blog>>("SELECT [BlogId], [LastUpdated] FROM [Blogs] FOR JSON PATH") ?? new();
+            var blogs = DbHelper.Exec<List<JsonNode>>("SELECT [BlogId], [LastUpdated] FROM [Blogs] FOR JSON PATH") ?? new();
 
             DbHelper.Exec("""
                 UPDATE [Blogs]
@@ -62,7 +63,7 @@ namespace BenchmarkDotNet.Samples
                 FROM OPENJSON(@Data)
                     WITH([BlogId] int, [LastUpdated] datetime2(7)) D
                 WHERE [Blogs].[BlogId] = D.[BlogId]
-                """, blogs.Select(blog => { blog.LastUpdated = date; return new { blog.BlogId, blog.LastUpdated }; }));
+                """, blogs.Select(blog => { blog["LastUpdated"] = date; return blog; }));
         }
 
         [Benchmark]
