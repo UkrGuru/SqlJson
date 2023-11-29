@@ -3,9 +3,9 @@
 
 using System.Text;
 using System.Text.Json;
-using static UkrGuru.SqlJson.GlobalTests;
+using static UkrGuru.SqlJson.Tests.GlobalTests;
 
-namespace UkrGuru.SqlJson.Extensions;
+namespace UkrGuru.SqlJson.Extensions.Tests;
 
 public class ObjExtensionsTests
 {

@@ -60,7 +60,7 @@ namespace BenchmarkDotNet.Samples
                 UPDATE [Blogs] SET [LastUpdated] = D.[LastUpdated]
                 FROM OPENJSON(@Data) WITH([BlogId] int, [LastUpdated] datetime2(7)) D
                 WHERE [Blogs].[BlogId] = D.[BlogId]
-                """, blogs.Select(blog => { blog.LastUpdated = date; return new { blog.BlogId, blog.LastUpdated }; }));
+                """, blogs.Select(blog => new { blog.BlogId, LastUpdated = date } ));
         }
 
         [Benchmark]

@@ -19,7 +19,7 @@ public class DbFileHelper
         => await DbHelper.DeleteAsync(DbFileHelper.WJbFiles_Del, guid, cancellationToken: cancellationToken);
 
     /// <inheritdoc/>
-    public static async Task<string?> GetAsync(string? value, int? timeout = null, CancellationToken cancellationToken = default)
+    public static async Task<string?> GetAsync(string? value, int? timeout = default, CancellationToken cancellationToken = default)
     {
         if (Guid.TryParse(value, out Guid guid))
         {
@@ -35,7 +35,7 @@ public class DbFileHelper
     }
 
     /// <inheritdoc/>
-    public static async Task<DbFile?> GetAsync(Guid? guid, int? timeout = null, CancellationToken cancellationToken = default)
+    public static async Task<DbFile?> GetAsync(Guid? guid, int? timeout = default, CancellationToken cancellationToken = default)
     {
         var file = await DbHelper.ReadAsync<DbFile?>(DbFileHelper.WJbFiles_Get, guid, timeout, cancellationToken);
 
@@ -45,7 +45,7 @@ public class DbFileHelper
     }
 
     /// <inheritdoc/>
-    public static async Task<string?> SetAsync(string? value, string? filename = "file.txt", bool safe = false, int? timeout = null, CancellationToken cancellationToken = default)
+    public static async Task<string?> SetAsync(string? value, string? filename = "file.txt", bool safe = false, int? timeout = default, CancellationToken cancellationToken = default)
     {
         if (value?.Length > 0)
         {
@@ -60,6 +60,6 @@ public class DbFileHelper
     }
 
     /// <inheritdoc/>
-    public static async Task<Guid?> SetAsync(DbFile? file, int? timeout = null, CancellationToken cancellationToken = default) 
+    public static async Task<Guid?> SetAsync(DbFile? file, int? timeout = default, CancellationToken cancellationToken = default) 
         => await file.SetAsync<Guid?>(timeout, cancellationToken);
 }

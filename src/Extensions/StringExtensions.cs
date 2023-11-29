@@ -17,13 +17,13 @@ public static class StringExtensions
     /// <param name="argumentName">The name of the argument.</param>
     /// <returns>The original argument.</returns>
     /// <exception cref="ArgumentException"></exception>
-    public static string? ThrowIfBlank(this string? argument, string? argumentName = null)
+    public static string ThrowIfBlank(this string? argument, string? argumentName = default)
     {
         ArgumentNullException.ThrowIfNull(argument, argumentName);
 
-        if (string.IsNullOrEmpty(argument))
+        if (string.IsNullOrWhiteSpace(argument))
             throw new ArgumentException($"'{argumentName ?? nameof(argument)}' cannot be blank.");
 
-        return argument;
+        return argument!;
     }
 }

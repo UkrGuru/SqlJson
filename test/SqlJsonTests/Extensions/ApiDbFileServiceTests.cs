@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using static UkrGuru.SqlJson.GlobalTests;
+using static UkrGuru.SqlJson.Tests.GlobalTests;
 
 namespace UkrGuru.SqlJson.Extensions;
 
@@ -18,6 +18,7 @@ public class ApiDbFileServiceTests
     {
         var allData = new List<object[]>
         {
+            new object[] { Array.Empty<byte>() },
             new object[] { TestBytes1k },
             new object[] { TestBytes5k },
             new object[] { TestBytes55k }
@@ -27,7 +28,7 @@ public class ApiDbFileServiceTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestBytes), parameters: 3)]
+    [MemberData(nameof(GetTestBytes), parameters: 4)]
     public async Task BinFileTests(byte[] bytes)
     {
         var fileName = $"{DateTime.Now.ToString("HHmmssnnn")}.bin";
@@ -45,6 +46,7 @@ public class ApiDbFileServiceTests
     {
         var allData = new List<object[]>
         {
+            new object[] { string.Empty },
             new object[] { TestString1k },
             new object[] { TestString5k },
             new object[] { TestString55k }
@@ -54,7 +56,7 @@ public class ApiDbFileServiceTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestString), parameters: 3)]
+    [MemberData(nameof(GetTestString), parameters: 4)]
     public async Task TxtFileTests(string content)
     {
         var guid1 = await _dbFile.SetAsync(content);

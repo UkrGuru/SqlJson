@@ -2,9 +2,9 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using System.Net;
-using static UkrGuru.SqlJson.GlobalTests;
+using static UkrGuru.SqlJson.Tests.GlobalTests;
 
-namespace UkrGuru.SqlJson;
+namespace UkrGuru.SqlJson.Tests;
 
 public class ApiDbExtensionsTests
 {

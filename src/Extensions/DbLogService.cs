@@ -33,7 +33,7 @@ public class DbLogService : DbService, IDbLogService
     public virtual string MinDbLogLevelPath => DbLogHelper.DbLogLevelPathDefault;
 
     /// <inheritdoc/>
-    public async Task LogAsync(DbLogLevel logLevel, string title, object? more = null, CancellationToken cancellationToken = default)
+    public async Task LogAsync(DbLogLevel logLevel, string title, object? more = default, CancellationToken cancellationToken = default)
     {
         try
         {

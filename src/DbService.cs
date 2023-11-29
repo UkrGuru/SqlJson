@@ -12,6 +12,11 @@ namespace UkrGuru.SqlJson;
 public class DbService : IDbService
 {
     /// <summary>
+    /// The ConnectionString name used to open the SQL Server database.
+    /// </summary>
+    public virtual string ConnectionStringName => "DefaultConnection";
+
+    /// <summary>
     /// Specifies the string used to open a SQL Server database.
     /// </summary>
     private readonly string? _connectionString;
@@ -29,31 +34,8 @@ public class DbService : IDbService
     /// <returns>New instance of the SqlConnection class</returns>
     public SqlConnection CreateSqlConnection() => new(_connectionString);
 
-    /// <summary>
-    /// The ConnectionString name used to open the SQL Server database.
-    /// </summary>
-    public virtual string ConnectionStringName => "DefaultConnection";
-
     /// <inheritdoc/>
-    public int Exec(string tsql, object? data = null, int? timeout = null)
-    {
-        using SqlConnection connection = CreateSqlConnection();
-        connection.Open();
-
-        return connection.Exec(tsql, data, timeout);
-    }
-
-    /// <inheritdoc/>
-    public T? Exec<T>(string tsql, object? data = null, int? timeout = null)
-    {
-        using SqlConnection connection = CreateSqlConnection();
-        connection.Open();
-
-        return connection.Exec<T?>(tsql, data, timeout);
-    }
-
-    /// <inheritdoc/>
-    public async Task<int> ExecAsync(string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+    public async Task<int> ExecAsync(string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
     {
         await using SqlConnection connection = CreateSqlConnection();
         await connection.OpenAsync(cancellationToken);
@@ -62,7 +44,7 @@ public class DbService : IDbService
     }
 
     /// <inheritdoc/>
-    public async Task<T?> ExecAsync<T>(string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+    public async Task<T?> ExecAsync<T>(string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
     {
         await using SqlConnection connection = CreateSqlConnection();
         await connection.OpenAsync(cancellationToken);
@@ -71,22 +53,18 @@ public class DbService : IDbService
     }
 
     /// <inheritdoc/>
-    public async Task<T?> CreateAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+    public async Task<T?> CreateAsync<T>(string proc, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
         => await ExecAsync<T?>(proc, data, timeout, cancellationToken);
 
     /// <inheritdoc/>
-    public async Task<T?> ReadAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+    public async Task<T?> ReadAsync<T>(string proc, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
         => await ExecAsync<T?>(proc, data, timeout, cancellationToken);
 
     /// <inheritdoc/>
-    public async Task<int> UpdateAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+    public async Task<int> UpdateAsync(string proc, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
         => await ExecAsync(proc, data, timeout, cancellationToken);
 
     /// <inheritdoc/>
-    public async Task<int> DeleteAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+    public async Task<int> DeleteAsync(string proc, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
         => await ExecAsync(proc, data, timeout, cancellationToken);
-
-    ///// <inheritdoc/>
-    //public async Task TestAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default) 
-    //    => await ExecAsync(proc, data, timeout, cancellationToken);
 }

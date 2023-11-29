@@ -3,7 +3,7 @@
 
 using System.Text.Json;
 
-namespace UkrGuru.SqlJson.Extensions;
+namespace UkrGuru.SqlJson.Extensions.Tests;
 
 public class MoreTests
 {

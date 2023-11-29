@@ -2,7 +2,7 @@
 [![Nuget](https://img.shields.io/nuget/v/UkrGuru.SqlJson)](https://www.nuget.org/packages/UkrGuru.SqlJson/)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-yellow.svg)](https://www.paypal.com/donate/?hosted_button_id=BPUF3H86X96YN)
 
-UkrGuru.SqlJson is a library that simplifies the interaction between .NET applications and SQL Server databases. It allows developers to automatically normalize input parameters and deserialize the result. Also supports dynamic queries, stored procedures and asynchronous operations. With UkrGuru.SqlJson, you can access SQL Server data with minimal code and maximum performance.
+UkrGuru.SqlJson is a library that makes it easy to interact between .NET applications and SQL Server databases. Supports CRUD with or without API with the same interface. It allows developers to automatically normalize input parameters and deserialize the result. Also supports dynamic queries, stored procedures and asynchronous operations. With the UkrGuru.SqlJson package, you can access SQL Server data with minimal code and maximum performance.
 
 ## Installation
 

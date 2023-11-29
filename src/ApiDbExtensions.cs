@@ -26,7 +26,7 @@ public static class ApiDbExtensions
 
         int.TryParse(content, out var number);
 
-        return await Task.FromResult(number);
+        return number;
     }
 
     /// <summary>
@@ -42,7 +42,7 @@ public static class ApiDbExtensions
 
         var content = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
 
-        return await Task.FromResult(content.ToObj<T?>());
+        return content.ToObj<T?>();
     }
 
     /// <summary>
@@ -52,13 +52,7 @@ public static class ApiDbExtensions
     /// <exception cref="HttpRequestException">Thrown if the content starts with "Error:".</exception>
     public static void ThrowIfError(this string? content)
     {
-        const string ErrorPrefix = "Error:";
-
-        if (content?.StartsWith(ErrorPrefix) == true)
-        {
-            var errorMessage = content.Substring(ErrorPrefix.Length).TrimStart();
-            throw new HttpRequestException(errorMessage);
-        }
+        if (content?.StartsWith("Error:") == true) throw new HttpRequestException(content["Error:".Length..]?.TrimStart());
     }
 
     /// <summary>
@@ -72,7 +66,8 @@ public static class ApiDbExtensions
     {
         try
         {
-            return await db.CreateAsync<string?>(proc, data);
+            var result = await db.CreateAsync<object?>(proc, ApiDbHelper.DeNormalize(data));
+            return await Task.FromResult(ApiDbHelper.Normalize(result));
         }
         catch (Exception ex)
         {
@@ -91,7 +86,8 @@ public static class ApiDbExtensions
     {
         try
         {
-            return await db.ReadAsync<string?>(proc, data);
+            var result = await db.ReadAsync<object?>(proc, ApiDbHelper.DeNormalize(data));
+            return await Task.FromResult(ApiDbHelper.Normalize(result));
         }
         catch (Exception ex)
         {
@@ -110,7 +106,7 @@ public static class ApiDbExtensions
     {
         try
         {
-            return Convert.ToString(await db.UpdateAsync(proc, data));
+            return Convert.ToString(await db.UpdateAsync(proc, ApiDbHelper.DeNormalize(data)));
         }
         catch (Exception ex)
         {
@@ -129,7 +125,7 @@ public static class ApiDbExtensions
     {
         try
         {
-            return Convert.ToString(await db.DeleteAsync(proc, data));
+            return Convert.ToString(await db.DeleteAsync(proc, ApiDbHelper.DeNormalize(data)));
         }
         catch (Exception ex)
         {

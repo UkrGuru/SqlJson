@@ -26,5 +26,5 @@ public class DbLog
     /// <summary>
     /// Text message or json in More format
     /// </summary>
-    public string? LogMore { get; set; }
+    public object? LogMore { get; set; }
 }

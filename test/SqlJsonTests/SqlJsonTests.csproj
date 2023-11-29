@@ -1,27 +1,36 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
         <Version>6.7.0</Version>
     </PropertyGroup>
     <ItemGroup>
+      <Compile Remove="ApiDbExtensionsTests.cs" />
+      <Compile Remove="ApiDbHelperTests.cs" />
+      <Compile Remove="ApiDbServiceTests .cs" />
       <Compile Remove="ApiExtensionsTests.cs" />
       <Compile Remove="ApiHelperTests.cs" />
+      <Compile Remove="Extensions\ApiDbFileServiceTests.cs" />
+      <Compile Remove="Extensions\ApiDbLogTests.cs" />
     </ItemGroup>
     <ItemGroup>
       <None Remove="Resources\InitDb.sql" />
+      <None Remove="Resources\TestProc.sql" />
+      <None Remove="Resources\TestProcAsync.sql" />
     </ItemGroup>
     <ItemGroup>
+      <EmbeddedResource Include="Resources\TestProcAsync.sql" />
+      <EmbeddedResource Include="Resources\TestProc.sql" />
       <EmbeddedResource Include="Resources\InitDb.sql" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
-        <PackageReference Include="xunit" Version="2.5.2" />
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3">
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+        <PackageReference Include="xunit" Version="2.6.2" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.5.4">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>

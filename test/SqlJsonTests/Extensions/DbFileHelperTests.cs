@@ -1,9 +1,9 @@
 // Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using static UkrGuru.SqlJson.GlobalTests;
+using static UkrGuru.SqlJson.Tests.GlobalTests;
 
-namespace UkrGuru.SqlJson.Extensions;
+namespace UkrGuru.SqlJson.Extensions.Tests;
 
 public class DbFileHelperTests
 {

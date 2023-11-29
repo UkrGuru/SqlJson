@@ -24,8 +24,8 @@ public class DbLogHelper
     /// <param name="title">The title of the log</param>
     /// <param name="more">Additional information to include in the log</param>
     /// <returns></returns>
-    internal static object Normalize(DbLogLevel logLevel, string title, object? more = null)
-        => new { LogLevel = logLevel, Title = title, LogMore = more };
+    internal static object Normalize(DbLogLevel logLevel, string title, object? more = default)
+        => new DbLog() { LogLevel = logLevel, Title = title, LogMore = more };
 
     /// <summary>
     /// Synchronous method that writes a log any of type to the database.
@@ -33,7 +33,7 @@ public class DbLogHelper
     /// <param name="logLevel">The level of the log to write</param>
     /// <param name="title">The title of the log</param>
     /// <param name="more">Additional information to include in the log</param>
-    public static void Log(DbLogLevel logLevel, string title, object? more = null)
+    public static void Log(DbLogLevel logLevel, string title, object? more = default)
     {
         try
         {
@@ -53,7 +53,7 @@ public class DbLogHelper
     /// <param name="more">Additional information to include in the log</param>
     /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
-    public static async Task LogAsync(DbLogLevel logLevel, string title, object? more = null, CancellationToken cancellationToken = default)
+    public static async Task LogAsync(DbLogLevel logLevel, string title, object? more = default, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -72,7 +72,7 @@ public class DbLogHelper
     /// <param name="more">Additional information to include in the log</param>
     /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
-    public static async Task LogCriticalAsync(string title, object? more = null, CancellationToken cancellationToken = default)
+    public static async Task LogCriticalAsync(string title, object? more = default, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Critical, title, more, cancellationToken);
 
     /// <summary>
@@ -82,7 +82,7 @@ public class DbLogHelper
     /// <param name="more">Additional information to include in the log</param>
     /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
-    public static async Task LogDebugAsync(string title, object? more = null, CancellationToken cancellationToken = default)
+    public static async Task LogDebugAsync(string title, object? more = default, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Debug, title, more, cancellationToken);
 
     /// <summary>
@@ -92,7 +92,7 @@ public class DbLogHelper
     /// <param name="more">Additional information to include in the log</param>
     /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
-    public static async Task LogErrorAsync(string title, object? more = null, CancellationToken cancellationToken = default)
+    public static async Task LogErrorAsync(string title, object? more = default, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Error, title, more, cancellationToken);
 
     /// <summary>
@@ -102,7 +102,7 @@ public class DbLogHelper
     /// <param name="more">Additional information to include in the log</param>
     /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
-    public static async Task LogInformationAsync(string title, object? more = null, CancellationToken cancellationToken = default)
+    public static async Task LogInformationAsync(string title, object? more = default, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Information, title, more, cancellationToken);
 
     /// <summary>
@@ -112,7 +112,7 @@ public class DbLogHelper
     /// <param name="more">Additional information to include in the log</param>
     /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
-    public static async Task LogTraceAsync(string title, object? more = null, CancellationToken cancellationToken = default)
+    public static async Task LogTraceAsync(string title, object? more = default, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Trace, title, more, cancellationToken);
 
     /// <summary>
@@ -122,6 +122,6 @@ public class DbLogHelper
     /// <param name="more">Additional information to include in the log</param>
     /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The async task.</returns>
-    public static async Task LogWarningAsync(string title, object? more = null, CancellationToken cancellationToken = default)
+    public static async Task LogWarningAsync(string title, object? more = default, CancellationToken cancellationToken = default)
         => await LogAsync(DbLogLevel.Warning, title, more, cancellationToken);
 }

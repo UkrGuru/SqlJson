@@ -23,7 +23,7 @@ public interface IDbFileService
     /// <param name="timeout">The timeout for the operation in milliseconds. Defaults to null.</param>
     /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the contents of the retrieved file as a string, or null if no file was found with the specified GUID or if the input value is not a valid GUID.</returns>
-    Task<string?> GetAsync(string? value, int? timeout = null, CancellationToken cancellationToken = default);
+    Task<string?> GetAsync(string? value, int? timeout = default, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Asynchronously retrieves a file from the database by its GUID.
@@ -32,7 +32,7 @@ public interface IDbFileService
     /// <param name="timeout">The timeout for the operation in milliseconds. Defaults to null.</param>
     /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the retrieved DbFile object, or null if no file was found with the specified GUID.</returns>
-    Task<DbFile?> GetAsync(Guid? guid, int? timeout = null, CancellationToken cancellationToken = default);
+    Task<DbFile?> GetAsync(Guid? guid, int? timeout = default, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Asynchronously create a file in the database.
@@ -43,7 +43,7 @@ public interface IDbFileService
     /// <param name="timeout">The timeout for the operation in milliseconds. Defaults to null.</param>
     /// <param name="cancellationToken">The cancellation token. Defaults to default(CancellationToken).</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the value that was set.</returns>
-    Task<string?> SetAsync(string? value, string? filename = "file.txt", bool safe = false, int? timeout = null, CancellationToken cancellationToken = default);
+    Task<string?> SetAsync(string? value, string? filename = "file.txt", bool safe = false, int? timeout = default, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Asynchronously create a file in the database.
@@ -52,5 +52,5 @@ public interface IDbFileService
     /// <param name="timeout">The time in seconds to wait for the command to execute.</param>
     /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the result of the operation.</returns>
-    Task<Guid?> SetAsync(DbFile? file, int? timeout = null, CancellationToken cancellationToken = default);
+    Task<Guid?> SetAsync(DbFile? file, int? timeout = default, CancellationToken cancellationToken = default);
 }

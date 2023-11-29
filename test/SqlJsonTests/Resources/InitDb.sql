@@ -263,3 +263,16 @@ CREATE OR ALTER PROCEDURE [dbo].[ProcVarChar_Api]
 AS 
 EXEC ProcVarChar @Data
 ';
+
+EXEC dbo.sp_executesql @statement = N'
+CREATE OR ALTER PROCEDURE [dbo].[ProcXml] 
+	@Data xml = NULL 
+AS 
+SELECT @Data;
+';
+EXEC dbo.sp_executesql @statement = N'
+CREATE OR ALTER PROCEDURE [dbo].[ProcXml_Api] 
+	@Data xml = NULL 
+AS
+EXEC ProcXml @Data
+';

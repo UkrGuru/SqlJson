@@ -16,7 +16,7 @@ public static class AssemblyExtensions
     /// <param name="assembly">Assembly containing the required sql script resource</param>
     /// <param name="resourceFullName">The full name of the resource containing the SQL script</param>
     /// <param name="timeout">The command timeout in seconds</param>
-    public static void ExecResource(this Assembly assembly, string resourceFullName, int? timeout = null)
+    public static void ExecResource(this Assembly assembly, string resourceFullName, int? timeout = default)
     {
         using var stream = assembly.GetManifestResourceStream(resourceFullName);
         ArgumentNullException.ThrowIfNull(stream);
@@ -31,9 +31,9 @@ public static class AssemblyExtensions
     /// <param name="assembly">Assembly containing the required SQL script resource</param>
     /// <param name="resourceFullName">The full name of the resource containing the SQL script</param>
     /// <param name="timeout">The command timeout in seconds</param>
-    public static async Task ExecResourceAsync(this Assembly assembly, string resourceFullName, int? timeout = null)
+    public static async Task ExecResourceAsync(this Assembly assembly, string resourceFullName, int? timeout = default)
     {
-        using var stream = assembly.GetManifestResourceStream(resourceFullName);
+        await using var stream = assembly.GetManifestResourceStream(resourceFullName);
         ArgumentNullException.ThrowIfNull(stream);
 
         using StreamReader reader = new(stream);

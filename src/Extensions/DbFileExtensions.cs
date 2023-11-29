@@ -19,7 +19,7 @@ public static class DbFileExtensions
     /// <param name="timeout">The command timeout in seconds</param>
     /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>A task that represents the asynchronous operation, containing the result of the operation</returns>
-    public static async Task<T?> SetAsync<T>(this DbFile? file, int? timeout = null, CancellationToken cancellationToken = default)
+    public static async Task<T?> SetAsync<T>(this DbFile? file, int? timeout = default, CancellationToken cancellationToken = default)
     {
         if (file?.FileContent?.Length > 0)
         {

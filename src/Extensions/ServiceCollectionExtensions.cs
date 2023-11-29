@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
+using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using UkrGuru.SqlJson;
 using UkrGuru.SqlJson.Extensions;
@@ -18,7 +19,7 @@ public static class SqlJsonServiceCollectionExtensions
     /// <param name="services">The IServiceCollection argument the ConfigureServices method receives.</param>
     /// <param name="connectionString">The connection string used to open the SQL Server database.</param>
     /// <returns>The updated IServiceCollection collection argument the ConfigureServices method receives.</returns>
-    public static IServiceCollection AddSqlJson(this IServiceCollection services, string? connectionString = null)
+    public static IServiceCollection AddSqlJson(this IServiceCollection services, string? connectionString = default)
     {
         ArgumentNullException.ThrowIfNull(connectionString);
 
@@ -47,28 +48,28 @@ public static class SqlJsonServiceCollectionExtensions
         return services;
     }
 
-    /// <summary>
-    /// Registers UkrGuru SqlJson services for client side application.
-    /// </summary>
-    /// <param name="services">The IServiceCollection argument the ConfigureServices method receives.</param>
-    /// <returns>The updated IServiceCollection collection argument the ConfigureServices method receives.</returns>
-    public static IServiceCollection AddSqlJsonApi(this IServiceCollection services)
-    {
-        services.AddScoped<IDbService, ApiDbService>();
+    ///// <summary>
+    ///// Registers UkrGuru SqlJson services for client side application.
+    ///// </summary>
+    ///// <param name="services">The IServiceCollection argument the ConfigureServices method receives.</param>
+    ///// <returns>The updated IServiceCollection collection argument the ConfigureServices method receives.</returns>
+    //public static IServiceCollection AddSqlJsonApi(this IServiceCollection services)
+    //{
+    //    services.AddScoped<IDbService, ApiDbService>();
 
-        return services;
-    }
+    //    return services;
+    //}
 
-    /// <summary>
-    /// Registers UkrGuru Extensions for client side application.
-    /// </summary>
-    /// <param name="services">The IServiceCollection argument the ConfigureServices method receives.</param>
-    /// <returns>The updated IServiceCollection collection argument the ConfigureServices method receives.</returns>
-    public static IServiceCollection AddSqlJsonApiExt(this IServiceCollection services)
-    {
-        services.AddScoped<IDbLogService, ApiDbLogService>();
-        services.AddScoped<IDbFileService, ApiDbFileService>();
+    ///// <summary>
+    ///// Registers UkrGuru Extensions for client side application.
+    ///// </summary>
+    ///// <param name="services">The IServiceCollection argument the ConfigureServices method receives.</param>
+    ///// <returns>The updated IServiceCollection collection argument the ConfigureServices method receives.</returns>
+    //public static IServiceCollection AddSqlJsonApiExt(this IServiceCollection services)
+    //{
+    //    services.AddScoped<IDbLogService, ApiDbLogService>();
+    //    services.AddScoped<IDbFileService, ApiDbFileService>();
 
-        return services;
-    }
+    //    return services;
+    //}
 }

@@ -22,8 +22,8 @@ public static class ObjExtensions
     public static T? ToObj<T>(this object? value, T? defaultValue = default) =>
         value == null || value == DBNull.Value ? defaultValue :
         value is T t ? t:
-        value is string s ? (string.IsNullOrEmpty(s) ? defaultValue : s.ToTypes<T>()) :
-        value is StringBuilder sb ? (sb.Length == 0 ? defaultValue : sb.ToString().ToTypes<T>()) :
+        value is string s ? (s.Length > 0 ? s.ToTypes<T>() : defaultValue) :
+        value is StringBuilder sb ? (sb.Length > 0 ? sb.ToString().ToTypes<T>() : defaultValue) :
         value.ToType<T>();
 
     /// <summary>
@@ -57,7 +57,7 @@ public static class ObjExtensions
         Type t when t == typeof(DateTime) => (T)(object)DateTime.ParseExact(value, "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture),
         Type t when t == typeof(DateTimeOffset) => (T)(object)DateTimeOffset.ParseExact(value, "yyyy-MM-dd HH:mm:ss.fffffff zzz", CultureInfo.InvariantCulture),
         Type t when t == typeof(TimeOnly) => (T)(object)TimeOnly.ParseExact(value, "HH:mm:ss", CultureInfo.InvariantCulture),
-        Type t when t == typeof(TimeSpan) => (T)(object)TimeSpan.ParseExact(value, "hh':'mm':'ss", CultureInfo.InvariantCulture),
+        Type t when t == typeof(TimeSpan) => (T)(object)TimeSpan.ParseExact(value, "c", null),
         _ => (T?)Convert.ChangeType(value, Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T), CultureInfo.InvariantCulture),
     };
 }

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using System.Reflection;
 using UkrGuru.SqlJson.Extensions;
 
-namespace UkrGuru.SqlJson;
+namespace UkrGuru.SqlJson.Tests;
 
 public class GlobalTests
 {
@@ -23,7 +23,7 @@ public class GlobalTests
         }
     }
 
-    private static IConfiguration _configuration;
+    private static IConfiguration? _configuration;
 
     public static IConfiguration Configuration
     {
@@ -45,7 +45,7 @@ public class GlobalTests
         }
     }
 
-    private static HttpClient _http;
+    private static HttpClient? _http;
 
     public static HttpClient Http
     {
@@ -122,21 +122,6 @@ public class GlobalTests
         Manager,
         Admin,
         SysAdmin
-    }
-
-    public GlobalTests()
-    {
-        //var connectionString = $"Server=(localdb)\\mssqllocaldb;Database={DbName};Trusted_Connection=True";
-
-        //DbHelper.ConnectionString = connectionString.Replace(DbName, "master");
-
-        //DbHelper.Exec($"IF DB_ID('{DbName}') IS NULL CREATE DATABASE {DbName};");
-
-        //DbHelper.ConnectionString = connectionString;
-
-        //Assembly.GetAssembly(typeof(DbHelper)).InitDb();
-
-        //Assembly.GetExecutingAssembly().InitDb();
     }
 
     [Fact]

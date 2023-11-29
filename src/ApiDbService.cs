@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using Microsoft.Data.SqlClient;
-
 namespace UkrGuru.SqlJson;
 
 /// <summary>
@@ -23,24 +21,6 @@ public class ApiDbService : IDbService
     /// <param name="http">The HTTP client.</param>
     public ApiDbService(HttpClient http) => _http = http;
 
-    /// <summary>
-    /// NotImplementedException
-    /// </summary>
-    public string ConnectionStringName => throw new NotImplementedException();
-
-    /// <summary>
-    /// NotImplementedException
-    /// </summary>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public SqlConnection CreateSqlConnection() => throw new NotImplementedException();
-
-    /// <inheritdoc/>
-    public int Exec(string tsql, object? data = null, int? timeout = null) => throw new NotImplementedException();
-
-    /// <inheritdoc/>
-    public T? Exec<T>(string tsql, object? data = null, int? timeout = null) => throw new NotImplementedException();
-
     /// <inheritdoc/>
     public async Task<int> ExecAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
@@ -48,10 +28,12 @@ public class ApiDbService : IDbService
 
         HttpResponseMessage httpResponse;
 
-        if (data != null && ApiDbHelper.Normalize(data).Length > 2000)
-            httpResponse = await _http.PostAsync(ApiDbHelper.Normalize(ApiHolePattern, proc), ApiDbHelper.NormalizeContent(data), cancellationToken);
+        var norm = ApiDbHelper.Normalize(data);
+
+        if (norm?.Length > 2000)
+            httpResponse = await _http.PostAsync(ApiDbHelper.Normalize(ApiHolePattern, proc), new StringContent(norm), cancellationToken);
         else
-            httpResponse = await _http.GetAsync(ApiDbHelper.Normalize(ApiHolePattern, proc, data), cancellationToken);
+            httpResponse = await _http.GetAsync(ApiDbHelper.Normalize(ApiHolePattern, proc, norm), cancellationToken);
 
         return await httpResponse.ReadAsync(cancellationToken);
     }
@@ -59,14 +41,16 @@ public class ApiDbService : IDbService
     /// <inheritdoc/>
     public async Task<T?> ExecAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
-        ApiDbHelper.ValidateProcName(proc);
-
+        ApiDbHelper.ValidateProcName(proc); 
+        
         HttpResponseMessage httpResponse;
 
-        if (data != null && ApiDbHelper.Normalize(data).Length > 2000)
-            httpResponse = await _http.PostAsync(ApiDbHelper.Normalize(ApiHolePattern, proc), ApiDbHelper.NormalizeContent(data), cancellationToken);
+        var norm = ApiDbHelper.Normalize(data);
+
+        if (norm?.Length > 2000)
+            httpResponse = await _http.PostAsync(ApiDbHelper.Normalize(ApiHolePattern, proc), new StringContent(norm), cancellationToken);
         else
-            httpResponse = await _http.GetAsync(ApiDbHelper.Normalize(ApiHolePattern, proc, data), cancellationToken);
+            httpResponse = await _http.GetAsync(ApiDbHelper.Normalize(ApiHolePattern, proc, norm), cancellationToken);
 
         return await httpResponse.ReadAsync<T>(cancellationToken);
     }
@@ -76,7 +60,9 @@ public class ApiDbService : IDbService
     {
         ApiDbHelper.ValidateProcName(proc); ArgumentNullException.ThrowIfNull(data);
 
-        var httpResponse = await _http.PostAsync(ApiDbHelper.Normalize(ApiHolePattern, proc), ApiDbHelper.NormalizeContent(data), cancellationToken);
+        var norm = ApiDbHelper.Normalize(data); ArgumentNullException.ThrowIfNull(norm, "content");
+
+        var httpResponse = await _http.PostAsync(ApiDbHelper.Normalize(ApiHolePattern, proc), new StringContent(norm), cancellationToken);
 
         return await httpResponse.ReadAsync<T?>(cancellationToken);
     }
@@ -84,7 +70,11 @@ public class ApiDbService : IDbService
     /// <inheritdoc/>
     public async Task<T?> ReadAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
-        var httpResponse = await _http.GetAsync(ApiDbHelper.Normalize(ApiHolePattern, proc, data), cancellationToken);
+        ApiDbHelper.ValidateProcName(proc);
+
+        var norm = ApiDbHelper.Normalize(data);
+
+        var httpResponse = await _http.GetAsync(ApiDbHelper.Normalize(ApiHolePattern, proc, norm), cancellationToken);
 
         return await httpResponse.ReadAsync<T?>(cancellationToken);
     }
@@ -94,7 +84,9 @@ public class ApiDbService : IDbService
     {
         ApiDbHelper.ValidateProcName(proc); ArgumentNullException.ThrowIfNull(data);
 
-        var httpResponse = await _http.PutAsync(ApiDbHelper.Normalize(ApiHolePattern, proc), ApiDbHelper.NormalizeContent(data), cancellationToken);
+        var norm = ApiDbHelper.Normalize(data); ArgumentNullException.ThrowIfNull(norm, "content");
+
+        var httpResponse = await _http.PutAsync(ApiDbHelper.Normalize(ApiHolePattern, proc), new StringContent(norm), cancellationToken);
 
         return await httpResponse.ReadAsync(cancellationToken);
     }
@@ -104,20 +96,10 @@ public class ApiDbService : IDbService
     {
         ApiDbHelper.ValidateProcName(proc);
 
-        var httpResponse = await _http.DeleteAsync(ApiDbHelper.Normalize(ApiHolePattern, proc, data), cancellationToken);
+        var norm = ApiDbHelper.Normalize(data);
+
+        var httpResponse = await _http.DeleteAsync(ApiDbHelper.Normalize(ApiHolePattern, proc, norm), cancellationToken);
 
         return await httpResponse.ReadAsync(cancellationToken);
     }
-
-    ///// <inheritdoc/>
-    //public async Task TestAsync(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
-    //{
-    //    ApiDbHelper.ValidateProcName(proc);
-
-    //    var httpResponse = (data != null && data.GetType().IsLong()) ?
-    //        await _http.PostAsync(ApiDbHelper.Normalize(ApiHolePattern, proc), ApiDbHelper.NormalizeContent(data), cancellationToken) :
-    //        await _http.GetAsync(ApiDbHelper.Normalize(ApiHolePattern, proc, data), cancellationToken);
-
-    //    httpResponse.EnsureSuccessStatusCode();
-    //}
 }

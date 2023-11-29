@@ -1,9 +1,13 @@
 ﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Data.SqlTypes;
 using System.Text;
+using System.Text.Json;
+using System.Text.RegularExpressions;
+using System.Xml;
+using Microsoft.Data.SqlClient;
 using UkrGuru.SqlJson.Extensions;
 
 namespace UkrGuru.SqlJson;
@@ -18,19 +22,22 @@ public static class DbExtensions
     /// </summary>
     /// <typeparam name="T">The type to check.</typeparam>
     /// <returns><c>true</c> if the specified type is a long; otherwise, <c>false</c>.</returns>
-    public static bool IsLong<T>() => (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)).IsLong();
+    public static bool IsLong<T>() => default(T) switch
+    {
+        byte or short or int or long or float or double or decimal or
+        bool or char or Guid or Enum or DateOnly or DateTime or DateTimeOffset or TimeOnly or TimeSpan or
+        SqlByte or SqlInt16 or SqlInt32 or SqlInt64 or SqlSingle or SqlDouble or SqlDecimal or SqlMoney or
+        SqlBoolean or SqlGuid or SqlDateTime => false,
+        _ => true
+    };
 
     /// <summary>
-    /// Determines whether a given type is considered "long" for database purposes.
+    /// Determines whether the given string is a valid name.
     /// </summary>
-    /// <param name="type">The type to check.</param>
-    /// <returns>True if the type is considered "long", false otherwise.</returns>
-    public static bool IsLong(this Type? type) => type == null || type.IsEnum ? false : type.Name switch
-    {
-        "Boolean" or "Byte" or "Int16" or "Int32" or "Int64" or "Single" or "Double" or "Decimal" or
-        "DateOnly" or "DateTime" or "DateTimeOffset" or "TimeOnly" or "TimeSpan" or "Guid" or "Char" => false,
-        _ => true,
-    };
+    /// <param name="tsql">The string to check.</param>
+    /// <returns>True if the string is a valid name; otherwise, false.</returns>
+    public static bool IsName(string? tsql) => tsql is not null && tsql.Length <= 100
+        && Regex.IsMatch(tsql, @"^([a-zA-Z_]\w*|\[.+?\])(\.([a-zA-Z_]\w*|\[.+?\]))?$");
 
     /// <summary>
     /// Creates a new instance of the SqlCommand class with initialization parameters.
@@ -44,13 +51,33 @@ public static class DbExtensions
     {
         SqlCommand command = new(tsql, connection);
 
-        if (DbHelper.IsName(tsql)) command.CommandType = CommandType.StoredProcedure;
+        if (IsName(tsql)) command.CommandType = CommandType.StoredProcedure;
 
-        if (data != null) command.Parameters.AddWithValue("@Data", DbHelper.Normalize(data));
+        if (data != null) command.Parameters.AddData(data);
 
         if (timeout.HasValue) command.CommandTimeout = timeout.Value;
 
         return command;
+    }
+
+    /// <summary>
+    /// Adds the specified SqlParameter object to the SqlParameterCollection.
+    /// </summary>
+    /// <param name="parameters">The parameters of the Transact-SQL statement or stored procedure.</param>
+    /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
+    /// <returns>A new SqlParameter object.</returns>
+    public static SqlParameter AddData(this SqlParameterCollection parameters, object data)
+    {
+        SqlParameter parameter = new("@Data", data);
+
+        if (parameter.SqlValue is null && data is not Enum && data is not Stream && data is not TextReader)
+        {
+            parameter.SqlValue = JsonSerializer.Serialize(data);
+        }
+
+        parameters.Add(parameter);
+
+        return parameter;
     }
 
     /// <summary>
@@ -62,9 +89,9 @@ public static class DbExtensions
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>The number of rows affected.</returns>
-    public static int Exec(this SqlConnection connection, string tsql, object? data = null, int? timeout = null)
+    public static int Exec(this SqlConnection connection, string tsql, object? data = default, int? timeout = default)
     {
-        using SqlCommand command = connection.CreateSqlCommand(tsql, data, timeout);
+        using var command = connection.CreateSqlCommand(tsql, data, timeout);
 
         return command.ExecuteNonQuery();
     }
@@ -79,20 +106,24 @@ public static class DbExtensions
     /// <param name="data">The only @Data parameter of any type available to a query or stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>Result as an object</returns>
-    public static T? Exec<T>(this SqlConnection connection, string tsql, object? data = null, int? timeout = null)
+    public static T? Exec<T>(this SqlConnection connection, string tsql, object? data = default, int? timeout = default)
     {
         using var command = connection.CreateSqlCommand(tsql, data, timeout);
 
-        if (IsLong<T?>())
+        object? result;
+
+        if (IsLong<T>())
         {
             using SqlDataReader reader = command.ExecuteReader(CommandBehavior.CloseConnection);
 
-            return reader.ReadAll<T?>().ToObj<T?>();
+            result = reader.ReadAll<T?>();
         }
         else
         {
-            return command.ExecuteScalar<T?>();
+            result = command.ExecuteScalar();
         }
+
+        return result.ToObj<T?>();
     }
 
     /// <summary>
@@ -105,9 +136,9 @@ public static class DbExtensions
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>The number of rows affected.</returns>
-    public static async Task<int> ExecAsync(this SqlConnection connection, string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+    public static async Task<int> ExecAsync(this SqlConnection connection, string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
     {
-        await using SqlCommand command = connection.CreateSqlCommand(tsql, data, timeout);
+        await using var command = connection.CreateSqlCommand(tsql, data, timeout);
 
         return await command.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -123,40 +154,25 @@ public static class DbExtensions
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
     /// <returns>Result as an object</returns>
-    public static async Task<T?> ExecAsync<T>(this SqlConnection connection, string tsql, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
+    public static async Task<T?> ExecAsync<T>(this SqlConnection connection, string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
     {
         await using var command = connection.CreateSqlCommand(tsql, data, timeout);
 
-        if (IsLong<T?>())
+        object? result;
+
+        if (IsLong<T>())
         {
             await using SqlDataReader reader = await command.ExecuteReaderAsync(CommandBehavior.CloseConnection, cancellationToken);
 
-            return (await reader.ReadAllAsync<T?>(cancellationToken)).ToObj<T?>();
+            result = await reader.ReadAllAsync<T?>(cancellationToken);
         }
         else
         {
-            return await command.ExecuteScalarAsync<T?>(cancellationToken);
+            result = await command.ExecuteScalarAsync(cancellationToken);
         }
+
+        return await Task.FromResult(result.ToObj<T?>());
     }
-
-    /// <summary>
-    /// Executes the query, and returns the first column of the first row in the result set returned by the query as an object of type T.
-    /// </summary>
-    /// <typeparam name="T">The type of object to return.</typeparam>
-    /// <param name="command">The SqlCommand to execute.</param>
-    /// <returns>An object of type T that represents the first column of the first row in the result set.</returns>
-    public static T? ExecuteScalar<T>(this SqlCommand command)
-        => command.ExecuteScalar().ToObj<T?>();
-
-    /// <summary>
-    /// Asynchronously executes the query, and returns the first column of the first row in the result set returned by the query as an object of type T.
-    /// </summary>
-    /// <typeparam name="T">The type of object to return.</typeparam>
-    /// <param name="command">The SqlCommand to execute.</param>
-    /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
-    /// <returns>A task that represents the asynchronous operation. The task result contains an object of type T that represents the first column of the first row in the result set.</returns>
-    public static async Task<T?> ExecuteScalarAsync<T>(this SqlCommand command, CancellationToken cancellationToken = default)
-        => (await command.ExecuteScalarAsync(cancellationToken)).ToObj<T?>();
 
     /// <summary>
     /// Reads the first column of the first row of the result set returned by the query and returns the value casted to type T.
@@ -165,7 +181,7 @@ public static class DbExtensions
     /// <param name="reader">The SqlDataReader instance.</param>
     /// <returns>The value casted to type T.</returns>
     public static object? ReadAll<T>(this SqlDataReader reader)
-        => reader.Read() ? reader.ReadObj<T>() : default(T);
+        => reader.Read() && !reader.IsDBNull(0) ? reader.ReadObj<T>() : default(T);
 
     /// <summary>
     /// Reads the first column of the first row of the result set returned by the query and returns the value casted to type T.
@@ -175,7 +191,8 @@ public static class DbExtensions
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The value casted to type T.</returns>
     public static async Task<object?> ReadAllAsync<T>(this SqlDataReader reader, CancellationToken cancellationToken = default)
-        => (await reader.ReadAsync(cancellationToken)) ? await reader.ReadObjAsync<T>(cancellationToken) : await Task.FromResult(default(T));
+        => ((await reader.ReadAsync(cancellationToken)) && !(await reader.IsDBNullAsync(0, cancellationToken))) ?
+            await reader.ReadObjAsync<T>(cancellationToken) : await Task.FromResult(default(T));
 
     /// <summary>
     /// Reads more data from the SqlDataReader and returns it as a string.
@@ -213,12 +230,17 @@ public static class DbExtensions
     /// <param name="reader">The SqlDataReader to read from.</param>
     /// <returns>An object of type T containing the data read from the SqlDataReader.</returns>
     public static object? ReadObj<T>(this SqlDataReader reader)
-        => (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)).Name switch
+        => typeof(T).Name switch
         {
             "Byte[]" => reader[0],
             "Char[]" => reader.GetSqlChars(0).Value,
             nameof(Stream) => reader.GetStream(0),
+            nameof(SqlBinary) => reader.GetSqlBinary(0),
+            nameof(SqlBytes) => reader.GetSqlBytes(0),
+            nameof(SqlXml) => reader.GetSqlXml(0),
+            nameof(SqlChars) => reader.GetSqlChars(0),
             nameof(TextReader) => reader.GetTextReader(0),
+            nameof(XmlReader) => reader.GetXmlReader(0),
             _ => reader.ReadMore(),
         };
 
@@ -230,12 +252,17 @@ public static class DbExtensions
     /// <param name="cancellationToken">A cancellation token that can be used to cancel the asynchronous operation.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains an object of type T containing the data read from the SqlDataReader.</returns>
     public static async Task<object?> ReadObjAsync<T>(this SqlDataReader reader, CancellationToken cancellationToken = default)
-        => await Task.FromResult((Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)).Name switch
+        => await Task.FromResult(typeof(T).Name switch
         {
             "Byte[]" => reader[0],
             "Char[]" => reader.GetSqlChars(0).Value,
             nameof(Stream) => reader.GetStream(0),
+            nameof(SqlBinary) => reader.GetSqlBinary(0),
+            nameof(SqlBytes) => reader.GetSqlBytes(0),
+            nameof(SqlXml) => reader.GetSqlXml(0),
+            nameof(SqlChars) => reader.GetSqlChars(0),
             nameof(TextReader) => reader.GetTextReader(0),
+            nameof(XmlReader) => reader.GetXmlReader(0),
             _ => await reader.ReadMoreAsync(cancellationToken),
         });
 }
