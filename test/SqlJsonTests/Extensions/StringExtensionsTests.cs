@@ -5,7 +5,7 @@ public class StringExtensionsTests
     [Fact]
     public void CanThrowIfBlank_Null()
     {
-        string? argument = null;
+        string? argument = default;
 
         Assert.Throws<ArgumentNullException>(() => argument.ThrowIfBlank());
     }

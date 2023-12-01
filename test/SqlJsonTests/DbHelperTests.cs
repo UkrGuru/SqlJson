@@ -102,7 +102,7 @@ public partial class DbHelperTests
     [Fact]
     public void CanExec_Numeric()
     {
-        object? value = null, sqlValue = null;
+        object? value = default, sqlValue = default;
 
         value = byte.MinValue; sqlValue = new SqlByte((byte)value);
         Assert.Equal(value, DbHelper.Exec<byte>("SELECT @Data", value));
@@ -143,7 +143,7 @@ public partial class DbHelperTests
     [Fact]
     public void CanExec_DateTime()
     {
-        object? value = null, sqlValue = null;
+        object? value = default, sqlValue = default;
 
         value = DateOnly.MaxValue; 
         Assert.Equal(value, DbHelper.Exec<DateOnly>("SELECT @Data", value));
@@ -165,7 +165,7 @@ public partial class DbHelperTests
     [Fact]
     public void CanExec_Other()
     {
-        object? value = null, sqlValue = null;
+        object? value = default, sqlValue = default;
 
         value = Guid.NewGuid(); sqlValue = new SqlGuid((Guid)value);
         Assert.Equal(value, DbHelper.Exec<Guid>("SELECT @Data", value));

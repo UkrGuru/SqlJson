@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 using UkrGuru.SqlJson;
 
 namespace ApiHole.Controllers;
@@ -29,4 +30,9 @@ public class ApiHoleController : ControllerBase
     [HttpDelete("{proc}")]
     public async Task<string?> Delete(string proc, string? data = default)
         => await _db.TryDeleteAsync($"{proc}{_suffix}", data);
+
+
+    [HttpPost]
+    public async Task<string?> SaveUserData([FromBody] JsonElement json)
+    => await _db.TryCreateAsync<string?>($"Users_Get_Info{_suffix}", json);
 }

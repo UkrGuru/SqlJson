@@ -16,20 +16,20 @@ public class MoreTests
         more.AddNew("{}");
         more.AddNew(JsonSerializer.Serialize(new
         {
-            dataNormal = "Rule",
-            dataEmpty = "",
             dataNull = null as string,
+            dataEmpty = string.Empty,
+            dataNormal = "asd",
+            boolNull = (bool?)null,
             boolTrue = true,
             boolFalse = false,
-            boolNull = (bool?)null
         }));
 
         var files = new[] { "file1.txt", "file2.txt" };
         more.AddNew(JsonSerializer.Serialize(new { type = "Action", timeout = 60, amount = 123.45, files }));
 
-        Assert.Equal("Rule", more.GetValue("dataNormal"));
-        Assert.Empty(more.GetValue("dataEmpty")!);
         Assert.Null(more.GetValue("dataNull"));
+        Assert.Empty(more.GetValue("dataEmpty")!);
+        Assert.Equal("asd", more.GetValue("dataNormal"));
         Assert.Null(more.GetValue("dataNotExists"));
 
         Assert.True(more.GetValue<bool>("boolTrue"));
@@ -43,8 +43,10 @@ public class MoreTests
         Assert.Equal(60, more.GetValue("timeout", 0));
         Assert.Equal(123.45, more.GetValue("amount", 0.0));
 
-        var files1 = more.GetValue<object[]?>("files");
-        Assert.Equal(files[0], Convert.ToString(files1?[0]));
-        Assert.Equal(files[1], Convert.ToString(files1?[1]));
+        var actualFiles = more.GetValue<object[]?>("files");
+        Assert.NotNull(actualFiles);
+        Assert.Equal(2, actualFiles.Length);
+        Assert.Equal(files[0], Convert.ToString(actualFiles[0]));
+        Assert.Equal(files[1], Convert.ToString(actualFiles[1]));
     }
 }

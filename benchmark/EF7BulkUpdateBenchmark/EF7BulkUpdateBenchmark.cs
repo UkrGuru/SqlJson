@@ -1,6 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Engines;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Reports;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ using UkrGuru.SqlJson;
 namespace BenchmarkDotNet.Samples
 {
     [Config(typeof(Config))]
-    [SimpleJob(RuntimeMoniker.Net70)]
+    [SimpleJob(RuntimeMoniker.Net80, 1, 1, 1, 1)]
     [MemoryDiagnoser]
     [HideColumns(Column.AllocRatio, Column.RatioSD, Column.Median, Column.Gen0, Column.Gen1)]
     public class EF7BulkUpdateBenchmark
@@ -17,7 +18,7 @@ namespace BenchmarkDotNet.Samples
         private string SQLConnectionString
             = "Data Source=(localdb)\\mssqllocaldb;Database=EF7BulkUpdate;Integrated Security=sspi;";
 
-        [Params(42, 500, 1000)]
+        [Params(1, 50, 500, 1000)]
         public int records;
 
         [GlobalSetup]
@@ -42,7 +43,7 @@ namespace BenchmarkDotNet.Samples
             }
 
             context.SaveChanges();
-            
+
             DbHelper.ConnectionString = SQLConnectionString;
         }
 
@@ -50,43 +51,44 @@ namespace BenchmarkDotNet.Samples
         public void UkrGuru_SqlJson_SqlUpdate() => DbHelper.Exec("UPDATE [Blogs] SET [LastUpdated] = @Data;", DateTime.UtcNow);
 
         [Benchmark]
+        public void EF_PlainSQL_BulkUpdate()
+        {
+            var date = DateTime.UtcNow;
+            using var context = new MyContext();
+
+            context.Database
+                .ExecuteSql($"UPDATE [Blogs] SET [LastUpdated] = {date}; --PlainSQLUpdate");
+        }
+
+        [Benchmark(Baseline = true)]
+        public void EF_ExecuteUpdate_BulkUpdate()
+        {
+            var date = DateTime.UtcNow;
+            using var context = new MyContext();
+
+            context.Blogs.ExecuteUpdate(
+                s => s.SetProperty(
+                    blog => blog.LastUpdated, date));
+        }
+
+        [Benchmark]
         public void UkrGuru_SqlJson_NetUpdate()
         {
             var date = DateTime.UtcNow;
-
             var blogs = DbHelper.Exec<List<Blog>>("SELECT [BlogId], [LastUpdated] FROM [Blogs] FOR JSON PATH") ?? new();
 
             DbHelper.Exec("""
                 UPDATE [Blogs] SET [LastUpdated] = D.[LastUpdated]
                 FROM OPENJSON(@Data) WITH([BlogId] int, [LastUpdated] datetime2(7)) D
                 WHERE [Blogs].[BlogId] = D.[BlogId]
-                """, blogs.Select(blog => new { blog.BlogId, LastUpdated = date } ));
-        }
-
-        [Benchmark]
-        public void EF_PlainSQL_BulkUpdate()
-        {
-            using var context = new MyContext();
-
-            context.Database
-                .ExecuteSql($"UPDATE [Blogs] SET [LastUpdated] = {DateTime.UtcNow}; --PlainSQLUpdate");
-        }
-
-        [Benchmark(Baseline = true)]
-        public void EF_ExecuteUpdate_BulkUpdate()
-        {
-            using var context = new MyContext();
-
-            context.Blogs.ExecuteUpdate(
-                s => s.SetProperty(
-                    blog => blog.LastUpdated, DateTime.UtcNow));
+                """, blogs.Select(blog => new { blog.BlogId, LastUpdated = date }));
         }
 
         [Benchmark]
         public void EF_SaveChanges_NoBulkUpdate()
         {
-            using var context = new MyContext();
             var date = DateTime.UtcNow;
+            using var context = new MyContext();
 
             var blogs = context.Blogs.ToList();
             foreach (var blog in blogs)

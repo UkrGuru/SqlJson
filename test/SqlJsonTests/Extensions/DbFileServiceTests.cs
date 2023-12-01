@@ -45,35 +45,50 @@ public class DbFileServiceTests
     public async Task BinFileTests(byte[] bytes)
     {
         var fileName = $"{DateTime.Now.ToString("HHmmss")}.bin";
-        var file1 = new DbFile { FileName = fileName, FileContent = bytes };
+        var file = new DbFile { FileName = fileName, FileContent = bytes };
 
-        var guid = await _dbFile.SetAsync(file1);
+        var guid = await file.SetAsync<Guid?>();
 
-        var file = await _dbFile.GetAsync(guid);
+        if (bytes?.Length > 0)
+        {
+            var fileActual = await _dbFile.GetAsync(guid);
 
-        Assert.Equal(fileName, file?.FileName);
-        Assert.Equal(bytes, file?.FileContent);
+            Assert.Equal(fileName, fileActual?.FileName);
 
-        await _dbFile.DelAsync(guid);
+            Assert.Equal(bytes, fileActual?.FileContent);
+
+            await _dbFile.DelAsync(guid);
+        }
+        else
+        {
+            Assert.Null(guid);
+        }
     }
 
     [Theory]
     [MemberData(nameof(GetTestString), parameters: 4)]
     public async Task TxtFileTests(string content)
     {
-        var guid1 = await _dbFile.SetAsync(content);
+        var guid = await _dbFile.SetAsync(content);
 
-        var content1 = await _dbFile.GetAsync(guid1);
-
-        Assert.Equal(content, content1);
-
-        if (!string.IsNullOrEmpty(guid1) && Guid.TryParse(guid1, out Guid guid))
+        if (content?.Length > 0)
         {
-            await _dbFile.DelAsync(guid);
+            var contentActual = await _dbFile.GetAsync(guid);
 
-            content1 = await _dbFile.GetAsync(guid1);
+            Assert.Equal(content, contentActual);
 
-            Assert.Null(content1);
+            if (!string.IsNullOrEmpty(guid) && Guid.TryParse(guid, out Guid guidNew))
+            {
+                await _dbFile.DelAsync(guidNew);
+
+                contentActual = await _dbFile.GetAsync(guid);
+
+                Assert.Null(contentActual);
+            }
+        }
+        else
+        {
+            Assert.Equal(content, guid);
         }
     }
 }

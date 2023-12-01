@@ -81,7 +81,7 @@ public class DbFileHelperTests
 
             Assert.Equal(bytes, fileActual?.FileContent);
 
-            await DbHelper.ExecAsync("WJbFiles_Del", guid);
+            await DbFileHelper.DelAsync(guid);
         }
         else {
             Assert.Null(guid);

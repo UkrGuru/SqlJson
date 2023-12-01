@@ -38,8 +38,10 @@ public class DbExtensionsTests
         Assert.False(DbExtensions.IsLong<SqlInt32>());
         Assert.False(DbExtensions.IsLong<SqlInt64>());
         Assert.False(DbExtensions.IsLong<SqlSingle>());
+        Assert.False(DbExtensions.IsLong<SqlDouble>());
         Assert.False(DbExtensions.IsLong<SqlDecimal>());
         Assert.False(DbExtensions.IsLong<SqlMoney>());
+
 
         Assert.False(DbExtensions.IsLong<SqlBoolean>());
         Assert.False(DbExtensions.IsLong<SqlGuid>());
@@ -103,11 +105,12 @@ public class DbExtensionsTests
 
     [Theory]
     [InlineData("SELECT @Data", null)]
-    [InlineData("SELECT @Data", 1)]
+    [InlineData("SELECT @Data", "")]
+    [InlineData("SELECT @Data", " ")]
     [InlineData("SELECT @Data", null, 15)]
     [InlineData("SELECT @Data", null, 45)]
     [InlineData("ProcTest", null, null, CommandType.StoredProcedure)]
-    public static void CanCreateSqlCommand(string cmdText, object? data = null, int? timeout = null, CommandType expected = CommandType.Text)
+    public static void CanCreateSqlCommand(string cmdText, object? data = default, int? timeout = default, CommandType expected = CommandType.Text)
     {
         SqlConnection connection = new SqlConnection(ConnectionString);
 

@@ -103,7 +103,7 @@ public class DbServiceTests
     [Fact]
     public async Task CanExecAsync_Numeric()
     {
-        object? value = null, sqlValue = null;
+        object? value = default, sqlValue = default;
 
         value = byte.MinValue; Assert.Equal(value, await _db.ExecAsync<byte>("ProcVar", value));
         sqlValue = new SqlByte((byte)value); Assert.Equal(value, await _db.ExecAsync<byte>("ProcVar", sqlValue));
@@ -135,7 +135,7 @@ public class DbServiceTests
     [Fact]
     public async Task CanExecAsync_DateTime()
     {
-        object? value = null, sqlValue = null;
+        object? value = default, sqlValue = default;
 
         value = DateOnly.MaxValue; 
         Assert.Equal(value, await _db.ExecAsync<DateOnly>("ProcVar", value));
@@ -157,7 +157,7 @@ public class DbServiceTests
     [Fact]
     public async Task CanExecAsync_Other()
     {
-        object? value = null, sqlValue = null;
+        object? value = default, sqlValue = default;
 
         value = Guid.NewGuid(); sqlValue = new SqlGuid((Guid)value);
         Assert.Equal(value, await _db.ExecAsync<Guid>("ProcVar", value));

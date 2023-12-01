@@ -15,8 +15,7 @@
         <SignAssembly>True</SignAssembly>
         <AssemblyOriginatorKeyFile>..\..\UkrGuru.snk</AssemblyOriginatorKeyFile>
         <PackageTags>sqlclient ado-net sql json .net6 .net7</PackageTags>
-        <PackageReleaseNotes>Added support SqlTypes and .Net 8. Continue with Api classes. 
-Please Donate.</PackageReleaseNotes>
+        <PackageReleaseNotes>Added support SqlTypes and .NET 8. Continue with Api classes. Please Donate.</PackageReleaseNotes>
         <DebugType>none</DebugType>
         <DelaySign>False</DelaySign>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
@@ -27,6 +26,7 @@ Please Donate.</PackageReleaseNotes>
         <PackageProjectUrl>https://ukrguru.com/sqljson</PackageProjectUrl>
         <RepositoryType>git</RepositoryType>
         <IncludeSymbols>False</IncludeSymbols>
+        <EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <DebugType>full</DebugType>
@@ -35,17 +35,27 @@ Please Donate.</PackageReleaseNotes>
         <DebugType>full</DebugType>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0|AnyCPU'">
-        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+        <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
         <DebugType>portable</DebugType>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0|AnyCPU'">
-        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+        <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
         <DebugType>portable</DebugType>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0|AnyCPU'">
       <DebugType>portable</DebugType>
+      <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0|AnyCPU'">
+      <DebugType>portable</DebugType>
+      <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0|AnyCPU'">
+      <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+      <DebugType>portable</DebugType>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0|AnyCPU'">
+      <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
       <DebugType>portable</DebugType>
     </PropertyGroup>
     <ItemGroup>

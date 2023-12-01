@@ -58,7 +58,7 @@ public partial class DbHelperTests
     [Fact]
     public async Task CanExecAsync_Numeric()
     {
-        object? value = null, sqlValue = null;
+        object? value = default, sqlValue = default;
 
         value = byte.MinValue; sqlValue = new SqlByte((byte)value);
         Assert.Equal(value, await DbHelper.ExecAsync<byte>("SELECT @Data", value));
@@ -99,7 +99,7 @@ public partial class DbHelperTests
     [Fact]
     public async Task CanExecAsync_DateTime()
     {
-        object? value = null, sqlValue = null;
+        object? value = default, sqlValue = default;
 
         value = DateOnly.MaxValue; 
         Assert.Equal(value, await DbHelper.ExecAsync<DateOnly>("SELECT @Data", value));
@@ -121,7 +121,7 @@ public partial class DbHelperTests
     [Fact]
     public async Task CanExecAsync_Other()
     {
-        object? value = null, sqlValue = null;
+        object? value = default, sqlValue = default;
 
         value = Guid.NewGuid(); sqlValue = new SqlGuid((Guid)value);
         Assert.Equal(value, await DbHelper.ExecAsync<Guid>("SELECT @Data", value));

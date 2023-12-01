@@ -7,7 +7,7 @@ public class DbFileExtensionsTests
     [Fact]
     public async Task ToStringAsync_Null()
     {
-        DbFile? file = null;
+        DbFile? file = default;
 
         var result = await file.ToStringAsync();
 
