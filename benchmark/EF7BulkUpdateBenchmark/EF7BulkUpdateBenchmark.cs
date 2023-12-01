@@ -53,22 +53,20 @@ namespace BenchmarkDotNet.Samples
         [Benchmark]
         public void EF_PlainSQL_BulkUpdate()
         {
-            var date = DateTime.UtcNow;
             using var context = new MyContext();
 
             context.Database
-                .ExecuteSql($"UPDATE [Blogs] SET [LastUpdated] = {date}; --PlainSQLUpdate");
+                .ExecuteSql($"UPDATE [Blogs] SET [LastUpdated] = {DateTime.UtcNow}; --PlainSQLUpdate");
         }
 
         [Benchmark(Baseline = true)]
         public void EF_ExecuteUpdate_BulkUpdate()
         {
-            var date = DateTime.UtcNow;
             using var context = new MyContext();
 
             context.Blogs.ExecuteUpdate(
                 s => s.SetProperty(
-                    blog => blog.LastUpdated, date));
+                    blog => blog.LastUpdated, DateTime.UtcNow));
         }
 
         [Benchmark]
