@@ -30,7 +30,7 @@ public class ApiDbService : IDbService
 
         var norm = ApiDbHelper.Normalize(data);
 
-        if (norm?.Length > 2000)
+        if (norm?.Length > 1000)
             httpResponse = await _http.PostAsync(ApiDbHelper.Normalize(ApiHolePattern, proc), new StringContent(norm), cancellationToken);
         else
             httpResponse = await _http.GetAsync(ApiDbHelper.Normalize(ApiHolePattern, proc, norm), cancellationToken);
@@ -41,16 +41,16 @@ public class ApiDbService : IDbService
     /// <inheritdoc/>
     public async Task<T?> ExecAsync<T>(string proc, object? data = null, int? timeout = null, CancellationToken cancellationToken = default)
     {
-        ApiDbHelper.ValidateProcName(proc); 
-        
+        ApiDbHelper.ValidateProcName(proc);
+
         HttpResponseMessage httpResponse;
 
         var norm = ApiDbHelper.Normalize(data);
 
-        if (norm?.Length > 2000)
-            httpResponse = await _http.PostAsync(ApiDbHelper.Normalize(ApiHolePattern, proc), new StringContent(norm), cancellationToken);
+        if (norm?.Length > 1000)
+            httpResponse = await _http.PostAsync(ApiDbHelper.Normalize(ApiHolePattern, proc, type: ApiDbHelper.GetTypeCode<T>()), new StringContent(norm), cancellationToken);
         else
-            httpResponse = await _http.GetAsync(ApiDbHelper.Normalize(ApiHolePattern, proc, norm), cancellationToken);
+            httpResponse = await _http.GetAsync(ApiDbHelper.Normalize(ApiHolePattern, proc, norm, type: ApiDbHelper.GetTypeCode<T>()), cancellationToken);
 
         return await httpResponse.ReadAsync<T>(cancellationToken);
     }
@@ -62,7 +62,7 @@ public class ApiDbService : IDbService
 
         var norm = ApiDbHelper.Normalize(data); ArgumentNullException.ThrowIfNull(norm, "content");
 
-        var httpResponse = await _http.PostAsync(ApiDbHelper.Normalize(ApiHolePattern, proc), new StringContent(norm), cancellationToken);
+        var httpResponse = await _http.PostAsync(ApiDbHelper.Normalize(ApiHolePattern, proc, type: ApiDbHelper.GetTypeCode<T>()), new StringContent(norm), cancellationToken);
 
         return await httpResponse.ReadAsync<T?>(cancellationToken);
     }
@@ -74,7 +74,7 @@ public class ApiDbService : IDbService
 
         var norm = ApiDbHelper.Normalize(data);
 
-        var httpResponse = await _http.GetAsync(ApiDbHelper.Normalize(ApiHolePattern, proc, norm), cancellationToken);
+        var httpResponse = await _http.GetAsync(ApiDbHelper.Normalize(ApiHolePattern, proc, norm, type: ApiDbHelper.GetTypeCode<T>()), cancellationToken);
 
         return await httpResponse.ReadAsync<T?>(cancellationToken);
     }

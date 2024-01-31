@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
+using System.Data;
 using System.Data.SqlTypes;
 using System.Globalization;
 using System.Text.Json;
@@ -65,14 +66,17 @@ public class ApiDbHelper
     /// <param name="apiHoleUri">The API endpoint URI.</param>
     /// <param name="proc">The stored procedure to execute.</param>
     /// <param name="norm">Normalized data that will be passed to the stored procedure.</param>
+    /// <param name="type">Result data type.</param>
     /// <returns>The normalized API endpoint URI.</returns>
-    public static string? Normalize(string? apiHoleUri, string proc, string? norm = default)
+    public static string? Normalize(string? apiHoleUri, string proc, string? norm = default, byte? type = default)
     {
         var result = Uri.EscapeDataString(proc.ThrowIfBlank());
-   
+
         if (!string.IsNullOrEmpty(apiHoleUri)) result = $"{apiHoleUri}/{result}";
 
         if (norm != null) result = $"{result}?Data={Uri.EscapeDataString(norm)}";
+
+        if (type is not null) result += $"{(norm is null ? '?' : '&')}Type={type}";
 
         return result;
     }
@@ -80,22 +84,30 @@ public class ApiDbHelper
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="data"></param>
+    /// <param name="norm"></param>
     /// <returns></returns>
-    public static object? DeNormalize(string? data) {
-        if (data?.StartsWith("0x") == true)
+    public static object? DeNormalize(string? norm)
+    {
+        if (norm?.StartsWith("0x") == true)
         {
-            try
-            {
-                var hexStr = data[2..];
-                return string.IsNullOrEmpty(hexStr) ? Array.Empty<byte>() : Enumerable.Range(0, hexStr.Length / 2)
-                    .Select(i => Convert.ToByte(hexStr.Substring(i * 2, 2), 16))
-                    .ToArray();
-            }
-            catch { }
+            try { return Convert.FromHexString(norm[2..]); } catch { }
         }
-        return data;
+        return norm;
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static byte? GetTypeCode<T>() => typeof(T).Name switch
+    {
+        "Byte[]" or nameof(SqlBytes) or nameof(SqlBinary) => (byte?)SqlDbType.VarBinary,
+        "Char[]" or nameof(SqlChars) => (byte?)SqlDbType.VarChar,
+        nameof(SqlXml) => (byte?)SqlDbType.Xml,
+        _ => default,
+    };
+
 
     /// <summary>
     /// Validates the name of a stored procedure.

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
+using System.Data;
+using System.Data.SqlTypes;
 using UkrGuru.SqlJson.Extensions;
 
 namespace UkrGuru.SqlJson;
@@ -42,7 +44,7 @@ public static class ApiDbExtensions
 
         var content = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
 
-        return content.ToObj<T?>();
+        return ApiDbHelper.DeNormalize(content).ToObj<T?>();
     }
 
     /// <summary>
@@ -61,13 +63,28 @@ public static class ApiDbExtensions
     /// <param name="db">The database service.</param>
     /// <param name="proc">The stored procedure name.</param>
     /// <param name="data">The data to be passed to the stored procedure.</param>
+    /// <param name="type">Result data type.</param>
     /// <returns></returns>
-    public static async Task<string?> TryCreateAsync(this IDbService db, string proc, string? data = default)
+    public static async Task<string?> TryCreateAsync(this IDbService db, string proc, string? data = default, byte? type = default)
     {
         try
         {
-            var result = await db.CreateAsync<object?>(proc, ApiDbHelper.DeNormalize(data));
-            return await Task.FromResult(ApiDbHelper.Normalize(result));
+            if (type == (byte)SqlDbType.VarBinary)
+            {
+                return ApiDbHelper.Normalize(await db.CreateAsync<byte[]>(proc, ApiDbHelper.DeNormalize(data)));
+            }
+            else if (type == (byte)SqlDbType.VarChar)
+            {
+                return ApiDbHelper.Normalize(await db.CreateAsync<char[]>(proc, ApiDbHelper.DeNormalize(data)));
+            }
+            else if (type == (byte)SqlDbType.Xml)
+            {
+                return ApiDbHelper.Normalize(await db.CreateAsync<SqlXml>(proc, ApiDbHelper.DeNormalize(data)));
+            }
+            else
+            {
+                return ApiDbHelper.Normalize(await db.CreateAsync<object?>(proc, ApiDbHelper.DeNormalize(data)));
+            }
         }
         catch (Exception ex)
         {
@@ -81,13 +98,29 @@ public static class ApiDbExtensions
     /// <param name="db">The database service.</param>
     /// <param name="proc">The stored procedure name.</param>
     /// <param name="data">The data to be passed to the stored procedure.</param>
+    /// <param name="type">Result data type.</param>
     /// <returns>The record read from the database.</returns>
-    public static async Task<string?> TryReadAsync(this IDbService db, string proc, string? data = default)
+    public static async Task<string?> TryReadAsync(this IDbService db, string proc, string? data = default, byte? type = default)
     {
         try
         {
-            var result = await db.ReadAsync<object?>(proc, ApiDbHelper.DeNormalize(data));
-            return await Task.FromResult(ApiDbHelper.Normalize(result));
+            if (type == (byte)SqlDbType.VarBinary)
+            {
+                return ApiDbHelper.Normalize(await db.ReadAsync<byte[]>(proc, ApiDbHelper.DeNormalize(data)));
+            }
+            else if (type == (byte)SqlDbType.VarChar)
+            {
+                return ApiDbHelper.Normalize(await db.ReadAsync<char[]>(proc, data));
+            }
+            else if (type == (byte)SqlDbType.Xml)
+            {
+                return await db.ReadAsync<string?>(proc, data);
+            }
+            else
+            {
+                //return ApiDbHelper.Normalize(await db.ReadAsync<object?>(proc, ApiDbHelper.DeNormalize(data)));
+                return await db.ReadAsync<string?>(proc, ApiDbHelper.DeNormalize(data));
+            }
         }
         catch (Exception ex)
         {

@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\ApiTypeController.cs" />
     <Compile Remove="Controllers\BakApiHoleController.cs" />
   </ItemGroup>
 

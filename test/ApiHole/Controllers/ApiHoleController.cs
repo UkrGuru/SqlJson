@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 using UkrGuru.SqlJson;
 
 namespace ApiHole.Controllers;
@@ -16,12 +15,12 @@ public class ApiHoleController : ControllerBase
     private readonly string _suffix = "_Api";
 
     [HttpPost("{proc}")]
-    public async Task<string?> Create(string proc, [FromBody] string? data = default)
-        => await _db.TryCreateAsync($"{proc}{_suffix}", data);
+    public async Task<string?> Create(string proc, [FromBody] string? data = default, byte? type = default)
+        => await _db.TryCreateAsync($"{proc}{_suffix}", data, type);
 
     [HttpGet("{proc}")]
-    public async Task<string?> Read(string proc, string? data = default)
-        => await _db.TryReadAsync($"{proc}{_suffix}", data);
+    public async Task<string?> Read(string proc, string? data = default, byte? type = default)
+        => await _db.TryReadAsync($"{proc}{_suffix}", data, type);
 
     [HttpPut("{proc}")]
     public async Task<string?> Update(string proc, [FromBody] string? data = default)
@@ -30,9 +29,4 @@ public class ApiHoleController : ControllerBase
     [HttpDelete("{proc}")]
     public async Task<string?> Delete(string proc, string? data = default)
         => await _db.TryDeleteAsync($"{proc}{_suffix}", data);
-
-
-    [HttpPost]
-    public async Task<string?> SaveUserData([FromBody] JsonElement json)
-    => await _db.TryCreateAsync<string?>($"Users_Get_Info{_suffix}", json);
 }

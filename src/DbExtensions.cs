@@ -70,7 +70,7 @@ public static class DbExtensions
     {
         SqlParameter parameter = new("@Data", data);
 
-        if (parameter.SqlValue is null && data is not Enum && data is not Stream && data is not TextReader)
+        if (parameter.SqlValue is null && data is not Enum && data is not Stream && data is not TextReader && data is not XmlReader)
         {
             parameter.SqlValue = JsonSerializer.Serialize(data);
         }
@@ -218,7 +218,8 @@ public static class DbExtensions
     {
         StringBuilder sb = new();
 
-        do { sb.Append(reader.GetValue(0)); } while (await reader.ReadAsync(cancellationToken));
+        do { sb.Append(reader.GetValue(0)); } 
+        while (await reader.ReadAsync(cancellationToken));
 
         return await Task.FromResult(sb.ToString());
     }

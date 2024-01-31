@@ -21,7 +21,7 @@ public static class ObjExtensions
     /// <returns>The converted object of type T.</returns>
     public static T? ToObj<T>(this object? value, T? defaultValue = default) =>
         value == null || value == DBNull.Value ? defaultValue :
-        value is T t ? t:
+        value is T t ? t :
         value is string s ? (s.Length > 0 ? s.ToTypes<T>() : defaultValue) :
         value is StringBuilder sb ? (sb.Length > 0 ? sb.ToString().ToTypes<T>() : defaultValue) :
         value.ToType<T>();
@@ -50,6 +50,7 @@ public static class ObjExtensions
     /// <returns>The converted object.</returns>
     public static T? ToTypes<T>(this string value) => (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)) switch
     {
+        Type t when t == typeof(char[]) => (T)(object)value.ToCharArray(),
         Type t when t.IsClass => JsonSerializer.Deserialize<T?>(value),
         Type t when t == typeof(Guid) => (T)(object)Guid.Parse(value),
         Type t when t.IsEnum => (T)Enum.Parse(t, value),

@@ -22,7 +22,7 @@ public class ApiDbServiceTests
             new object[] { Array.Empty<byte>() },
             new object[] { TestBytes1k },
             new object[] { TestBytes5k },
-            new object[] { TestBytes55k }
+            new object[] { TestBytes55k },
         };
 
         return allData.Take(numTests);
@@ -32,10 +32,10 @@ public class ApiDbServiceTests
     {
         var allData = new List<object[]>
         {
-            new object[] { Array.Empty<char>() },
             new object[] { TestChars1k },
             new object[] { TestChars5k },
-            new object[] { TestChars55k }
+            new object[] { TestChars55k },
+            new object[] { Array.Empty<char>() },
         };
 
         return allData.Take(numTests);
@@ -84,10 +84,10 @@ public class ApiDbServiceTests
         Assert.Null(await _db.ExecAsync<byte[]?>("ProcVar", SqlBinary.Null));
         Assert.Null(await _db.ExecAsync<byte[]?>("ProcVar", SqlBytes.Null));
 
-        //Assert.Empty(await _db.ExecAsync<string?>("ProcVar", SqlChars.Null));
-        //Assert.Empty(await _db.ExecAsync<string?>("ProcVar", SqlString.Null));
+        Assert.Empty((await _db.ExecAsync<string?>("ProcVar", SqlChars.Null))!);
+        Assert.Empty((await _db.ExecAsync<string?>("ProcVar", SqlString.Null))!);
 
-        //Assert.Empty(await _db.ExecAsync<string?>("ProcXml", SqlXml.Null));
+        Assert.Empty((await _db.ExecAsync<string?>("ProcXml", SqlXml.Null))!);
     }
 
     [Fact]
@@ -178,25 +178,20 @@ public class ApiDbServiceTests
         Assert.Equal(UserType.User, await _db.ExecAsync<UserType?>("ProcVar", UserType.User));
     }
 
-    //[Theory]
-    //[MemberData(nameof(GetTestBytes), parameters: 4)]
-    //public async Task CanExecAsync_Bytes(byte[] bytes)
-    //    => Assert.Equal(bytes, await _db.ExecAsync<byte[]?>("InputVarBin", bytes));
-
     [Theory]
     [MemberData(nameof(GetTestBytes), parameters: 4)]
     public async Task CanExecAsync_Bytes(byte[] bytes)
         => Assert.Equal(bytes, await _db.ExecAsync<byte[]?>("ProcVarBin", bytes));
 
-    //[Theory]
-    //[MemberData(nameof(GetTestBytes), parameters: 4)]
-    //public async Task CanExecAsync_SqlBinary(byte[] bytes)
-    //    => Assert.Equal(bytes, await _db.ExecAsync<byte[]?>("ProcVarBin", new SqlBinary(bytes)));
+    [Theory]
+    [MemberData(nameof(GetTestBytes), parameters: 4)]
+    public async Task CanExecAsync_SqlBinary(byte[] bytes)
+        => Assert.Equal(bytes, await _db.ExecAsync<byte[]?>("ProcVarBin", new SqlBinary(bytes)));
 
-    //[Theory]
-    //[MemberData(nameof(GetTestBytes), parameters: 4)]
-    //public async Task CanExecAsync_SqlBytes(byte[] bytes)
-    //    => Assert.Equal(bytes, await _db.ExecAsync<byte[]?>("ProcVarBin", new SqlBytes(bytes)));
+    [Theory]
+    [MemberData(nameof(GetTestBytes), parameters: 4)]
+    public async Task CanExecAsync_SqlBytes(byte[] bytes)
+        => Assert.Equal(bytes, await _db.ExecAsync<byte[]?>("ProcVarBin", new SqlBytes(bytes)));
 
     //[Theory]
     //[MemberData(nameof(GetTestBytes), parameters: 4)]
@@ -217,17 +212,17 @@ public class ApiDbServiceTests
     //}
 
     [Theory]
-    [MemberData(nameof(GetTestChars), parameters: 4)]
+    [MemberData(nameof(GetTestChars), parameters: 3)]
     public async Task CanExecAsync_Chars(char[] chars)
         => Assert.Equal(chars, await _db.ExecAsync<char[]?>("ProcVarChar", chars));
 
-    //[Theory]
-    //[MemberData(nameof(GetTestChars), parameters: 4)]
-    //public async Task CanExecAsync_SqlChars(char[] chars)
-    //{
-    //    var sqlValue = new SqlChars(chars);
-    //    Assert.Equal(chars, await _db.ExecAsync<char[]?>("ProcVarChar", sqlValue));
-    //}
+    [Theory]
+    [MemberData(nameof(GetTestChars), parameters: 3)]
+    public async Task CanExecAsync_SqlChars(char[] chars)
+    {
+        var sqlValue = new SqlChars(chars);
+        Assert.Equal(chars, await _db.ExecAsync<char[]?>("ProcVarChar", sqlValue));
+    }
 
     [Theory]
     [MemberData(nameof(GetTestString), parameters: 4)]
@@ -267,7 +262,7 @@ public class ApiDbServiceTests
 
     //    using var readerIn = XmlReader.Create(new StringReader(value));
 
-    //    using var readerOut = await _db.ExecAsync<XmlReader>("ProcXml", new SqlXml(readerIn));
+    //    using var readerOut = await _db.ExecAsync<XmlReader>("ProcXml", readerIn);
 
     //    Assert.NotNull(readerOut);
 
