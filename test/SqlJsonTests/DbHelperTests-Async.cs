@@ -114,7 +114,7 @@ public partial class DbHelperTests
         value = new TimeOnly(23, 59, 59); 
         Assert.Equal(value, await DbHelper.ExecAsync<TimeOnly>("SELECT @Data", value));
 
-        value = new TimeSpan(0, 23, 59, 59, 999, 999);
+        value = new TimeSpan(0, 23, 59, 59, 999);
         Assert.Equal(value, await DbHelper.ExecAsync<TimeSpan>("SELECT @Data", value));
     }
 

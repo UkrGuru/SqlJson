@@ -17,7 +17,7 @@ public class DbFileExtensionsTests
     [Fact]
     public async Task ToStringAsync_Empty()
     {
-        var file = new DbFile { FileContent = Encoding.UTF8.GetBytes(string.Empty) };
+        var file = new DbFile { FileContent = Encoding.Unicode.GetBytes(string.Empty) };
 
         var result = await file.ToStringAsync();
 
@@ -27,7 +27,7 @@ public class DbFileExtensionsTests
     [Fact]
     public async Task ToStringAsync_NotEmpty()
     {
-        var file = new DbFile { FileContent = Encoding.UTF8.GetBytes("Hello, world!") };
+        var file = new DbFile { FileContent = Encoding.Unicode.GetBytes("Hello, world!") };
 
         var result = await file.ToStringAsync();
 

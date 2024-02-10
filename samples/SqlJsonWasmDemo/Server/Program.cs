@@ -18,7 +18,7 @@ var app = builder.Build();
 
 Assembly.GetExecutingAssembly().InitDb();
 
-typeof(ApiDbService).Assembly.InitDb();
+//typeof(ApiDbService).Assembly.InitDb();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

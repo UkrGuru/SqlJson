@@ -28,7 +28,7 @@ public class DbFileService : DbService, IDbFileService
         {
             var file = await GetAsync(guid, timeout, cancellationToken);
 
-            return file?.FileContent != null ? Encoding.UTF8.GetString(file.FileContent) : await Task.FromResult(default(string?));
+            return file?.FileContent != null ? Encoding.Unicode.GetString(file.FileContent) : await Task.FromResult(default(string?));
         }
 
         return await Task.FromResult(value);
@@ -49,7 +49,7 @@ public class DbFileService : DbService, IDbFileService
     {
         if (value?.Length > 0)
         {
-            DbFile file = new() { FileName = filename, FileContent = Encoding.UTF8.GetBytes(value), Safe = safe };
+            DbFile file = new() { FileName = filename, FileContent = Encoding.Unicode.GetBytes(value), Safe = safe };
 
             await file.CompressAsync(cancellationToken);
 

@@ -10,96 +10,258 @@ namespace UkrGuru.SqlJson.Extensions.Tests;
 public class ObjExtensionsTests
 {
     [Fact]
-    public void CanStringBuilderToObj()
+    public void CanToObj_Null()
     {
-        Assert.Null(((StringBuilder?)null).ToObj<string?>()); ;
-        Assert.Null(new StringBuilder().ToObj<string?>()); ;
-
-        StringBuilder sb = new();
-        sb.Append("t");
-        sb.Append("r");
-        sb.Append("u");
-        sb.Append("e");
-
-        Assert.True(sb.ToObj(false));
-    }
-
-    [Theory]
-    [InlineData(null, null, null)]
-    [InlineData(null, "A", "A")]
-    [InlineData("", "A", "")]
-    [InlineData("A", "A", "A")]
-    [InlineData("A", "B", "A")]
-    public static void CanStringToObj(object? value, string? defaultValue = default, string? expected = default)
-        => Assert.Equal(expected, value.ToObj(defaultValue));
-
-    [Fact]
-    public static void CanClassToObj()
-    {
-        var region = new Region() { Id = 1, Name = "West" };
-        var actual = JsonSerializer.Serialize(region).ToObj<Region?>();
-
-        Assert.Equal(region.Id, actual?.Id);
-        Assert.Equal(region.Name, actual?.Name);
-
-        var stream = new MemoryStream(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(region)));
-        actual = stream.ToObj<Region?>();
-
-        Assert.Equal(region.Id, actual?.Id);
-        Assert.Equal(region.Name, actual?.Name);
+        Assert.Null((null as object).ToObj<int?>());
+        Assert.Null(DBNull.Value.ToObj<int?>());
+        Assert.Null(string.Empty.ToObj<int?>());
+        Assert.Null(new StringBuilder().ToObj<bool?>());
+        Assert.Null(Array.Empty<byte[]>().ToObj<byte[]?>());
+        Assert.Null(Array.Empty<char[]>().ToObj<char[]?>());
     }
 
     [Fact]
-    public static void CanGuidToObj()
+    public void CanToObj_HaveDefaultValue()
     {
-        Assert.Null((null as object).ToObj<Guid?>());
-        Assert.Equal(Guid.Empty, (null as string).ToObj<Guid?>(Guid.Empty));
-        Assert.Equal(Guid.Empty, string.Empty.ToObj<Guid?>(Guid.Empty));
-
-        var someguid = Guid.NewGuid();
-        var actual = someguid.ToString().ToObj<Guid?>();
-
-        Assert.Equal(someguid, actual);
+        Assert.True((null as string).ToObj(true));
+        Assert.True(DBNull.Value.ToObj(true));
+        Assert.True(string.Empty.ToObj(true));
+        Assert.True(new StringBuilder().ToObj(true));
+        Assert.Equal(new byte[0], Array.Empty<byte[]>().ToObj(new byte[0]));
+        Assert.Equal(new char[0], Array.Empty<char[]>().ToObj(new char[0]));
     }
 
     [Fact]
-    public static void CanEnumToObj()
+    public void CanToObj_Boolean()
     {
-        Assert.Null((null as string).ToObj<UserType?>());
-        Assert.Equal(UserType.Guest, (null as string).ToObj<UserType?>(UserType.Guest));
-        Assert.Equal(UserType.Guest, UserType.Guest.ToString().ToObj<UserType?>());
-        Assert.Equal(UserType.Guest, UserType.Guest.ToString("g").ToObj<UserType?>());
+        bool value = false;
+
+        Assert.Equal(value, value.ToObj<bool>());
+        Assert.Equal(value, value.ToString().ToObj<bool>());
+        Assert.Equal(value, 0.ToObj<bool>());
+
+        value = true;
+        Assert.Equal(value, value.ToObj<bool>());
+        Assert.Equal(value, value.ToString().ToObj<bool>());
+        Assert.Equal(value, 1.ToObj<bool>());
     }
 
     [Fact]
-    public static void CanDateOnlyToObj()
+    public void CanToObj_Byte()
     {
-        Assert.Null((null as string).ToObj<DateOnly?>());
-        Assert.Equal(DateOnly.MinValue, (null as string).ToObj<DateOnly?>(DateOnly.MinValue));
-        Assert.Equal(DateOnly.MinValue, DateOnly.MinValue.ToDateTime(TimeOnly.MinValue).ToObj<DateOnly?>());
+        byte value = 0x0a;
+
+        Assert.Equal(value, value.ToObj<byte>());
+        Assert.Equal(value, value.ToString().ToObj<byte>());
     }
 
     [Fact]
-    public static void CanTimeOnlyToObj()
+    public void CanToObj_ByteArray()
     {
-        Assert.Null((null as string).ToObj<TimeOnly?>());
-        Assert.Equal(TimeOnly.MinValue, (null as string).ToObj<TimeOnly?>(TimeOnly.MinValue));
-        Assert.Equal(TimeOnly.MinValue, TimeOnly.MinValue.ToTimeSpan().ToObj<TimeOnly?>());
+        byte[] value = Encoding.Unicode.GetBytes("\n\r");
+
+        Assert.Equal(value, value.ToObj<byte[]>());
+        Assert.Equal(value, "\n\r".ToObj<byte[]>());
     }
 
     [Fact]
-    public static void CanPrimitiveToObj()
+    public void CanToObj_Char()
     {
-        Assert.Null((null as string).ToObj<int?>());
-        Assert.Equal((int?)int.MaxValue, (null as string).ToObj<int?>(int.MaxValue));
-        Assert.Equal((int?)int.MaxValue, int.MaxValue.ToString().ToObj<int?>());
+        char value = 'X';
+        string string_value = "X";
+
+        Assert.Equal(value, value.ToObj<char>());
+        Assert.Equal(string_value, string_value.ToObj<string>());
     }
 
     [Fact]
-    public static void CanOtherToObj()
+    public void CanToObj_CharArray()
     {
-        Assert.Null((null as string).ToObj<DateTime?>());
-        Assert.Equal(DateTime.MinValue, (null as string).ToObj<DateTime?>(DateTime.MinValue));
-        //Assert.Equal(DateTime.MinValue, DateTime.MinValue.ToString().ToObj<DateTime?>());
+        char[] value = new char[] { 'A', 'X' };
+        string string_value = "AX";
+
+        Assert.Equal(value, value.ToObj<char[]?>());
+        Assert.Equal(string_value, string_value.ToObj<string?>());
+    }
+
+    [Fact]
+    public void CanToObj_DateOnly()
+    {
+        DateOnly value = new (2000, 11, 25);
+        DateTime dt = new(2000, 11, 25);
+
+        Assert.Equal(value, value.ToObj<DateOnly>());
+        Assert.Equal(value, dt.ToLongDateString().ToObj<DateOnly>());
+        Assert.Equal(value, dt.ToString("yyyy-MM-dd").ToObj<DateOnly>());
+        Assert.Equal(value, dt.ToString("yyyy-MM-ddTHH:mm:ss").ToObj<DateOnly>());
+        Assert.Equal(value, dt.ToString("yyyy-MM-ddTHH:mm:ssZ").ToObj<DateOnly>());
+        Assert.Equal(value, dt.ToString("yyyy-MM-dd HH:mm:ss.fffffff").ToObj<DateOnly>());
+        Assert.Equal(value, dt.ToString("yyyy-MM-dd HH:mm:ss.fffffff zzz").ToObj<DateOnly>());
+    }
+
+    [Fact]
+    public void CanToObj_TimeOnly()
+    {
+        TimeOnly value = new(23, 59, 59);
+        DateTime dt = new(2000, 1, 1, 23, 59, 59);
+
+        Assert.Equal(value, value.ToObj<TimeOnly>());
+        Assert.Equal(value, dt.ToLongTimeString().ToObj<TimeOnly>());
+    }
+
+    [Fact]
+    public void CanToObj_DateTime()
+    {
+        DateTime value = new(2000, 11, 25, 23, 59, 59);
+
+        Assert.Equal(value, value.ToObj<DateTime>());
+        Assert.Equal(value, value.ToString().ToObj<DateTime>());
+        Assert.Equal(value, value.ToString("yyyy-MM-ddTHH:mm:ss").ToObj<DateTime>());
+
+        //value = TimeZoneInfo.ConvertTimeFromUtc(value, TimeZoneInfo.Local);
+        //Assert.Equal(value, value.ToString("yyyy-MM-ddTHH:mm:ssZ").ToObj<DateTime>());
+    }
+
+    [Fact]
+    public void CanToObj_Decimal()
+    {
+        decimal value = decimal.MinValue;
+        Assert.Equal(value, value.ToObj<decimal>());
+        Assert.Equal(value, value.ToString().ToObj<decimal>());
+
+        value = decimal.Zero;
+        Assert.Equal(value, value.ToObj<decimal>());
+        Assert.Equal(value, value.ToString().ToObj<decimal>());
+
+        value = decimal.One;
+        Assert.Equal(value, value.ToObj<decimal>());
+        Assert.Equal(value, value.ToString().ToObj<decimal>());
+
+        value = decimal.MinusOne;
+        Assert.Equal(value, value.ToObj<decimal>());
+        Assert.Equal(value, value.ToString().ToObj<decimal>());
+
+        value = decimal.MaxValue;
+        Assert.Equal(value, value.ToObj<decimal>());
+        Assert.Equal(value, value.ToString().ToObj<decimal>());
+
+        value = 123456.789m;
+        Assert.Equal(value, value.ToObj<decimal>());
+        Assert.Equal(value, value.ToString().ToObj<decimal>());
+    }
+
+    [Fact]
+    public void CanToObj_Double()
+    {
+        double value = double.MinValue;
+        Assert.Equal(value, value.ToObj<double>());
+        Assert.Equal(value, value.ToString().ToObj<double>());
+
+        value = double.MaxValue;
+        Assert.Equal(value, value.ToObj<double>());
+        Assert.Equal(value, value.ToString().ToObj<double>());
+
+        value = 123456.789d;
+        Assert.Equal(value, value.ToObj<double>());
+        Assert.Equal(value, value.ToString().ToObj<double>());
+    }
+
+    [Fact]
+    public void CanToObj_Enum()
+    {
+        UserType value = UserType.Guest;
+
+        Assert.Equal(value, value.ToObj<UserType>());
+        Assert.Equal(value, ((int)value).ToObj<UserType>());
+        Assert.Equal(value, value.ToString().ToObj<UserType>());
+    }
+
+    [Fact]
+    public void CanToObj_Guid()
+    {
+        Guid value = Guid.NewGuid();
+
+        Assert.Equal(value, value.ToObj<Guid>());
+        Assert.Equal(value, value.ToString().ToObj<Guid>());
+    }
+
+    [Fact]
+    public void CanToObj_Int16()
+    {
+        short value = short.MinValue;
+
+        Assert.Equal(value, value.ToObj<short>());
+        Assert.Equal(value, value.ToString().ToObj<short>());
+
+        value = short.MaxValue;
+        Assert.Equal(value, value.ToObj<short>());
+        Assert.Equal(value, value.ToString().ToObj<short>());
+
+        value = 0;
+        Assert.Equal(value, value.ToObj<short>());
+        Assert.Equal(value, value.ToString().ToObj<short>());
+    }
+
+    [Fact]
+    public void CanToObj_Int32()
+    {
+        int value = int.MinValue;
+
+        Assert.Equal(value, value.ToObj<int>());
+        Assert.Equal(value, value.ToString().ToObj<int>());
+
+        value = int.MaxValue;
+        Assert.Equal(value, value.ToObj<int>());
+        Assert.Equal(value, value.ToString().ToObj<int>());
+
+        value = 0;
+        Assert.Equal(value, value.ToObj<int>());
+        Assert.Equal(value, value.ToString().ToObj<int>());
+    }
+
+    [Fact]
+    public void CanToObj_Int64()
+    {
+        long value = long.MinValue;
+
+        Assert.Equal(value, value.ToObj<long>());
+        Assert.Equal(value, value.ToString().ToObj<long>());
+
+        value = long.MaxValue;
+        Assert.Equal(value, value.ToObj<long>());
+        Assert.Equal(value, value.ToString().ToObj<long>());
+
+        value = 0;
+        Assert.Equal(value, value.ToObj<long>());
+        Assert.Equal(value, value.ToString().ToObj<long>());
+    }
+
+    [Fact]
+    public void CanToObj_StringBuilder()
+    {
+        var value = new StringBuilder();
+        value.Append("t");
+        value.Append("r");
+        value.Append("u");
+        value.Append("e");
+
+        Assert.True(value.ToObj(false));
+    }
+
+    [Fact]
+    public static void CanToObj_Class()
+    {
+        var value = new Region() { Id = 1, Name = "West" };
+
+        var actual = JsonSerializer.Serialize(value).ToObj<Region?>();
+
+        Assert.Equal(value.Id, actual?.Id);
+        Assert.Equal(value.Name, actual?.Name);
+
+        //var stream = new MemoryStream(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(value)));
+        //actual = stream.ToObj<Region?>();
+
+        //Assert.Equal(value.Id, actual?.Id);
+        //Assert.Equal(value.Name, actual?.Name);
     }
 }

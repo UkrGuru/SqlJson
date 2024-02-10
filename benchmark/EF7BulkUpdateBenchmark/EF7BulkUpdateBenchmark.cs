@@ -1,7 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Engines;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Reports;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +17,7 @@ namespace BenchmarkDotNet.Samples
         private string SQLConnectionString
             = "Data Source=(localdb)\\mssqllocaldb;Database=EF7BulkUpdate;Integrated Security=sspi;";
 
-        [Params(1, 50, 500, 1000)]
+        [Params(1, 100, 500, 1000)]
         public int records;
 
         [GlobalSetup]
