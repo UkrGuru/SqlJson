@@ -26,7 +26,7 @@ public class DbFileHelper
             var file = await GetAsync(guid, timeout, cancellationToken);
 
             if (file?.FileContent != null)
-                return Encoding.Unicode.GetString(file.FileContent);
+                return Encoding.UTF8.GetString(file.FileContent);
 
             return await Task.FromResult(default(string?));
         }
@@ -49,7 +49,7 @@ public class DbFileHelper
     {
         if (value?.Length > 0)
         {
-            DbFile file = new() { FileName = filename, FileContent = Encoding.Unicode.GetBytes(value), Safe = safe };
+            DbFile file = new() { FileName = filename, FileContent = Encoding.UTF8.GetBytes(value), Safe = safe };
 
             await file.CompressAsync(cancellationToken);
 

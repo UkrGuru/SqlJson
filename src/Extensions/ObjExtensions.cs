@@ -48,7 +48,7 @@ public static class ObjExtensions
     /// <returns>The converted object.</returns>
     internal static T? ToTypes<T>(this string value) => (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)) switch
     {
-        Type t when t == typeof(byte[]) => (T)(object)Encoding.Unicode.GetBytes(value),
+        Type t when t == typeof(byte[]) => (T)(object)Encoding.UTF8.GetBytes(value),
         Type t when t == typeof(char[]) => (T)(object)value.ToCharArray(),
         Type t when t.IsClass => JsonSerializer.Deserialize<T?>(value),
         Type t when t == typeof(Guid) => (T)(object)Guid.Parse(value),

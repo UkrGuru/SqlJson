@@ -104,6 +104,6 @@ public static class DbFileExtensions
     public static async Task<string?> ToStringAsync(this DbFile? file) => await Task.FromResult(file?.FileContent switch
     {
         null => default,
-        _ => Encoding.Unicode.GetString(file.FileContent)
+        _ => Encoding.UTF8.GetString(file.FileContent)
     });
 }

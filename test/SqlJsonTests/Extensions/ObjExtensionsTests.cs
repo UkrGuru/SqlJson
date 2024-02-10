@@ -58,7 +58,7 @@ public class ObjExtensionsTests
     [Fact]
     public void CanToObj_ByteArray()
     {
-        byte[] value = Encoding.Unicode.GetBytes("\n\r");
+        byte[] value = Encoding.UTF8.GetBytes("\n\r");
 
         Assert.Equal(value, value.ToObj<byte[]>());
         Assert.Equal(value, "\n\r".ToObj<byte[]>());
