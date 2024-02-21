@@ -23,12 +23,15 @@ public class ObjExtensionsTests
     [Fact]
     public void CanToObj_HaveDefaultValue()
     {
+        var bytes_default = new byte[1] { 0x01 };
+        var chars_default = new char[1] { 'A' };
+
         Assert.True((null as string).ToObj(true));
         Assert.True(DBNull.Value.ToObj(true));
         Assert.True(string.Empty.ToObj(true));
         Assert.True(new StringBuilder().ToObj(true));
-        Assert.Equal(new byte[0], Array.Empty<byte[]>().ToObj(new byte[0]));
-        Assert.Equal(new char[0], Array.Empty<char[]>().ToObj(new char[0]));
+        Assert.Equal(bytes_default, Array.Empty<byte[]>().ToObj(bytes_default));
+        Assert.Equal(chars_default, Array.Empty<char[]>().ToObj(chars_default));
     }
 
     [Fact]
@@ -240,10 +243,10 @@ public class ObjExtensionsTests
     public void CanToObj_StringBuilder()
     {
         var value = new StringBuilder();
-        value.Append("t");
-        value.Append("r");
-        value.Append("u");
-        value.Append("e");
+        value.Append('t');
+        value.Append('r');
+        value.Append('u');
+        value.Append('e');
 
         Assert.True(value.ToObj(false));
     }

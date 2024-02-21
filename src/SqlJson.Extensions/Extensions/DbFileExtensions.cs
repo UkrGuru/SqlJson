@@ -12,26 +12,6 @@ namespace UkrGuru.SqlJson.Extensions;
 public static class DbFileExtensions
 {
     /// <summary>
-    /// Saves a file in the current database asynchronously.
-    /// </summary>
-    /// <typeparam name="T">The type of the result to return</typeparam>
-    /// <param name="file">The file to save</param>
-    /// <param name="timeout">The command timeout in seconds</param>
-    /// <param name="cancellationToken">An optional CancellationToken to observe while waiting for the task to complete. Defaults to default(CancellationToken).</param>
-    /// <returns>A task that represents the asynchronous operation, containing the result of the operation</returns>
-    public static async Task<T?> SetAsync<T>(this DbFile? file, int? timeout = default, CancellationToken cancellationToken = default)
-    {
-        if (file?.FileContent?.Length > 0)
-        {
-            await file.CompressAsync(cancellationToken);
-
-            return await DbHelper.CreateAsync<T?>(DbFileHelper.WJbFiles_Ins, file, timeout, cancellationToken);
-        }
-
-        return await Task.FromResult(default(T?));
-    }
-
-    /// <summary>
     /// Compression of the file content
     /// </summary>
     /// <param name="file">The file to compress</param>

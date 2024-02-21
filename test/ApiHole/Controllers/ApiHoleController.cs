@@ -15,12 +15,12 @@ public class ApiHoleController : ControllerBase
     private readonly string _suffix = "_Api";
 
     [HttpPost("{proc}")]
-    public async Task<string?> Create(string proc, [FromBody] string? data = default, byte? type = default)
-        => await _db.TryCreateAsync($"{proc}{_suffix}", data, type);
+    public async Task<string?> Create(string proc, [FromBody] string? data = default)
+        => await _db.TryCreateAsync($"{proc}{_suffix}", data);
 
     [HttpGet("{proc}")]
-    public async Task<string?> Read(string proc, string? data = default, byte? type = default)
-        => await _db.TryReadAsync($"{proc}{_suffix}", data, type);
+    public async Task<string?> Read(string proc, string? data = default)
+        => await _db.TryReadAsync($"{proc}{_suffix}", data);
 
     [HttpPut("{proc}")]
     public async Task<string?> Update(string proc, [FromBody] string? data = default)

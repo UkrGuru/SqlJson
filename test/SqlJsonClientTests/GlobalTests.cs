@@ -2,10 +2,10 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using Microsoft.Extensions.Configuration;
-using System.Reflection;
-using UkrGuru.SqlJson.Extensions;
+//using System.Reflection;
+//using UkrGuru.SqlJson.Extensions;
 
-namespace UkrGuru.SqlJson.Tests;
+namespace UkrGuru.SqlJson.Client.Tests;
 
 public class GlobalTests
 {
@@ -124,13 +124,13 @@ public class GlobalTests
         SysAdmin
     }
 
-    [Fact]
-    public void CanInitDbs()
-    {
-        DbHelper.ConnectionString = ConnectionString;
+    //[Fact]
+    //public void CanInitDbs()
+    //{
+    //    DbHelper.ConnectionString = ConnectionString;
 
-        Assembly.GetAssembly(typeof(DbHelper)).InitDb();
+    //    Assembly.GetAssembly(typeof(DbHelper)).InitDb();
 
-        Assembly.GetExecutingAssembly().InitDb();
-    }
+    //    Assembly.GetExecutingAssembly().InitDb();
+    //}
 }

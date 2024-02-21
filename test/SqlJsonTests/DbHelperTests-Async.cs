@@ -58,7 +58,7 @@ public partial class DbHelperTests
     [Fact]
     public async Task CanExecAsync_Numeric()
     {
-        object? value = default, sqlValue = default;
+        object? value, sqlValue;
 
         value = byte.MinValue; sqlValue = new SqlByte((byte)value);
         Assert.Equal(value, await DbHelper.ExecAsync<byte>("SELECT @Data", value));
@@ -99,7 +99,7 @@ public partial class DbHelperTests
     [Fact]
     public async Task CanExecAsync_DateTime()
     {
-        object? value = default, sqlValue = default;
+        object? value, sqlValue;
 
         value = DateOnly.MaxValue; 
         Assert.Equal(value, await DbHelper.ExecAsync<DateOnly>("SELECT @Data", value));
@@ -121,7 +121,7 @@ public partial class DbHelperTests
     [Fact]
     public async Task CanExecAsync_Other()
     {
-        object? value = default, sqlValue = default;
+        object? value, sqlValue;
 
         value = Guid.NewGuid(); sqlValue = new SqlGuid((Guid)value);
         Assert.Equal(value, await DbHelper.ExecAsync<Guid>("SELECT @Data", value));
@@ -142,12 +142,12 @@ public partial class DbHelperTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestBytes), parameters: 4)]
+    [MemberData(nameof(GetTestBytes))]
     public async Task CanExecAsync_Bytes(byte[] bytes) 
         => Assert.Equal(bytes, await DbHelper.ExecAsync<byte[]?>("SELECT @Data", bytes));
 
     [Theory]
-    [MemberData(nameof(GetTestBytes), parameters: 4)]
+    [MemberData(nameof(GetTestBytes))]
     public async Task CanExecAsync_SqlBinary(byte[] bytes)
     {
         var sqlValue = new SqlBinary(bytes);
@@ -155,7 +155,7 @@ public partial class DbHelperTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestBytes), parameters: 4)]
+    [MemberData(nameof(GetTestBytes))]
     public async Task CanExecAsync_SqlBytes(byte[] bytes)
     {
         var sqlValue = new SqlBytes(bytes);
@@ -163,7 +163,7 @@ public partial class DbHelperTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestBytes), parameters: 4)]
+    [MemberData(nameof(GetTestBytes))]
     public async Task CanExecAsync_Stream(byte[] bytes)
     {
         using var msIn = new MemoryStream(bytes);
@@ -172,7 +172,7 @@ public partial class DbHelperTests
         Assert.NotNull(stream);
         Assert.Equal(bytes, Stream2Bytes(stream));
 
-        byte[] Stream2Bytes(Stream input)
+        static byte[] Stream2Bytes(Stream input)
         {
             MemoryStream ms = new();
             input.CopyTo(ms);
@@ -181,12 +181,12 @@ public partial class DbHelperTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestChars), parameters: 4)]
+    [MemberData(nameof(GetTestChars))]
     public async Task CanExecAsync_Chars(char[] chars) 
         => Assert.Equal(chars, await DbHelper.ExecAsync<char[]?>("SELECT @Data", chars));
 
     [Theory]
-    [MemberData(nameof(GetTestChars), parameters: 4)]
+    [MemberData(nameof(GetTestChars))]
     public async Task CanExecAsync_SqlChars(char[] chars)
     {
         var sqlValue = new SqlChars(chars);
@@ -194,12 +194,12 @@ public partial class DbHelperTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestString), parameters: 4)]
+    [MemberData(nameof(GetTestStrings))]
     public async Task CanExecAsync_String(string str) 
         => Assert.Equal(str, await DbHelper.ExecAsync<string?>("SELECT @Data", str));
 
     [Theory]
-    [MemberData(nameof(GetTestString), parameters: 4)]
+    [MemberData(nameof(GetTestStrings))]
     public async Task CanExecAsync_TextReader(string text)
     {
         using TextReader readerSource = new StringReader(text);
@@ -210,7 +210,7 @@ public partial class DbHelperTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestString), parameters: 4)]
+    [MemberData(nameof(GetTestStrings))]
     public async Task CanExecAsync_SqlXml(string text)
     {
         var value = string.IsNullOrEmpty(text) ? "<value />" : new XElement("value", text).ToString();
@@ -225,7 +225,7 @@ public partial class DbHelperTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestString), parameters: 4)]
+    [MemberData(nameof(GetTestStrings))]
     public async Task CanExecAsync_XmlReader(string text)
     {
         var value = string.IsNullOrEmpty(text) ? "<value />" : new XElement("value", text).ToString();

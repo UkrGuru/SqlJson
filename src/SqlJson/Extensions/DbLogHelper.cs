@@ -8,25 +8,6 @@ namespace UkrGuru.SqlJson.Extensions;
 /// </summary>
 public class DbLogHelper
 {
-    internal const string DbLogLevelPathDefault = "Logging:LogLevel:UkrGuru.SqlJson";
-
-    internal const string WJbLogs_Ins = "WJbLogs_Ins";
-
-    /// <summary>
-    /// MinDbLogLevel allows to set the minimum allowed logging level.
-    /// </summary>
-    public static DbLogLevel MinDbLogLevel { get; set; } = DbLogLevel.Information;
-
-    /// <summary>
-    /// Normalization of parameters before logging.
-    /// </summary>
-    /// <param name="logLevel">The level of the log to write</param>
-    /// <param name="title">The title of the log</param>
-    /// <param name="more">Additional information to include in the log</param>
-    /// <returns></returns>
-    internal static object Normalize(DbLogLevel logLevel, string title, object? more = default)
-        => new DbLog() { LogLevel = logLevel, Title = title, LogMore = more };
-
     /// <summary>
     /// Synchronous method that writes a log any of type to the database.
     /// </summary>
@@ -37,9 +18,9 @@ public class DbLogHelper
     {
         try
         {
-            if ((byte)logLevel >= (byte)MinDbLogLevel)
+            if ((byte)logLevel >= (byte)DbLogExtensions.MinDbLogLevel)
             {
-                DbHelper.Exec(WJbLogs_Ins, Normalize(logLevel, title, more));
+                DbHelper.Exec("WJbLogs_Ins", DbLogExtensions.Normalize(logLevel, title, more));
             }
         }
         finally { }
@@ -57,9 +38,9 @@ public class DbLogHelper
     {
         try
         {
-            if ((byte)logLevel >= (byte)MinDbLogLevel)
+            if ((byte)logLevel >= (byte)DbLogExtensions.MinDbLogLevel)
             {
-                _ = await DbHelper.ExecAsync(WJbLogs_Ins, Normalize(logLevel, title, more), cancellationToken: cancellationToken);
+                _ = await DbHelper.ExecAsync("WJbLogs_Ins", DbLogExtensions.Normalize(logLevel, title, more), cancellationToken: cancellationToken);
             }
         }
         finally { await Task.CompletedTask; }

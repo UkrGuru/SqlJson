@@ -20,7 +20,7 @@ public class DbLogService : DbService, IDbLogService
     /// </summary>
     /// <param name="configuration">The configuration to use</param>
     public DbLogService(IConfiguration configuration) : base(configuration)
-        => _minDbLogLevel = configuration.GetValue<DbLogLevel?>(MinDbLogLevelPath);
+        => _minDbLogLevel = configuration.GetSection(MinDbLogLevelPath)?.Value.ToObj<DbLogLevel?>();
 
     /// <summary>
     /// Gets the minimum allowed logging level.
@@ -30,7 +30,7 @@ public class DbLogService : DbService, IDbLogService
     /// <summary>
     /// Gets the path for the MinDbLogLevel property in the configuration.
     /// </summary>
-    public virtual string MinDbLogLevelPath => DbLogHelper.DbLogLevelPathDefault;
+    public virtual string MinDbLogLevelPath => "Logging:LogLevel:UkrGuru.SqlJson";
 
     /// <inheritdoc/>
     public async Task LogAsync(DbLogLevel logLevel, string title, object? more = default, CancellationToken cancellationToken = default)
@@ -39,7 +39,7 @@ public class DbLogService : DbService, IDbLogService
         {
             if ((byte)logLevel >= (byte)MinDbLogLevel)
             {
-                _ = await ExecAsync(DbLogHelper.WJbLogs_Ins, DbLogHelper.Normalize(logLevel, title, more), cancellationToken: cancellationToken);
+                _ = await ExecAsync("WJbLogs_Ins", DbLogExtensions.Normalize(logLevel, title, more), cancellationToken: cancellationToken);
             }
         }
         finally { await Task.CompletedTask; }

@@ -19,7 +19,7 @@ public class DbFileService : DbService, IDbFileService
 
     /// <inheritdoc/>
     public async Task DelAsync(object? guid, CancellationToken cancellationToken = default)
-        => await DeleteAsync(DbFileHelper.WJbFiles_Del, guid, cancellationToken: cancellationToken);
+        => await DeleteAsync("WJbFiles_Del", guid, cancellationToken: cancellationToken);
 
     /// <inheritdoc/>
     public async Task<string?> GetAsync(string? value, int? timeout = default, CancellationToken cancellationToken = default)
@@ -37,7 +37,7 @@ public class DbFileService : DbService, IDbFileService
     /// <inheritdoc/>
     public async Task<DbFile?> GetAsync(Guid? guid, int? timeout = default, CancellationToken cancellationToken = default)
     {
-        var file = await ReadAsync<DbFile?>(DbFileHelper.WJbFiles_Get, guid, timeout, cancellationToken);
+        var file = await ReadAsync<DbFile?>("WJbFiles_Get", guid, timeout, cancellationToken);
 
         await file.DecompressAsync(cancellationToken);
 
@@ -53,7 +53,7 @@ public class DbFileService : DbService, IDbFileService
 
             await file.CompressAsync(cancellationToken);
 
-            return await CreateAsync<string?>(DbFileHelper.WJbFiles_Ins, file, timeout, cancellationToken);
+            return await CreateAsync<string?>("WJbFiles_Ins", file, timeout, cancellationToken);
         }
 
         return await Task.FromResult(value);
@@ -64,6 +64,6 @@ public class DbFileService : DbService, IDbFileService
     {
         await file.CompressAsync(cancellationToken);
 
-        return await CreateAsync<Guid?>(DbFileHelper.WJbFiles_Ins, file, timeout, cancellationToken);
+        return await CreateAsync<Guid?>("WJbFiles_Ins", file, timeout, cancellationToken);
     }
 }

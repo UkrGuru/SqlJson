@@ -112,7 +112,7 @@ public class DbExtensionsTests
     [InlineData("ProcTest", null, null, CommandType.StoredProcedure)]
     public static void CanCreateSqlCommand(string cmdText, object? data = default, int? timeout = default, CommandType expected = CommandType.Text)
     {
-        SqlConnection connection = new SqlConnection(ConnectionString);
+        SqlConnection connection = new(ConnectionString);
 
         var command = connection.CreateSqlCommand(cmdText, data, timeout);
 
@@ -191,7 +191,7 @@ public class DbExtensionsTests
     [MemberData(nameof(GetData4CanNormalize), parameters: 40)]
     public void CanAddDataParameter(object data, object expected)
     {
-        SqlCommand command = new SqlCommand();
+        SqlCommand command = new();
 
         Assert.Equal(0, command.Parameters.Count);
 

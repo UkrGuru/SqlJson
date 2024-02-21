@@ -48,9 +48,9 @@ public class ApiDbService : IDbService
         var norm = ApiDbHelper.Normalize(data);
 
         if (norm?.Length > 1000)
-            httpResponse = await _http.PostAsync(ApiDbHelper.Normalize(ApiHolePattern, proc, type: ApiDbHelper.GetTypeCode<T>()), new StringContent(norm), cancellationToken);
+            httpResponse = await _http.PostAsync(ApiDbHelper.Normalize(ApiHolePattern, proc), new StringContent(norm), cancellationToken);
         else
-            httpResponse = await _http.GetAsync(ApiDbHelper.Normalize(ApiHolePattern, proc, norm, type: ApiDbHelper.GetTypeCode<T>()), cancellationToken);
+            httpResponse = await _http.GetAsync(ApiDbHelper.Normalize(ApiHolePattern, proc, norm), cancellationToken);
 
         return await httpResponse.ReadAsync<T>(cancellationToken);
     }
@@ -62,7 +62,7 @@ public class ApiDbService : IDbService
 
         var norm = ApiDbHelper.Normalize(data); ArgumentNullException.ThrowIfNull(norm, "content");
 
-        var httpResponse = await _http.PostAsync(ApiDbHelper.Normalize(ApiHolePattern, proc, type: ApiDbHelper.GetTypeCode<T>()), new StringContent(norm), cancellationToken);
+        var httpResponse = await _http.PostAsync(ApiDbHelper.Normalize(ApiHolePattern, proc), new StringContent(norm), cancellationToken);
 
         return await httpResponse.ReadAsync<T?>(cancellationToken);
     }
@@ -74,7 +74,7 @@ public class ApiDbService : IDbService
 
         var norm = ApiDbHelper.Normalize(data);
 
-        var httpResponse = await _http.GetAsync(ApiDbHelper.Normalize(ApiHolePattern, proc, norm, type: ApiDbHelper.GetTypeCode<T>()), cancellationToken);
+        var httpResponse = await _http.GetAsync(ApiDbHelper.Normalize(ApiHolePattern, proc, norm), cancellationToken);
 
         return await httpResponse.ReadAsync<T?>(cancellationToken);
     }

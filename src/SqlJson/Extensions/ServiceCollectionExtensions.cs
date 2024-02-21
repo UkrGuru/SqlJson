@@ -37,7 +37,7 @@ public static class SqlJsonServiceCollectionExtensions
     /// <param name="initDb"></param>
     public static IServiceCollection AddSqlJsonExt(this IServiceCollection services, DbLogLevel logLevel = DbLogLevel.Information, bool initDb = true)
     {
-        DbLogHelper.MinDbLogLevel = logLevel;
+        DbLogExtensions.MinDbLogLevel = logLevel;
 
         if (initDb) Assembly.GetExecutingAssembly().InitDb();
 
@@ -46,29 +46,4 @@ public static class SqlJsonServiceCollectionExtensions
 
         return services;
     }
-
-    ///// <summary>
-    ///// Registers UkrGuru SqlJson services for client side application.
-    ///// </summary>
-    ///// <param name="services">The IServiceCollection argument the ConfigureServices method receives.</param>
-    ///// <returns>The updated IServiceCollection collection argument the ConfigureServices method receives.</returns>
-    //public static IServiceCollection AddSqlJsonApi(this IServiceCollection services)
-    //{
-    //    services.AddScoped<IDbService, ApiDbService>();
-
-    //    return services;
-    //}
-
-    ///// <summary>
-    ///// Registers UkrGuru Extensions for client side application.
-    ///// </summary>
-    ///// <param name="services">The IServiceCollection argument the ConfigureServices method receives.</param>
-    ///// <returns>The updated IServiceCollection collection argument the ConfigureServices method receives.</returns>
-    //public static IServiceCollection AddSqlJsonApiExt(this IServiceCollection services)
-    //{
-    //    services.AddScoped<IDbLogService, ApiDbLogService>();
-    //    services.AddScoped<IDbFileService, ApiDbFileService>();
-
-    //    return services;
-    //}
 }

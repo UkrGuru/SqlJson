@@ -16,44 +16,11 @@ public partial class DbHelperTests
         DbHelper.ConnectionString = ConnectionString;
     }
 
-    public static IEnumerable<object[]> GetTestBytes(int numTests)
-    {
-        var allData = new List<object[]>
-        {
-            new object[] { Array.Empty<byte>() },
-            new object[] { TestBytes1k },
-            new object[] { TestBytes5k },
-            new object[] { TestBytes55k }
-        };
+    public static readonly TheoryData<byte[]> GetTestBytes = new() { Array.Empty<byte>(), TestBytes1k, TestBytes5k, TestBytes55k };
 
-        return allData.Take(numTests);
-    }
+    public static readonly TheoryData<char[]> GetTestChars = new() { Array.Empty<char>(), TestChars1k, TestChars5k, TestChars55k };
 
-    public static IEnumerable<object[]> GetTestChars(int numTests)
-    {
-        var allData = new List<object[]>
-        {
-            new object[] { Array.Empty<char>() },
-            new object[] { TestChars1k },
-            new object[] { TestChars5k },
-            new object[] { TestChars55k }
-        };
-
-        return allData.Take(numTests);
-    }
-
-    public static IEnumerable<object[]> GetTestString(int numTests)
-    {
-        var allData = new List<object[]>
-        {
-            new object[] { string.Empty },
-            new object[] { TestString1k },
-            new object[] { TestString5k },
-            new object[] { TestString55k }
-        };
-
-        return allData.Take(numTests);
-    }
+    public static readonly TheoryData<string> GetTestStrings = new() { string.Empty, TestString1k, TestString5k, TestString55k };
 
     [Fact]
     public void CanExec_Null()
@@ -102,7 +69,7 @@ public partial class DbHelperTests
     [Fact]
     public void CanExec_Numeric()
     {
-        object? value = default, sqlValue = default;
+        object? value, sqlValue;
 
         value = byte.MinValue; sqlValue = new SqlByte((byte)value);
         Assert.Equal(value, DbHelper.Exec<byte>("SELECT @Data", value));
@@ -143,7 +110,7 @@ public partial class DbHelperTests
     [Fact]
     public void CanExec_DateTime()
     {
-        object? value = default, sqlValue = default;
+        object? value, sqlValue;
 
         value = DateOnly.MaxValue; 
         Assert.Equal(value, DbHelper.Exec<DateOnly>("SELECT @Data", value));
@@ -165,7 +132,7 @@ public partial class DbHelperTests
     [Fact]
     public void CanExec_Other()
     {
-        object? value = default, sqlValue = default;
+        object? value, sqlValue;
 
         value = Guid.NewGuid(); sqlValue = new SqlGuid((Guid)value);
         Assert.Equal(value, DbHelper.Exec<Guid>("SELECT @Data", value));
@@ -187,12 +154,12 @@ public partial class DbHelperTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestBytes), parameters: 4)]
+    [MemberData(nameof(GetTestBytes))]
     public void CanExec_Bytes(byte[] bytes) 
         => Assert.Equal(bytes, DbHelper.Exec<byte[]?>("SELECT @Data", bytes));
 
     [Theory]
-    [MemberData(nameof(GetTestBytes), parameters: 4)]
+    [MemberData(nameof(GetTestBytes))]
     public void CanExec_SqlBinary(byte[] bytes)
     {
         var sqlValue = new SqlBinary(bytes);
@@ -200,7 +167,7 @@ public partial class DbHelperTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestBytes), parameters: 4)]
+    [MemberData(nameof(GetTestBytes))]
     public void CanExec_SqlBytes(byte[] bytes)
     {
         var sqlValue = new SqlBytes(bytes);
@@ -208,7 +175,7 @@ public partial class DbHelperTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestBytes), parameters: 4)]
+    [MemberData(nameof(GetTestBytes))]
     public void CanExec_Stream(byte[] bytes)
     {
         using var msIn = new MemoryStream(bytes);
@@ -217,7 +184,7 @@ public partial class DbHelperTests
         Assert.NotNull(stream);
         Assert.Equal(bytes, Stream2Bytes(stream));
 
-        byte[] Stream2Bytes(Stream input)
+        static byte[] Stream2Bytes(Stream input)
         {
             MemoryStream ms = new();
             input.CopyTo(ms);
@@ -226,12 +193,12 @@ public partial class DbHelperTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestChars), parameters: 4)]
+    [MemberData(nameof(GetTestChars))]
     public void CanExec_Chars(char[] chars) 
         => Assert.Equal(chars, DbHelper.Exec<char[]?>("SELECT @Data", chars));
 
     [Theory]
-    [MemberData(nameof(GetTestChars), parameters: 4)]
+    [MemberData(nameof(GetTestChars))]
     public void CanExec_SqlChars(char[] chars)
     {
         var sqlValue = new SqlChars(chars);
@@ -240,12 +207,12 @@ public partial class DbHelperTests
 
 
     [Theory]
-    [MemberData(nameof(GetTestString), parameters: 4)]
+    [MemberData(nameof(GetTestStrings))]
     public void CanExec_String(string str) 
         => Assert.Equal(str, DbHelper.Exec<string?>("SELECT @Data", str));
 
     [Theory]
-    [MemberData(nameof(GetTestString), parameters: 4)]
+    [MemberData(nameof(GetTestStrings))]
     public void CanExec_TextReader(string text)
     {
         using TextReader readerSource = new StringReader(text);
@@ -256,7 +223,7 @@ public partial class DbHelperTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestString), parameters: 4)]
+    [MemberData(nameof(GetTestStrings))]
     public void CanExec_SqlXml(string text)
     {
         var value = string.IsNullOrEmpty(text) ? "<value />" : new XElement("value", text).ToString();
@@ -271,7 +238,7 @@ public partial class DbHelperTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestString), parameters: 4)]
+    [MemberData(nameof(GetTestStrings))]
     public void CanExec_XmlReader(string text)
     {
         var value = string.IsNullOrEmpty(text) ? "<value />" : new XElement("value", text).ToString();

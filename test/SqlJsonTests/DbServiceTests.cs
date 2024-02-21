@@ -15,44 +15,11 @@ public class DbServiceTests
 
     public DbServiceTests() => _db = new DbService(Configuration);
 
-    public static IEnumerable<object[]> GetTestBytes(int numTests)
-    {
-        var allData = new List<object[]>
-        {
-            new object[] { Array.Empty<byte>() },
-            new object[] { TestBytes1k },
-            new object[] { TestBytes5k },
-            new object[] { TestBytes55k }
-        };
+    public static readonly TheoryData<byte[]> GetTestBytes = new() { Array.Empty<byte>(), TestBytes1k, TestBytes5k, TestBytes55k };
 
-        return allData.Take(numTests);
-    }
+    public static readonly TheoryData<char[]> GetTestChars = new() { Array.Empty<char>(), TestChars1k, TestChars5k, TestChars55k };
 
-    public static IEnumerable<object[]> GetTestChars(int numTests)
-    {
-        var allData = new List<object[]>
-        {
-            new object[] { Array.Empty<char>() },
-            new object[] { TestChars1k },
-            new object[] { TestChars5k },
-            new object[] { TestChars55k }
-        };
-
-        return allData.Take(numTests);
-    }
-
-    public static IEnumerable<object[]> GetTestString(int numTests)
-    {
-        var allData = new List<object[]>
-        {
-            new object[] { string.Empty },
-            new object[] { TestString1k },
-            new object[] { TestString5k },
-            new object[] { TestString55k }
-        };
-
-        return allData.Take(numTests);
-    }
+    public static readonly TheoryData<string> GetTestStrings = new() { string.Empty, TestString1k, TestString5k, TestString55k };
 
     [Fact]
     public async Task CanExecAsync_Null()
@@ -103,7 +70,7 @@ public class DbServiceTests
     [Fact]
     public async Task CanExecAsync_Numeric()
     {
-        object? value = default, sqlValue = default;
+        object? value, sqlValue;
 
         value = byte.MinValue; Assert.Equal(value, await _db.ExecAsync<byte>("ProcVar", value));
         sqlValue = new SqlByte((byte)value); Assert.Equal(value, await _db.ExecAsync<byte>("ProcVar", sqlValue));
@@ -135,7 +102,7 @@ public class DbServiceTests
     [Fact]
     public async Task CanExecAsync_DateTime()
     {
-        object? value = default, sqlValue = default;
+        object? value, sqlValue;
 
         value = DateOnly.MaxValue; 
         Assert.Equal(value, await _db.ExecAsync<DateOnly>("ProcVar", value));
@@ -157,7 +124,7 @@ public class DbServiceTests
     [Fact]
     public async Task CanExecAsync_Other()
     {
-        object? value = default, sqlValue = default;
+        object? value, sqlValue;
 
         value = Guid.NewGuid(); sqlValue = new SqlGuid((Guid)value);
         Assert.Equal(value, await _db.ExecAsync<Guid>("ProcVar", value));
@@ -178,12 +145,12 @@ public class DbServiceTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestBytes), parameters: 4)]
+    [MemberData(nameof(GetTestBytes))]
     public async Task CanExecAsync_Bytes(byte[] bytes) 
         => Assert.Equal(bytes, await _db.ExecAsync<byte[]?>("ProcVarBin", bytes));
 
     [Theory]
-    [MemberData(nameof(GetTestBytes), parameters: 4)]
+    [MemberData(nameof(GetTestBytes))]
     public async Task CanExecAsync_SqlBinary(byte[] bytes)
     {
         var sqlValue = new SqlBinary(bytes);
@@ -191,7 +158,7 @@ public class DbServiceTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestBytes), parameters: 4)]
+    [MemberData(nameof(GetTestBytes))]
     public async Task CanExecAsync_SqlBytes(byte[] bytes)
     {
         var sqlValue = new SqlBytes(bytes);
@@ -199,7 +166,7 @@ public class DbServiceTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestBytes), parameters: 4)]
+    [MemberData(nameof(GetTestBytes))]
     public async Task CanExecAsync_Stream(byte[] bytes)
     {
         using var msIn = new MemoryStream(bytes);
@@ -208,7 +175,7 @@ public class DbServiceTests
         Assert.NotNull(stream);
         Assert.Equal(bytes, Stream2Bytes(stream));
 
-        byte[] Stream2Bytes(Stream input)
+        static byte[] Stream2Bytes(Stream input)
         {
             MemoryStream ms = new();
             input.CopyTo(ms);
@@ -217,12 +184,12 @@ public class DbServiceTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestChars), parameters: 4)]
+    [MemberData(nameof(GetTestChars))]
     public async Task CanExecAsync_Chars(char[] chars) 
         => Assert.Equal(chars, await _db.ExecAsync<char[]?>("ProcVarChar", chars));
 
     [Theory]
-    [MemberData(nameof(GetTestChars), parameters: 4)]
+    [MemberData(nameof(GetTestChars))]
     public async Task CanExecAsync_SqlChars(char[] chars)
     {
         var sqlValue = new SqlChars(chars);
@@ -230,12 +197,12 @@ public class DbServiceTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestString), parameters: 4)]
+    [MemberData(nameof(GetTestStrings))]
     public async Task CanExecAsync_String(string str) 
         => Assert.Equal(str, await _db.ExecAsync<string?>("ProcVarChar", str));
 
     [Theory]
-    [MemberData(nameof(GetTestString), parameters: 4)]
+    [MemberData(nameof(GetTestStrings))]
     public async Task CanExecAsync_TextReader(string text)
     {
         using TextReader readerSource = new StringReader(text);
@@ -246,7 +213,7 @@ public class DbServiceTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestString), parameters: 4)]
+    [MemberData(nameof(GetTestStrings))]
     public async Task CanExecAsync_SqlXml(string text)
     {
         var value = string.IsNullOrEmpty(text) ? "<value />" : new XElement("value", text).ToString();
@@ -261,7 +228,7 @@ public class DbServiceTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestString), parameters: 4)]
+    [MemberData(nameof(GetTestStrings))]
     public async Task CanExecAsync_XmlReader(string text)
     {
         var value = string.IsNullOrEmpty(text) ? "<value />" : new XElement("value", text).ToString();

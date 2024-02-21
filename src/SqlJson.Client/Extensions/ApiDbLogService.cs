@@ -21,7 +21,7 @@ public class ApiDbLogService : ApiDbService, IDbLogService
     /// <param name="http">HTTP client instance</param>
     /// <param name="configuration">The configuration.</param>
     public ApiDbLogService(HttpClient http, IConfiguration configuration) : base(http)
-        => _minDbLogLevel = configuration.GetValue<DbLogLevel?>(MinDbLogLevelPath);
+        => _minDbLogLevel = configuration.GetSection(MinDbLogLevelPath)?.Value.ToObj<DbLogLevel?>();
 
     /// <summary>
     /// MinDbLogLevel allows to set the minimum allowed logging level.
@@ -31,7 +31,7 @@ public class ApiDbLogService : ApiDbService, IDbLogService
     /// <summary>
     /// MinDbLogLevelPath allows you to change the default path for the MinDbLogLevel property.
     /// </summary>
-    public virtual string MinDbLogLevelPath => DbLogHelper.DbLogLevelPathDefault;
+    public virtual string MinDbLogLevelPath => "Logging:LogLevel:UkrGuru.SqlJson";
 
     /// <inheritdoc/>
     public async Task LogAsync(DbLogLevel logLevel, string title, object? more = null, CancellationToken cancellationToken = default)
@@ -40,7 +40,7 @@ public class ApiDbLogService : ApiDbService, IDbLogService
         {
             if ((byte)logLevel >= (byte)MinDbLogLevel)
             {
-                _ = await CreateAsync<int?>(DbLogHelper.WJbLogs_Ins, DbLogHelper.Normalize(logLevel, title, more), cancellationToken: cancellationToken);
+                _ = await CreateAsync<int?>("WJbLogs_Ins", DbLogExtensions.Normalize(logLevel, title, more), cancellationToken: cancellationToken);
             }
         }
         finally { await Task.CompletedTask; }

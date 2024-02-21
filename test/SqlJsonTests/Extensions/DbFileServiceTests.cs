@@ -14,37 +14,15 @@ public class DbFileServiceTests
         _dbFile = new DbFileService(Configuration);
     }
 
-    public static IEnumerable<object[]> GetTestBytes(int numTests)
-    {
-        var allData = new List<object[]>
-        {
-            new object[] { Array.Empty<byte>() },
-            new object[] { TestBytes1k },
-            new object[] { TestBytes5k },
-            new object[] { TestBytes55k }
-        };
-
-        return allData.Take(numTests);
-    }
-
-    public static IEnumerable<object[]> GetTestString(int numTests)
-    {
-        var allData = new List<object[]>
-        {
-            new object[] { string.Empty },
-            new object[] { TestString1k },
-            new object[] { TestString5k },
-            new object[] { TestString55k }
-        };
-
-        return allData.Take(numTests);
-    }
+    public static readonly TheoryData<byte[]> GetTestBytes = new() { Array.Empty<byte>(), TestBytes1k, TestBytes5k, TestBytes55k };
+    
+    public static readonly TheoryData<string> GetTestStrings = new() { string.Empty, TestString1k, TestString5k, TestString55k };
 
     [Theory]
-    [MemberData(nameof(GetTestBytes), parameters: 4)]
+    [MemberData(nameof(GetTestBytes))]
     public async Task BinFileTests(byte[] bytes)
     {
-        var fileName = $"{DateTime.Now.ToString("HHmmss")}.bin";
+        var fileName = $"{DateTime.Now:HHmmss}.bin";
         var file = new DbFile { FileName = fileName, FileContent = bytes };
 
         var guid = await file.SetAsync<Guid?>();
@@ -66,7 +44,7 @@ public class DbFileServiceTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestString), parameters: 4)]
+    [MemberData(nameof(GetTestStrings))]
     public async Task TxtFileTests(string content)
     {
         var guid = await _dbFile.SetAsync(content);

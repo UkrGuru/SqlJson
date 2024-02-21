@@ -3,6 +3,7 @@
 
 using System.Data;
 using System.Data.SqlTypes;
+using System.Globalization;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -18,6 +19,14 @@ namespace UkrGuru.SqlJson;
 public static class DbExtensions
 {
     /// <summary>
+    /// Determines whether the given string is a valid name.
+    /// </summary>
+    /// <param name="tsql">The string to check.</param>
+    /// <returns>True if the string is a valid name; otherwise, false.</returns>
+    public static bool IsName(string? tsql) => tsql is not null && tsql.Length <= 100
+        && Regex.IsMatch(tsql, @"^([a-zA-Z_]\w*|\[.+?\])(\.([a-zA-Z_]\w*|\[.+?\]))?$");
+
+    /// <summary>
     /// Determines whether the specified type is a long.
     /// </summary>
     /// <typeparam name="T">The type to check.</typeparam>
@@ -30,14 +39,6 @@ public static class DbExtensions
         SqlBoolean or SqlGuid or SqlDateTime => false,
         _ => true
     };
-
-    /// <summary>
-    /// Determines whether the given string is a valid name.
-    /// </summary>
-    /// <param name="tsql">The string to check.</param>
-    /// <returns>True if the string is a valid name; otherwise, false.</returns>
-    public static bool IsName(string? tsql) => tsql is not null && tsql.Length <= 100
-        && Regex.IsMatch(tsql, @"^([a-zA-Z_]\w*|\[.+?\])(\.([a-zA-Z_]\w*|\[.+?\]))?$");
 
     /// <summary>
     /// Creates a new instance of the SqlCommand class with initialization parameters.
@@ -191,7 +192,7 @@ public static class DbExtensions
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The value casted to type T.</returns>
     public static async Task<object?> ReadAllAsync<T>(this SqlDataReader reader, CancellationToken cancellationToken = default)
-        => ((await reader.ReadAsync(cancellationToken)) && !(await reader.IsDBNullAsync(0, cancellationToken))) ?
+        => ((await reader.ReadAsync(cancellationToken)) && !await reader.IsDBNullAsync(0, cancellationToken)) ?
             await reader.ReadObjAsync<T>(cancellationToken) : await Task.FromResult(default(T));
 
     /// <summary>
@@ -218,8 +219,7 @@ public static class DbExtensions
     {
         StringBuilder sb = new();
 
-        do { sb.Append(reader.GetValue(0)); } 
-        while (await reader.ReadAsync(cancellationToken));
+        do { sb.Append(reader.GetValue(0)); } while (await reader.ReadAsync(cancellationToken));
 
         return await Task.FromResult(sb.ToString());
     }
@@ -266,4 +266,102 @@ public static class DbExtensions
             nameof(XmlReader) => reader.GetXmlReader(0),
             _ => await reader.ReadMoreAsync(cancellationToken),
         });
+
+    /// <summary>
+    /// Tries to create a new record in the database.
+    /// </summary>
+    /// <param name="db">The database service.</param>
+    /// <param name="proc">The stored procedure name.</param>
+    /// <param name="data">The data to be passed to the stored procedure.</param>
+    /// <returns></returns>
+    public static async Task<string?> TryCreateAsync(this IDbService db, string proc, string? data = default)
+    {
+        try
+        {
+            return await db.CreateAsync<string?>(proc, data);
+        }
+        catch (Exception ex)
+        {
+            return await Task.FromResult($"Error: {ex.Message}. Proc={proc}");
+        }
+    }
+
+    /// <summary>
+    /// Tries to read a record from the database.
+    /// </summary>
+    /// <param name="db">The database service.</param>
+    /// <param name="proc">The stored procedure name.</param>
+    /// <param name="data">The data to be passed to the stored procedure.</param>
+    /// <returns>The record read from the database.</returns>
+    public static async Task<string?> TryReadAsync(this IDbService db, string proc, string? data = default)
+    {
+        try
+        {
+            // return Normalize(await db.ReadAsync<object?>(proc, ApiHelper.DeNormalize(data)));
+            return await db.ReadAsync<string?>(proc, data);
+        }
+        catch (Exception ex)
+        {
+            return await Task.FromResult($"Error: {ex.Message}. Proc={proc}");
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
+    public static string? Normalize(object? data) => (data is null || Convert.IsDBNull(data)) ? null : data switch
+    {
+        bool => Convert.ToString(data, CultureInfo.InvariantCulture),
+        byte or short or int or long or float or double or decimal => Convert.ToString(data, CultureInfo.InvariantCulture),
+        DateOnly => ((DateOnly)data).ToDateTime(TimeOnly.MinValue).ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture),
+        DateTime => ((DateTime)data).ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture),
+        DateTimeOffset => ((DateTimeOffset)data).ToString("yyyy-MM-dd HH:mm:ss.fffffff zzz", CultureInfo.InvariantCulture),
+        TimeOnly => ((TimeOnly)data).ToString("HH:mm:ss", CultureInfo.InvariantCulture),
+        TimeSpan => ((TimeSpan)data).ToString("c"),
+        Guid or char or string => Convert.ToString(data),
+        byte[] => $"0x{Convert.ToHexString((byte[])data)}",
+        char[] => new string((char[])data),
+        _ => JsonSerializer.Serialize(data)
+    };
+
+    /// <summary>
+    /// Tries to update a record in the database.
+    /// </summary>
+    /// <param name="db">The database service.</param>
+    /// <param name="proc">The stored procedure name.</param>
+    /// <param name="data">The data to be passed to the stored procedure.</param>
+    /// <returns>The number of records updated in the database.</returns>
+    public static async Task<string?> TryUpdateAsync(this IDbService db, string proc, string? data = default)
+    {
+        try
+        {
+            return Convert.ToString(await db.UpdateAsync(proc, data));
+        }
+        catch (Exception ex)
+        {
+            return await Task.FromResult($"Error: {ex.Message}. Proc={proc}");
+        }
+    }
+
+    /// <summary>
+    /// Tries to delete a record from the database.
+    /// </summary>
+    /// <param name="db">The database service.</param>
+    /// <param name="proc">The stored procedure name.</param>
+    /// <param name="data">The data to be passed to the stored procedure.</param>
+    /// <returns>The number of records deleted from the database.</returns>
+    public static async Task<string?> TryDeleteAsync(this IDbService db, string proc, string? data = default)
+    {
+        try
+        {
+            return Convert.ToString(await db.DeleteAsync(proc, data));
+        }
+        catch (Exception ex)
+        {
+            return await Task.FromResult($"Error: {ex.Message}. Proc={proc}");
+        }
+    }
+
 }
