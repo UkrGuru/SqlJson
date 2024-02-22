@@ -9,7 +9,7 @@ using UkrGuru.SqlJson.Extensions;
 namespace UkrGuru.SqlJson;
 
 /// <summary>
-/// 
+/// Helper class for api-related operations.
 /// </summary>
 public static class ApiDbHelper
 {
@@ -47,23 +47,28 @@ public static class ApiDbHelper
     /// <param name="apiHoleUri">The API endpoint URI.</param>
     /// <param name="proc">The stored procedure to execute.</param>
     /// <param name="norm">Normalized data that will be passed to the stored procedure.</param>
+    /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>The normalized API endpoint URI.</returns>
-    public static string? Normalize(string? apiHoleUri, string proc, string? norm = default)
+    public static string? Normalize(string? apiHoleUri, string proc, string? norm = default, int? timeout = default)
     {
         var result = Uri.EscapeDataString(proc.ThrowIfBlank());
 
         if (!string.IsNullOrEmpty(apiHoleUri)) result = $"{apiHoleUri}/{result}";
 
-        if (norm != null) result = $"{result}?Data={Uri.EscapeDataString(norm)}";
+        var separator = '?';
+
+        if (norm != null) { result += $"{separator}data={Uri.EscapeDataString(norm)}"; separator = '&'; }
+
+        if (timeout > 0) result += $"{separator}timeout={timeout}";
 
         return result;
     }
 
     /// <summary>
-    /// 
+    /// De-normalizes a string value.
     /// </summary>
-    /// <param name="norm"></param>
-    /// <returns></returns>
+    /// <param name="norm">The normalized string.</param>
+    /// <returns>The de-normalized value.</returns>
     public static object? DeNormalize(string? norm)
     {
         if (norm?.StartsWith("0x") == true)

@@ -56,15 +56,17 @@ public class ApiDbHelperTests
         => Assert.Equal(expected, ApiDbHelper.Normalize(data));
 
     [Theory]
-    [InlineData(null, "[1]", null, "%5B1%5D")]
-    [InlineData(null, "[1]", "", "%5B1%5D?Data=")]
-    [InlineData(null, "[1]", "[1]", "%5B1%5D?Data=%5B1%5D")]
-    [InlineData("", "Proc1", null, "Proc1")]
-    [InlineData("", "Proc1", "", "Proc1?Data=")]
-    [InlineData("", "Proc1", "[1]", "Proc1?Data=%5B1%5D")]
-    [InlineData("https://ApiHole", "Proc1", null, "https://ApiHole/Proc1")]
-    [InlineData("https://ApiHole", "Proc1", "", "https://ApiHole/Proc1?Data=")]
-    [InlineData("https://ApiHole", "Proc1", "[1]", "https://ApiHole/Proc1?Data=%5B1%5D")]
-    public void CanNormalizeUrl(string? apiHoleUri, string proc, string? norm = null, string? expected = null)
-        => Assert.Equal(expected, ApiDbHelper.Normalize(apiHoleUri, proc, norm));
+    [InlineData(null, "[1]", null, null, "%5B1%5D")]
+    [InlineData(null, "[1]", null, 100, "%5B1%5D?timeout=100")]
+    [InlineData(null, "[1]", "", null, "%5B1%5D?data=")]
+    [InlineData(null, "[1]", "", 100, "%5B1%5D?data=&timeout=100")]
+    [InlineData(null, "[1]", "[1]", null, "%5B1%5D?data=%5B1%5D")]
+    [InlineData("", "Proc1", null, null, "Proc1")]
+    [InlineData("", "Proc1", "", null, "Proc1?data=")]
+    [InlineData("", "Proc1", "[1]", null, "Proc1?data=%5B1%5D")]
+    [InlineData("https://ApiHole", "Proc1", null, null, "https://ApiHole/Proc1")]
+    [InlineData("https://ApiHole", "Proc1", "", null, "https://ApiHole/Proc1?data=")]
+    [InlineData("https://ApiHole", "Proc1", "[1]", null, "https://ApiHole/Proc1?data=%5B1%5D")]
+    public void CanNormalizeUrl(string? apiHoleUri, string proc, string? norm = default, int? timeout = default, string? expected = null)
+        => Assert.Equal(expected, ApiDbHelper.Normalize(apiHoleUri, proc, norm, timeout));
 }
