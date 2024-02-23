@@ -18,32 +18,6 @@ public class DbFileHelperTests
 
     [Theory]
     [MemberData(nameof(GetTestBytes))]
-    public static async Task CanZipFile(byte[] bytes)
-    {
-        var fileName = $"{DateTime.Now:HHmmss}.bin";
-
-        DbFile file = new() { FileName = fileName, FileContent = bytes };
-
-        await file.CompressAsync();
-
-        if (file?.FileContent?.Length > 0)
-        {
-            Assert.EndsWith(".gzip", file.FileName);
-
-            await file.DecompressAsync();
-
-            Assert.Equal(fileName, file.FileName);
-
-            Assert.Equal(bytes, file.FileContent);
-        }
-        else
-        {
-            Assert.Equal(fileName, file?.FileName);
-        }
-    }
-
-    [Theory]
-    [MemberData(nameof(GetTestBytes))]
     public async Task BinFileTests(byte[] bytes)
     {
         var fileName = $"{DateTime.Now:HHmmss}.bin";

@@ -21,8 +21,10 @@ public static class ObjExtensions
     public static T? ToObj<T>(this object? value, T? defaultValue = default) =>
         value == null || value == DBNull.Value || value == Array.Empty<T>() ? defaultValue :
         value is T t ? t :
-        value is string s ? (s.Length > 0 ? s.ToTypes<T>() : defaultValue) :
-        value is StringBuilder sb ? (sb.Length > 0 ? sb.ToString().ToTypes<T>() : defaultValue) :
+        value is string s ? (s.Length > 0 ? s.ToTypeS<T>() : defaultValue) :
+        value is StringBuilder sb ? (sb.Length > 0 ? sb.ToString().ToTypeS<T>() : defaultValue) :
+        value is JsonElement e ? e.ValueKind == JsonValueKind.Null ? defaultValue :
+            (e.ValueKind == JsonValueKind.String ? e.GetString()! : e.GetRawText().Trim('"')).ToTypeS<T>() :
         value.ToType<T>();
 
     /// <summary>
@@ -46,10 +48,12 @@ public static class ObjExtensions
     /// <typeparam name="T">The type to convert to.</typeparam>
     /// <param name="value">The string to convert.</param>
     /// <returns>The converted object.</returns>
-    internal static T? ToTypes<T>(this string value) => (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)) switch
+    internal static T? ToTypeS<T>(this string value) => (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)) switch
     {
         Type t when t == typeof(byte[]) => (T)(object)Encoding.UTF8.GetBytes(value),
         Type t when t == typeof(char[]) => (T)(object)value.ToCharArray(),
+        Type t when t == typeof(string) => (T)(object)value,
+        Type t when t == typeof(char) => (T)(object)value[0],
         Type t when t.IsClass => JsonSerializer.Deserialize<T?>(value),
         Type t when t == typeof(Guid) => (T)(object)Guid.Parse(value),
         Type t when t.IsEnum => (T)Enum.Parse(t, value),

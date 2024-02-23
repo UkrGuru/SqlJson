@@ -10,7 +10,7 @@
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.2" />
-    <PackageReference Include="UkrGuru.SqlJson" Version="8.0.0" />
+    <PackageReference Include="UkrGuru.SqlJson" Version="8.1.0" />
   </ItemGroup>
 
 </Project>
