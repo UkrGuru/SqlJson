@@ -60,7 +60,7 @@ public static class ApiDbExtensions
         var norm = ApiDbHelper.Normalize(data);
 
         if (norm?.Length > 1000)
-            httpResponse = await client.PostAsync(ApiDbHelper.Normalize(apiHoleUri, proc), new StringContent(norm), cancellationToken);
+            httpResponse = await client.PostAsync(ApiDbHelper.Normalize(apiHoleUri, proc, null, timeout), new StringContent(norm), cancellationToken);
         else
             httpResponse = await client.GetAsync(ApiDbHelper.Normalize(apiHoleUri, proc, norm, timeout), cancellationToken);
 
@@ -199,7 +199,7 @@ public static class ApiDbExtensions
     /// </summary>
     /// <param name="client">The HTTP client.</param>
     /// <param name="timeout">The timeout in seconds (optional).</param>
-    public static void SetTimeout(this HttpClient client, int? timeout = default)
+    internal static void SetTimeout(this HttpClient client, int? timeout = default)
     {
         if (timeout > 0) client.Timeout = new TimeSpan(0, 0, (int)timeout + 1);
     }
@@ -209,7 +209,7 @@ public static class ApiDbExtensions
     /// </summary>
     /// <param name="content">The content to check for errors.</param>
     /// <exception cref="HttpRequestException">Thrown if the content starts with "Error:".</exception>
-    public static void ThrowIfError(this string? content)
+    internal static void ThrowIfError(this string? content)
     {
         if (content?.StartsWith("Error:") == true) throw new HttpRequestException(content["Error:".Length..]?.TrimStart());
     }

@@ -23,8 +23,9 @@ public static class ObjExtensions
         value is T t ? t :
         value is string s ? (s.Length > 0 ? s.ToTypeS<T>() : defaultValue) :
         value is StringBuilder sb ? (sb.Length > 0 ? sb.ToString().ToTypeS<T>() : defaultValue) :
+        value is Guid g ? g.ToString().ToTypeS<T>() :
         value is JsonElement e ? e.ValueKind == JsonValueKind.Null ? defaultValue :
-            (e.ValueKind == JsonValueKind.String ? e.GetString()! : e.GetRawText().Trim('"')).ToTypeS<T>() :
+            (e.ValueKind == JsonValueKind.String ? e.GetString()! : e.GetRawText()).ToTypeS<T>() :
         value.ToType<T>();
 
     /// <summary>

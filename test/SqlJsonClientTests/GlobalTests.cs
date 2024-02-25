@@ -2,8 +2,6 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using Microsoft.Extensions.Configuration;
-//using System.Reflection;
-//using UkrGuru.SqlJson.Extensions;
 
 namespace UkrGuru.SqlJson.Client.Tests;
 

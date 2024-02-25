@@ -3,7 +3,6 @@
 
 using System.Data;
 using System.Data.SqlTypes;
-using System.Globalization;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -297,7 +296,6 @@ public static class DbExtensions
     {
         try
         {
-            // return Normalize(await db.ReadAsync<object?>(proc, ApiHelper.DeNormalize(data)));
             return await db.ReadAsync<string?>(proc, data);
         }
         catch (Exception ex)
@@ -305,26 +303,6 @@ public static class DbExtensions
             return await Task.FromResult($"Error: {ex.Message}. Proc={proc}");
         }
     }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="data"></param>
-    /// <returns></returns>
-    public static string? Normalize(object? data) => (data is null || Convert.IsDBNull(data)) ? null : data switch
-    {
-        bool => Convert.ToString(data, CultureInfo.InvariantCulture),
-        byte or short or int or long or float or double or decimal => Convert.ToString(data, CultureInfo.InvariantCulture),
-        DateOnly => ((DateOnly)data).ToDateTime(TimeOnly.MinValue).ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture),
-        DateTime => ((DateTime)data).ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture),
-        DateTimeOffset => ((DateTimeOffset)data).ToString("yyyy-MM-dd HH:mm:ss.fffffff zzz", CultureInfo.InvariantCulture),
-        TimeOnly => ((TimeOnly)data).ToString("HH:mm:ss", CultureInfo.InvariantCulture),
-        TimeSpan => ((TimeSpan)data).ToString("c"),
-        Guid or char or string => Convert.ToString(data),
-        byte[] => $"0x{Convert.ToHexString((byte[])data)}",
-        char[] => new string((char[])data),
-        _ => JsonSerializer.Serialize(data)
-    };
 
     /// <summary>
     /// Tries to update a record in the database.

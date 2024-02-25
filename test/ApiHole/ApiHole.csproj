@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\SqlJson\SqlJson.csproj" />
+    <PackageReference Include="UkrGuru.SqlJson" Version="8.5.0" />
   </ItemGroup>
 
 </Project>

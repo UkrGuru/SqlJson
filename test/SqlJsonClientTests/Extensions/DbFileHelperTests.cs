@@ -1,7 +1,7 @@
 // Copyright (c) Oleksandr Viktor (UkrGuru). All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using static UkrGuru.SqlJson.Extensions.Tests.GlobalTests;
+using static UkrGuru.SqlJson.Client.Tests.GlobalTests;
 
 namespace UkrGuru.SqlJson.Extensions.Tests;
 

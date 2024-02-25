@@ -8,7 +8,7 @@ namespace UkrGuru.SqlJson.Extensions;
 /// <summary>
 /// Represents a collection of keys and values.
 /// </summary>
-public class More : Dictionary<string, object>
+public class More : Dictionary<string, object?>
 {
     /// <summary>
     /// Deserialize the JSON string into a dictionary, then add the non-existing key/value pairs to the More dictionary.

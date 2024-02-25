@@ -35,13 +35,13 @@ public class ApiDbExtensionsTests
         await Assert.ThrowsAsync<HttpRequestException>(() => httpResponse.ReadAsync<Region>());
     }
 
-    [Fact]
-    public void CanThrowIfError()
-    {
-        string content = "Error: Test Error Message";
+    //[Fact]
+    //public void CanThrowIfError()
+    //{
+    //    string content = "Error: Test Error Message";
 
-        var exception = Assert.Throws<HttpRequestException>(() => content.ThrowIfError());
+    //    var exception = Assert.Throws<HttpRequestException>(() => content.ThrowIfError());
 
-        Assert.Equal("Test Error Message", exception.Message);
-    }
+    //    Assert.Equal("Test Error Message", exception.Message);
+    //}
 }

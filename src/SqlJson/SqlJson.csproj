@@ -11,7 +11,7 @@
         <PackageIcon>ukrguru-logo.jpg</PackageIcon>
         <RepositoryUrl>https://github.com/UkrGuru/SqlJson</RepositoryUrl>
         <Description>UkrGuru.SqlJson is a library that simplifies the interaction between .NET applications and SQL Server databases.</Description>
-        <Version>8.1.0</Version>
+        <Version>8.5.0</Version>
         <SignAssembly>True</SignAssembly>
         <AssemblyOriginatorKeyFile>..\..\..\UkrGuru.snk</AssemblyOriginatorKeyFile>
         <PackageTags>sqlclient ado.net sql json more dbfile dblog .net6 .net8</PackageTags>
@@ -86,8 +86,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.5" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
-        <PackageReference Include="UkrGuru.SqlJson.Extensions" Version="0.3.0" />
+        <PackageReference Include="UkrGuru.SqlJson.Client" Version="8.5.0" />
     </ItemGroup>
+
 </Project>

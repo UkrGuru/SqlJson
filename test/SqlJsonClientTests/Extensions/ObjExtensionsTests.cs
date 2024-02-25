@@ -3,8 +3,7 @@
 
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using static UkrGuru.SqlJson.Extensions.Tests.GlobalTests;
+using static UkrGuru.SqlJson.Client.Tests.GlobalTests;
 
 namespace UkrGuru.SqlJson.Extensions.Tests;
 

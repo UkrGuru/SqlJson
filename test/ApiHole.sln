@@ -5,10 +5,6 @@ VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiHole", "ApiHole\ApiHole.csproj", "{EBD4B215-02D8-49CF-98A0-2C4A7F440473}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlJson", "..\src\SqlJson\SqlJson.csproj", "{8BC56138-DE43-4BDD-8A40-D3B37D2A1DDE}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlJson.Extensions", "..\src\SqlJson.Extensions\SqlJson.Extensions.csproj", "{8D8E744A-4B9D-4911-9583-322906A0DBE0}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,14 +15,6 @@ Global
 		{EBD4B215-02D8-49CF-98A0-2C4A7F440473}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EBD4B215-02D8-49CF-98A0-2C4A7F440473}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EBD4B215-02D8-49CF-98A0-2C4A7F440473}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8BC56138-DE43-4BDD-8A40-D3B37D2A1DDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8BC56138-DE43-4BDD-8A40-D3B37D2A1DDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8BC56138-DE43-4BDD-8A40-D3B37D2A1DDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8BC56138-DE43-4BDD-8A40-D3B37D2A1DDE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8D8E744A-4B9D-4911-9583-322906A0DBE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8D8E744A-4B9D-4911-9583-322906A0DBE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8D8E744A-4B9D-4911-9583-322906A0DBE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8D8E744A-4B9D-4911-9583-322906A0DBE0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
