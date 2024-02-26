@@ -4,7 +4,6 @@
 using System.Globalization;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using UkrGuru.SqlJson.Extensions;
 
 namespace UkrGuru.SqlJson;
 
@@ -44,16 +43,13 @@ public static class ApiDbHelper
     /// <summary>
     /// Normalizes the API endpoint URI.
     /// </summary>
-    /// <param name="apiHoleUri">The API endpoint URI.</param>
     /// <param name="proc">The stored procedure to execute.</param>
     /// <param name="norm">Normalized data that will be passed to the stored procedure.</param>
     /// <param name="timeout">The time in seconds to wait for the command to execute. The default is 30 seconds.</param>
     /// <returns>The normalized API endpoint URI.</returns>
-    public static string? Normalize(string? apiHoleUri, string proc, string? norm = default, int? timeout = default)
+    public static string? Normalize(string proc, string? norm = default, int? timeout = default)
     {
-        var result = Uri.EscapeDataString(proc.ThrowIfBlank());
-
-        if (!string.IsNullOrEmpty(apiHoleUri)) result = $"{apiHoleUri}/{result}";
+        var result = Uri.EscapeDataString(proc);
 
         var separator = '?';
 

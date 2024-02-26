@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.2" />
-    <PackageReference Include="UkrGuru.SqlJson" Version="8.5.0" />
+    <PackageReference Include="UkrGuru.SqlJson" Version="8.5.1" />
   </ItemGroup>
 
   <ItemGroup>

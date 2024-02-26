@@ -12,7 +12,7 @@
         <PackageIcon>ukrguru-logo.jpg</PackageIcon>
         <RepositoryUrl>https://github.com/UkrGuru/SqlJson</RepositoryUrl>
         <Description>UkrGuru.SqlJson.Client is a client side library for the UkrGuru.SqlJson package.</Description>
-        <Version>8.5.0</Version>
+        <Version>8.5.1</Version>
         <SignAssembly>True</SignAssembly>
         <AssemblyOriginatorKeyFile>..\..\..\UkrGuru.snk</AssemblyOriginatorKeyFile>
         <PackageTags>sqljson client sql .net</PackageTags>

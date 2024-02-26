@@ -8,12 +8,11 @@ namespace SqlJsonWasmDemo.Server.Controllers;
 
 //[Authorize]
 [ApiController]
-[Route("[controller]")]
+//[Route("[controller]")]
 //[RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
-public class ApiHoleController : ControllerBase
+public class ApiHoleController(IDbService db) : ControllerBase
 {
-    public ApiHoleController(IDbService db) => _db = db;
-    private readonly IDbService _db;
+    private readonly IDbService _db = db;
 
     private readonly string _suffix = "_Api";
 

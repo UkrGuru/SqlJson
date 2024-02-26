@@ -5,7 +5,7 @@ namespace ApiHole.Controllers;
 
 //[Authorize]
 [ApiController]
-[Route("[controller]")]
+//[Route("[controller]")]
 //[RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
 public class ApiHoleController : ControllerBase
 {
