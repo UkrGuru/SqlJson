@@ -205,7 +205,6 @@ public partial class DbHelperTests
         Assert.Equal(sqlValue.Value, (DbHelper.Exec<SqlChars>("SELECT @Data", sqlValue))!.Value);
     }
 
-
     [Theory]
     [MemberData(nameof(GetTestStrings))]
     public void CanExec_String(string str) 
@@ -228,7 +227,7 @@ public partial class DbHelperTests
     {
         var value = string.IsNullOrEmpty(text) ? "<value />" : new XElement("value", text).ToString();
 
-        var sqlValue = new SqlXml(new System.Xml.XmlTextReader(new StringReader(value)));
+        var sqlValue = new SqlXml(new XmlTextReader(new StringReader(value)));
 
         var sqlActual = DbHelper.Exec<SqlXml>("SELECT @Data", sqlValue);
 

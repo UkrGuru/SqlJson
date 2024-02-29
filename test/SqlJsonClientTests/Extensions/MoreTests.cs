@@ -8,41 +8,14 @@ namespace UkrGuru.SqlJson.Extensions.Tests;
 public class MoreTests
 {
     [Fact]
-    public void CanAddNew_Null()
+    public void CanAddNew_Blank()
     {
         More more = new();
 
         more.AddNew(default);
-
-        Assert.Empty(more);
-    }
-
-    [Fact]
-    public void CanAddNew_Empty()
-    {
-        More more = new();
-
         more.AddNew(string.Empty);
-
-        Assert.Empty(more);
-    }
-
-    [Fact]
-    public void CanAddNew_Whitespace()
-    {
-        More more = new();
-
         more.AddNew("   ");
-
-        Assert.Empty(more);
-    }
-
-    [Fact]
-    public void CanAddNew_NotBlank()
-    {
-        More more = new(); 
-
-        more.AddNew(@"null");
+        more.AddNew("null");
 
         Assert.Empty(more);
     }

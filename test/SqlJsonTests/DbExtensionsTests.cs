@@ -195,7 +195,8 @@ public class DbExtensionsTests
 
         Assert.Equal(0, command.Parameters.Count);
 
-        var result = command.Parameters.AddData(data);
+        command.Parameters.AddData(data);
+        var result = command.Parameters[0];
 
         Assert.Equal(1, command.Parameters.Count);
         Assert.Equal("@Data", result.ParameterName);

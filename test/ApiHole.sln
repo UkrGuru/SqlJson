@@ -5,6 +5,8 @@ VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiHole", "ApiHole\ApiHole.csproj", "{EBD4B215-02D8-49CF-98A0-2C4A7F440473}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SqlJson", "..\src\SqlJson\SqlJson.csproj", "{EBE9F8CE-6E9C-4C00-9D1C-AB9117E7BE0C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{EBD4B215-02D8-49CF-98A0-2C4A7F440473}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EBD4B215-02D8-49CF-98A0-2C4A7F440473}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EBD4B215-02D8-49CF-98A0-2C4A7F440473}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBE9F8CE-6E9C-4C00-9D1C-AB9117E7BE0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBE9F8CE-6E9C-4C00-9D1C-AB9117E7BE0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBE9F8CE-6E9C-4C00-9D1C-AB9117E7BE0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBE9F8CE-6E9C-4C00-9D1C-AB9117E7BE0C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

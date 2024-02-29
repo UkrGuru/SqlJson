@@ -24,8 +24,7 @@ public static class ObjExtensions
         value is string s ? (s.Length > 0 ? s.ToTypeS<T>() : defaultValue) :
         value is StringBuilder sb ? (sb.Length > 0 ? sb.ToString().ToTypeS<T>() : defaultValue) :
         value is Guid g ? g.ToString().ToTypeS<T>() :
-        value is JsonElement e ? e.ValueKind == JsonValueKind.Null ? defaultValue :
-            (e.ValueKind == JsonValueKind.String ? e.GetString()! : e.GetRawText()).ToTypeS<T>() :
+        value is JsonElement je ? je.ValueKind == JsonValueKind.Null ? defaultValue : je.ToTypeJE<T>() :
         value.ToType<T>();
 
     /// <summary>
@@ -42,6 +41,13 @@ public static class ObjExtensions
         Type t when t == typeof(TimeOnly) => (T)(object)TimeOnly.FromTimeSpan((TimeSpan)value),
         Type t => (T?)Convert.ChangeType(value, t),
     };
+
+    internal static T? ToTypeJE<T>(this JsonElement value) => (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)) switch
+    {
+        Type t when t == typeof(string) => (value.ValueKind == JsonValueKind.String ? value.GetString()! : value.GetRawText().Trim('"')).ToTypeS<T>(),
+        Type t => value.Deserialize<T>(),
+    };
+
 
     /// <summary>
     /// Converts a string to a specified type.

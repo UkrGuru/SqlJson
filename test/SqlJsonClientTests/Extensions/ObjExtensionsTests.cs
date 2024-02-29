@@ -21,7 +21,7 @@ public class ObjExtensionsTests
     }
 
     [Fact]
-    public void CanToObj_HaveDefaultValue()
+    public void CanToObj_Default()
     {
         var bytes_default = new byte[1] { 0x01 };
         var chars_default = new char[1] { 'A' };
@@ -261,121 +261,167 @@ public class ObjExtensionsTests
         bool bool_value = false;
         json = JsonSerializer.Serialize(bool_value); value = JsonDocument.Parse(json).RootElement;
         Assert.False(value.ToObj<bool>());
+        Assert.Equal(bool.FalseString.ToLower(), value.ToObj<string>());
 
         bool_value = true;
         json = JsonSerializer.Serialize(bool_value); value = JsonDocument.Parse(json).RootElement;
         Assert.True(value.ToObj<bool>());
+        Assert.Equal(bool.TrueString.ToLower(), value.ToObj<string>());
 
         byte byte_value = 0x0a;
         json = JsonSerializer.Serialize(byte_value); value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(byte_value, value.ToObj<byte>());
+        Assert.Equal(byte_value.ToString(), value.ToObj<string>());
 
-        //byte[] bytearr_value = Encoding.UTF8.GetBytes("\n\r");
-        //json = JsonSerializer.Serialize(bytearr_value); value = JsonDocument.Parse(json).RootElement;
-        //Assert.Equal(bytearr_value, value.ToObj<byte[]>());
+        byte[] bytearr_value = Array.Empty<byte>();
+        json = JsonSerializer.Serialize(bytearr_value); value = JsonDocument.Parse(json).RootElement;
+        Assert.Equal(bytearr_value, value.ToObj<byte[]>());
+        Assert.Equal(bytearr_value, Convert.FromBase64String(value.ToObj<string>()!));
 
-        char char_value = 'X';
+        bytearr_value = Encoding.UTF8.GetBytes("\n\r");
+        json = JsonSerializer.Serialize(bytearr_value); value = JsonDocument.Parse(json).RootElement;
+        Assert.Equal(bytearr_value, value.ToObj<byte[]>());
+        Assert.Equal(bytearr_value, Convert.FromBase64String(value.ToObj<string>()!));
+
+        char char_value = 'A';
         json = JsonSerializer.Serialize(char_value); value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(char_value, value.ToObj<char>());
+        Assert.Equal(char_value.ToString(), value.ToObj<string>());
+        Assert.Equal(char_value.ToString(), value.ToObj<string>());
 
-        //DateOnly date_value = new(2000, 11, 25);
-        //json = JsonSerializer.Serialize(date_value); value = JsonDocument.Parse(json).RootElement;
-        //Assert.Equal(date_value, value.ToObj<DateOnly>());
+        char[] chararr_value = Array.Empty<char>();
+        json = JsonSerializer.Serialize(chararr_value); value = JsonDocument.Parse(json).RootElement;
+        Assert.Equal(chararr_value, value.ToObj<char[]>());
+        Assert.Equal("[]", value.ToObj<string>());
 
-        //TimeOnly time_value = new(23, 59, 59);
-        //json = JsonSerializer.Serialize(time_value); value = JsonDocument.Parse(json).RootElement;
-        //Assert.Equal(time_value, value.ToObj<TimeOnly>());
+        chararr_value = [ 'A', 'V' ];
+        json = JsonSerializer.Serialize(chararr_value); value = JsonDocument.Parse(json).RootElement;
+        Assert.Equal(chararr_value, value.ToObj<char[]>());
+        Assert.Equal(@"[""A"",""V""]", value.ToObj<string>());
+
+        DateOnly date_value = new(2000, 11, 25);
+        json = JsonSerializer.Serialize(date_value); value = JsonDocument.Parse(json).RootElement;
+        Assert.Equal(date_value, value.ToObj<DateOnly>());
+        Assert.Equal(date_value.ToString("yyyy-MM-dd"), value.ToObj<string>());
+
+        TimeOnly time_value = new(23, 59, 59);
+        json = JsonSerializer.Serialize(time_value); value = JsonDocument.Parse(json).RootElement;
+        Assert.Equal(time_value, value.ToObj<TimeOnly>());
+        Assert.Equal(time_value.ToString("HH:mm:ss"), value.ToObj<string>());
 
         DateTime datetime_value = new(2000, 11, 25, 23, 59, 59);
         json = JsonSerializer.Serialize(datetime_value); value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(datetime_value, value.ToObj<DateTime>());
+        Assert.Equal(datetime_value.ToString("yyyy-MM-ddTHH:mm:ss"), value.ToObj<string>());
 
         decimal decimal_value = decimal.MinValue;
         json = JsonSerializer.Serialize(decimal_value); value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(decimal_value, value.ToObj<decimal>());
+        Assert.Equal(decimal_value.ToString(), value.ToObj<string>());
 
         decimal_value = decimal.Zero;
         json = JsonSerializer.Serialize(decimal_value); value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(decimal_value, value.ToObj<decimal>());
+        Assert.Equal(decimal_value.ToString(), value.ToObj<string>());
 
         decimal_value = decimal.One;
         json = JsonSerializer.Serialize(decimal_value); value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(decimal_value, value.ToObj<decimal>());
+        Assert.Equal(decimal_value.ToString(), value.ToObj<string>());
 
         decimal_value = decimal.MinusOne;
         json = JsonSerializer.Serialize(decimal_value); value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(decimal_value, value.ToObj<decimal>());
+        Assert.Equal(decimal_value.ToString(), value.ToObj<string>());
 
         decimal_value = decimal.MaxValue;
         json = JsonSerializer.Serialize(decimal_value); value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(decimal_value, value.ToObj<decimal>());
+        Assert.Equal(decimal_value.ToString(), value.ToObj<string>());
 
         decimal_value = 123456.789m;
         json = JsonSerializer.Serialize(decimal_value); value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(decimal_value, value.ToObj<decimal>());
+        Assert.Equal(decimal_value.ToString(), value.ToObj<string>());
 
         double double_value = double.MinValue;
         json = JsonSerializer.Serialize(double_value); value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(double_value, value.ToObj<double>());
+        Assert.Equal(double_value.ToString(), value.ToObj<string>());
 
         double_value = double.MaxValue;
         json = JsonSerializer.Serialize(double_value); value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(double_value, value.ToObj<double>());
+        Assert.Equal(double_value.ToString(), value.ToObj<string>());
 
         double_value = 123456.789d;
         json = JsonSerializer.Serialize(double_value); value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(double_value, value.ToObj<double>());
+        Assert.Equal(double_value.ToString(), value.ToObj<string>());
 
         UserType enum_value = UserType.Guest;
         json = JsonSerializer.Serialize(enum_value); value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(enum_value, value.ToObj<UserType>());
+        Assert.Equal(((int)enum_value).ToString(), value.ToObj<string>());
 
         Guid guid_value = Guid.NewGuid();
         json = JsonSerializer.Serialize(guid_value); value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(guid_value, value.ToObj<Guid>());
+        Assert.Equal(guid_value.ToString(), value.ToObj<string>());
 
         short short_value = short.MinValue;
         json = JsonSerializer.Serialize(short_value); value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(short_value, value.ToObj<short>());
+        Assert.Equal(short_value.ToString(), value.ToObj<string>());
 
         short_value = short.MaxValue;
         json = JsonSerializer.Serialize(short_value); value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(short_value, value.ToObj<short>());
+        Assert.Equal(short_value.ToString(), value.ToObj<string>());
 
         short_value = 0;
         json = JsonSerializer.Serialize(short_value); value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(short_value, value.ToObj<short>());
+        Assert.Equal(short_value.ToString(), value.ToObj<string>());
 
         int int_value = int.MinValue;
         json = JsonSerializer.Serialize(int_value); value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(int_value, value.ToObj<int>());
+        Assert.Equal(int_value.ToString(), value.ToObj<string>());
 
         int_value = int.MaxValue;
         json = JsonSerializer.Serialize(int_value); value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(int_value, value.ToObj<int>());
+        Assert.Equal(int_value.ToString(), value.ToObj<string>());
 
         int_value = 0;
         json = JsonSerializer.Serialize(int_value); value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(int_value, value.ToObj<int>());
+        Assert.Equal(int_value.ToString(), value.ToObj<string>());
 
         long long_value = long.MinValue;
         json = JsonSerializer.Serialize(long_value); value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(long_value, value.ToObj<long>());
+        Assert.Equal(long_value.ToString(), value.ToObj<string>());
 
         long_value = long.MaxValue;
         json = JsonSerializer.Serialize(long_value); value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(long_value, value.ToObj<long>());
+        Assert.Equal(long_value.ToString(), value.ToObj<string>());
 
         long_value = 0;
         json = JsonSerializer.Serialize(long_value); value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(long_value, value.ToObj<long>());
+        Assert.Equal(long_value.ToString(), value.ToObj<string>());
 
         string string_value = string.Empty;
         json = JsonSerializer.Serialize(string_value); value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(string_value, value.ToObj<string>());
+        Assert.Equal(string_value, value.ToObj<string>());
 
         string_value = "ASD";
         json = JsonSerializer.Serialize(string_value); value = JsonDocument.Parse(json).RootElement;
+        Assert.Equal(string_value, value.ToObj<string>());
         Assert.Equal(string_value, value.ToObj<string>());
     }
 
